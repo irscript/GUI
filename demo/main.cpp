@@ -1,26 +1,15 @@
 #include <cstdio>
-#include <airkit/Core/Bitop.hpp>
-#include <airkit/3Part/Glad2/glad/gl.h>
+#include <airkit/Plat/PlatWin/PlatWin.hpp>
 
-#include <windows.h>
-
-HMODULE glhd;
-
-static GLADloadfunc getProcAddressWGL(const char* procname)
-{
-    const GLADloadfunc proc = (GLADloadfunc) wglGetProcAddress(procname);
-    if (proc)
-        return proc;
-
-    return (GLADloadfunc) GetProcAddress(glhd, procname);
-}
+using namespace airkit;
 int main(int argc, char *argv[])
 {
-    GladGLContext gl = {};
+    PlatWin plat(RenderAPI::OpenGL);
 
-    glhd = LoadLibraryA("opengl32.dll");
+    auto win = plat.createWindow(1280, 720, "Hello World");
 
-    auto ret = gladLoadGLContext(&gl, (GLADloadfunc)getProcAddressWGL);
+    auto winptr = (IWindow *)win.get();
+    winptr->doModal();
 
     return 0;
 }

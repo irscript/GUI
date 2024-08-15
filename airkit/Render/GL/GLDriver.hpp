@@ -8,10 +8,10 @@ namespace airkit
 {
     struct GLDriver
     {
-        GLDriver() : mContext() {}
+        GLDriver() : mContext(), mVersion(0) {}
 
         // 加载上下文
-        bool loadContext(GLADloadfunc load) { gladLoadGLContext(&mContext, load) != 0; }
+        bool loadContext(GLADloadfunc load) { return gladLoadGLContext(&mContext, load) != 0; }
 
         // 功能函数
 
@@ -23,6 +23,7 @@ namespace airkit
 
     private:
         GladGLContext mContext;
+        uint32_t mVersion; // 版本号
     };
 
 }

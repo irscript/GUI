@@ -16,7 +16,7 @@ target("demo")
     set_kind("binary")
     add_includedirs(".")
     add_files("demo/*.cpp")
-    add_ldflags("-lopengl32")
+    add_ldflags("-lopengl32 -lgdi32 -luxtheme")
    
 --
 -- If you want to known more usage about xmake, please see https://xmake.io

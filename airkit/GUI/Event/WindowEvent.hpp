@@ -45,16 +45,16 @@ namespace airkit
     // 窗口移动事件
     struct WindowMoveEvent : public IWindowEvent
     {
-        WindowMoveEvent(int x, int y)
+        WindowMoveEvent(float x, float y)
             : IWindowEvent(WindowAction::Moved), mX(x), mY(y) {}
         virtual ~WindowMoveEvent() = default;
 
-        int getX() const { return mX; }
-        int getY() const { return mY; }
+        float getX() const { return mX; }
+        float getY() const { return mY; }
 
     private:
-        int mX;
-        int mY;
+        float mX;
+        float mY;
     };
 }
 #endif // __WINDOWEVENT_H__

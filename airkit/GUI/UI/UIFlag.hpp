@@ -21,6 +21,9 @@ namespace airkit
             Draggable = Bitop::bit<FlagType>(3), // 用于识别UI元素是否可拖动
             Drawable = Bitop::bit<FlagType>(4),  // 用于识别UI元素是否可绘制
             Visible = Bitop::bit<FlagType>(5),   // 用于识别UI元素是否可见
+
+            Closed = Bitop::bit<FlagType>(6),  // 用于识别UI元素是否应该关闭
+            Focused = Bitop::bit<FlagType>(7), // 用于识别UI元素是否已获得焦点
         };
     };
 }
