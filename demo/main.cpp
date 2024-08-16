@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     auto win = plat.createWindow(1280, 720, "Hello World");
 
     auto render = plat.getRender();
-    render->createShader("test", "F:\\gitee\\gui\\demo\\FlatColor.glsl");
+    //render->createShader("test", "F:\\gitee\\gui\\demo\\FlatColor.glsl");
 
     auto winptr = (IWindow *)win.get();
     winptr->doModal();

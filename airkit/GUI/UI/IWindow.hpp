@@ -5,9 +5,9 @@
 
 namespace airkit
 {
-    struct IWindow : public IGUIVisable
+    struct IWindow : public IGUIElement
     {
-        IWindow() : IGUIVisable() { mUIFlag.set(UIFlag::Window); }
+        IWindow() : IGUIElement() { mUIFlag.set(UIFlag::Window); }
 
         virtual ~IWindow() = 0;
 

@@ -131,9 +131,7 @@ const airkit::UIHolder airkit::IGUIElement::getWindowUI() const
     return parent;
 }
 
-airkit::IGUILayout::~IGUILayout() {}
-airkit::IGUIVisable::~IGUIVisable() {}
-airkit::IGUIWidget::~IGUIWidget() {}
+
 airkit::IWindow::~IWindow() {}
 void airkit::IWindow::setShouldClose(bool shouldClose)
 {

@@ -33,5 +33,30 @@ namespace airkit
         float mX;
         float mY;
     };
+
+    struct UISize
+    {
+        UISize(float width = 0.0, float height = 0.0)
+            : mWidth(width), mHeight(height)
+        {
+        }
+        UISize(const UISize &size)
+            : mWidth(size.mWidth), mHeight(size.mHeight)
+        {
+        }
+        UISize &operator=(const UISize &size)
+        {
+            mWidth = size.mWidth;
+            mHeight = size.mHeight;
+            return *this;
+        }
+        float getWidth() const { return mWidth; }
+        float getHeight() const { return mHeight; }
+
+    protected:
+        float mWidth;
+        float mHeight;
+    };
+
 }
 #endif // __UIPOINT_H__

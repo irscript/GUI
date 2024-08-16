@@ -14,6 +14,7 @@ namespace airkit
         Mouse,    // 鼠标事件
         Keyboard, // 键盘事件
         Text,     // 文本事件
+        UI,       // UI事件
     };
 
     // 事件基类

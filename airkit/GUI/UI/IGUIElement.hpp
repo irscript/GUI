@@ -60,31 +60,6 @@ namespace airkit
         std::list<UIHolder> mChildUI; // 子 UI
     };
 
-    // UI 布局元素基类：一般不会绘制，只响应布局操作
-    struct IGUILayout : public IGUIElement
-    {
-        IGUILayout() : IGUIElement() {}
-        virtual ~IGUILayout() = 0;
-
-        // 响应布局改变，子类实现真正的布局算法
-        virtual void onLayout(const float width, const float height) = 0;
-    };
-
-    // UI部件基类：
-    struct IGUIVisable : public IGUIElement
-    {
-        virtual ~IGUIVisable() = 0;
-
-        // virtual void onMove(const UIPoint &pos) = 0;
-        // virtual void onFocus(bool focus) = 0;
-    };
-
-    // UI部件基类：
-    struct IGUIWidget : public IGUIVisable
-    {
-        virtual ~IGUIWidget() = 0;
-    };
-
 }
 
 #endif // __IGUIELEMENT_H__

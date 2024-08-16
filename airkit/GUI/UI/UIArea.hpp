@@ -25,6 +25,8 @@ namespace airkit
                float width = 0.0, float height = 0.0)
             : mX(x), mY(y),
               mWidth(width), mHeight(height) {}
+        UIArea(const UIPoint &pos, const UISize &size)
+            : mX(pos.getX()), mY(pos.getY()), mWidth(size.getWidth()), mHeight(size.getHeight()) {}
 
         void setArea(float x, float y, float width, float height)
         {
@@ -33,7 +35,14 @@ namespace airkit
             mWidth = width;
             mHeight = height;
         }
-        void setPosition(float x, float y)
+        void setArea(const UIPoint &pos, const UISize &size)
+        {
+            mX = pos.getX();
+            mY = pos.getY();
+            mWidth = size.getWidth();
+            mHeight = size.getHeight();
+        }
+        void setPos(float x, float y)
         {
             mX = x;
             mY = y;
@@ -43,6 +52,11 @@ namespace airkit
             mWidth = width;
             mHeight = height;
         }
+
+        // 获取矩形在父容器的位置
+        UIPoint getPos() const { return UIPoint(mX, mY); }
+        // 获取矩形的尺寸
+        UISize getSize() const { return UISize(mWidth, mHeight); }
 
         float getRight() const { return mX + mWidth; }
         float getBottom() const { return mY + mHeight; }
