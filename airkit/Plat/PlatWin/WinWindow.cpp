@@ -22,4 +22,8 @@ namespace airkit
 
         return 0;
     }
+    LRESULT WinWindow::onHitTest(UIPoint &cursor)
+    {
+        return HTCLIENT;
+    }
 }

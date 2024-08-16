@@ -9,8 +9,8 @@ namespace airkit
     // 一些平台接口
     struct IPlat
     {
-        IPlat(RenderAPI api): mRenderAPI(api) {}
-        
+        IPlat() : mRenderAPI() {}
+
         virtual ~IPlat() = 0;
         static IPlat &getInstance() { return *mInstance; }
 
@@ -19,13 +19,21 @@ namespace airkit
 
         // 获取渲染接口API
         RenderAPI getRenderAPI() const { return mRenderAPI; }
+        RenderHolder getRender() { return mRender; }
 
-    protected:
-        static IPlat *mInstance;
+        virtual void init(RenderAPI api) = 0;
+        virtual void shutdown() = 0;
+
+        // 错误信息处理
+        virtual void error(const std::string &msg) = 0;
+        virtual void warning(const std::string &msg) = 0;
 
     protected:
         WindowHub mWinHub;    // 窗口管理器
         RenderAPI mRenderAPI; // 渲染接口API
+        RenderHolder mRender; // 渲染接口
+    protected:
+        static IPlat *mInstance;
     };
 
 }

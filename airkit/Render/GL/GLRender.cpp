@@ -1,0 +1,164 @@
+#include <airkit/Render/GL/GLRender.hpp>
+#include <airkit/GUI/IPlat.hpp>
+#define FMT_HEADER_ONLY
+#include <airkit/3Part/Fmt/core.h>
+
+#include <airkit/Render/GL/GLShader.hpp>
+
+namespace airkit
+{
+    RenderAPI GLRender::getAPI() const { return RenderAPI::OpenGL; }
+    const char *GLRender::getAPIName() const { return "OpenGL"; }
+
+    bool GLRender::init(void *data)
+    {
+        mVersion = gladLoadGLContext(&gl, (GLADloadfunc)data);
+        return mVersion != 0;
+    }
+    void GLRender::shutdown() {
+        mShaderLibrary.clear();
+    }
+    void GLRender::clear() { gl.Clear(GL_COLOR_BUFFER_BIT); }
+    void GLRender::clearColor(float r, float g, float b, float a) { gl.ClearColor(r, g, b, a); }
+    void GLRender::setViewport(int x, int y, int width, int height) { gl.Viewport(x, y, width, height); }
+    void GLRender::setScissor(int x, int y, int width, int height) { gl.Scissor(x, y, width, height); }
+    ShaderWatcher GLRender::createShader(const std::string &name, const std::string &vertex, const std::string &fragment, bool isfile)
+    {
+        std::unordered_map<uint32_t, const char *> codes;
+        if (isfile == true)
+        {
+            codes[GL_VERTEX_SHADER] = readFile(vertex).c_str();
+            codes[GL_FRAGMENT_SHADER] = readFile(fragment).c_str();
+        }
+        else
+        {
+            codes[GL_VERTEX_SHADER] = vertex.c_str();
+            codes[GL_FRAGMENT_SHADER] = fragment.c_str();
+        }
+        return createShader(name, codes);
+    }
+    ShaderWatcher GLRender::createShader(const std::string &name, const std::string &filepath)
+    {
+        std::unordered_map<uint32_t, const char *> codes;
+        std::string source = readFile(filepath);
+        std::vector<std::string> srclist;
+        // 解析分段
+        const char *typeToken = "#type";
+        size_t typeTokenLength = strlen(typeToken);
+        size_t pos = source.find(typeToken, 0); // Start of shader type declaration line
+        while (pos != std::string::npos)
+        {
+            size_t eol = source.find_first_of("\r\n", pos); // End of shader type declaration line
+            if (eol == std::string::npos)
+                IPlat::getInstance().error(fmt::format("shader file '{0}' syntax error", filepath));
+
+            size_t begin = pos + typeTokenLength + 1; // Start of shader type name (after "#type " keyword)
+            std::string type = source.substr(begin, eol - begin);
+            auto stage = getShaderStage(type);
+            if (stage == 0)
+                IPlat::getInstance().error(fmt::format("shader file '{0}' Invalid shader type specified {1}", filepath, type));
+
+            size_t nextLinePos = source.find_first_not_of("\r\n", eol); // Start of shader code after shader type declaration line
+            if (nextLinePos == std::string::npos)
+                IPlat::getInstance().error(fmt::format("shader file '{0}' syntax error", filepath));
+
+            pos = source.find(typeToken, nextLinePos); // Start of next shader type declaration line
+            auto src = (pos == std::string::npos) ? source.substr(nextLinePos) : source.substr(nextLinePos, pos - nextLinePos);
+            srclist.push_back(src);
+            codes[stage] = srclist.back().c_str();
+        }
+        return createShader(name, codes);
+    }
+    std::string GLRender::readFile(const std::string &filepath)
+    {
+        std::string result;
+        std::ifstream in(filepath, std::ios::in | std::ios::binary); // ifstream closes itself due to RAII
+        if (in)
+        {
+            in.seekg(0, std::ios::end);
+            size_t size = in.tellg();
+            if (size != -1)
+            {
+                result.resize(size);
+                in.seekg(0, std::ios::beg);
+                in.read(&result[0], size);
+            }
+            else
+                IPlat::getInstance().error(fmt::format("Could not read from file '{0}'", filepath));
+        }
+        else
+            IPlat::getInstance().error(fmt::format("Could not open file '{0}'", filepath));
+
+        return result;
+    }
+    ShaderWatcher GLRender::createShader(const std::string &name, std::unordered_map<uint32_t, const char *> &src)
+    {
+
+        // 先编译着色器
+        std::vector<uint32_t> shaders;
+        for (auto &it : src)
+        {
+            auto stage = it.first;
+            auto sid = shaders.emplace_back(gl.CreateShader(stage));
+            const char *code = it.second;
+            gl.ShaderSource(sid, 1, &code, nullptr);
+            gl.CompileShader(sid);
+            int32_t status;
+            gl.GetShaderiv(sid, GL_COMPILE_STATUS, &status);
+            if (status == 0)
+            {
+                GLint len = 0;
+                gl.GetShaderiv(sid, GL_INFO_LOG_LENGTH, &len);
+                std::string log;
+                log.resize(len);
+                gl.GetShaderInfoLog(sid, len, nullptr, log.data());
+                IPlat::getInstance().error(fmt::format("Shader '{0}.{1}' compile failed!\nlog: {2}",
+                                                       name, getShaderStageName(stage), log));
+            }
+        }
+        // 再链接着色器
+        uint32_t pid = gl.CreateProgram();
+        for (auto &it : shaders)
+            gl.AttachShader(pid, it);
+        gl.LinkProgram(pid);
+        int32_t status;
+        gl.GetProgramiv(pid, GL_COMPILE_STATUS, &status);
+        if (status == 0)
+        {
+            GLint len = 0;
+            gl.GetProgramiv(pid, GL_INFO_LOG_LENGTH, &len);
+            std::string log;
+            log.resize(len);
+            gl.GetProgramInfoLog(pid, len, nullptr, log.data());
+            IPlat::getInstance().error(fmt::format("Program '{0}' compile failed!\nlog: {1}", name, log));
+        }
+        for (auto &it : shaders)
+            gl.DeleteShader(it);
+
+        // 返回Shader
+        ShaderHolder shader(new GLShader(name, pid));
+        mShaderLibrary.add(name, shader);
+        return ShaderWatcher(shader);
+    }
+    const char *GLRender::getShaderStageName(uint32_t stage)
+    {
+        switch (stage)
+        {
+        case GL_VERTEX_SHADER:
+            return "opengl.vert";
+        case GL_FRAGMENT_SHADER:
+            return "opengl.frag";
+        }
+        IPlat::getInstance().error("unknown shader stage");
+        return nullptr;
+    }
+    uint32_t GLRender::getShaderStage(const std::string &type)
+    {
+        if (type == "vertex")
+            return GL_VERTEX_SHADER;
+        if (type == "fragment" || type == "pixel")
+            return GL_FRAGMENT_SHADER;
+
+        return 0;
+    }
+}

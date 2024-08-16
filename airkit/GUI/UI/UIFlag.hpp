@@ -24,6 +24,9 @@ namespace airkit
 
             Closed = Bitop::bit<FlagType>(6),  // 用于识别UI元素是否应该关闭
             Focused = Bitop::bit<FlagType>(7), // 用于识别UI元素是否已获得焦点
+
+            Text = Bitop::bit<FlagType>(8), // 用于识别UI元素是否为文本
+
         };
     };
 }

@@ -9,19 +9,19 @@ namespace airkit
     struct WindowHub
     {
         // 查找窗口
-        UIPtr findWindow(const IGUIElement *window) const { return mWinMap.find(window)->second; }
+        UIHolder findWindow(const IGUIElement *window) const { return mWinMap.find(window)->second; }
         // 添加窗口
-        UIPtr addWindow(IWindow *window)
+        UIHolder addWindow(IWindow *window)
         {
-            auto res = mWinMap.insert({window, UIPtr{window}});
+            auto res = mWinMap.insert({window, UIHolder{window}});
             return res.first->second;
         }
         // 移除窗口
-        void removeWindow(UIPtr winptr) { mWinMap.erase(winptr.get()); }
+        void removeWindow(UIHolder winptr) { mWinMap.erase(winptr.get()); }
         void removeWindow(const IGUIElement *winptr) { mWinMap.erase(winptr); }
 
     protected:
-        std::map<const IGUIElement *, UIPtr> mWinMap; // 窗口指针和窗口共享指针的映射
+        std::map<const IGUIElement *, UIHolder> mWinMap; // 窗口指针和窗口共享指针的映射
     };
 }
 

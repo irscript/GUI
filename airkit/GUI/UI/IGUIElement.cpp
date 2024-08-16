@@ -8,7 +8,7 @@ airkit::IGUIElement::~IGUIElement() {}
 void airkit::IGUIElement::screenToWindow(UIPoint &point) const
 {
     // 先找到窗口指针
-    UIPtr parent = getParentUI();
+    UIHolder parent = getParentUI();
     while (parent.get() != nullptr)
     {
         if (parent->mUIFlag.check(UIFlag::Window) == true)
@@ -25,7 +25,7 @@ void airkit::IGUIElement::screenToWindow(UIPoint &point) const
 void airkit::IGUIElement::windowToScreen(UIPoint &point) const
 {
     // 先找到窗口指针
-    UIPtr parent = getParentUI();
+    UIHolder parent = getParentUI();
     while (parent.get() != nullptr)
     {
         if (parent->mUIFlag.check(UIFlag::Window) == true)
@@ -45,7 +45,7 @@ void airkit::IGUIElement::UIToWindow(UIPoint &point) const
     auto x = point.getX() + mArea.getX();
     auto y = point.getY() + mArea.getY();
     // 先找到窗口指针
-    UIPtr parent = getParentUI();
+    UIHolder parent = getParentUI();
     while (parent.get() != nullptr)
     {
         // 父UI是窗口
@@ -76,7 +76,7 @@ void airkit::IGUIElement::UIToscreen(UIPoint &point) const
     auto x = point.getX() + mArea.getX();
     auto y = point.getY() + mArea.getY();
     // 先找到窗口指针
-    UIPtr parent = getParentUI();
+    UIHolder parent = getParentUI();
     while (parent.get() != nullptr)
     {
         // 计算坐标
@@ -99,13 +99,13 @@ void airkit::IGUIElement::screenToUI(UIPoint &point) const
     point.setXY(x, y);
 }
 
-airkit::UIPtr airkit::IGUIElement::getWindowUI()
+airkit::UIHolder airkit::IGUIElement::getWindowUI()
 {
     // 如果自己就是窗口
     if (mUIFlag.check(UIFlag::Window) == true)
         return IPlat::getInstance().getWinHub().findWindow(this);
 
-    UIPtr parent = getParentUI();
+    UIHolder parent = getParentUI();
     while (parent.get() != nullptr)
     {
         if (parent->mUIFlag.check(UIFlag::Window) == true)
@@ -115,13 +115,13 @@ airkit::UIPtr airkit::IGUIElement::getWindowUI()
     return parent;
 }
 
-const airkit::UIPtr airkit::IGUIElement::getWindowUI() const
+const airkit::UIHolder airkit::IGUIElement::getWindowUI() const
 {
     // 如果自己就是窗口
     if (mUIFlag.check(UIFlag::Window) == true)
         return IPlat::getInstance().getWinHub().findWindow(this);
 
-    UIPtr parent = getParentUI();
+    UIHolder parent = getParentUI();
     while (parent.get() != nullptr)
     {
         if (parent->mUIFlag.check(UIFlag::Window) == true)

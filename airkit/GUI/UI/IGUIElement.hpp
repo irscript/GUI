@@ -7,7 +7,8 @@
 namespace airkit
 {
     struct IGUIElement;
-    using UIPtr = std::shared_ptr<IGUIElement>;
+    using UIHolder = std::shared_ptr<IGUIElement>;
+    using UIWatcher = std::weak_ptr<IGUIElement>;
     // UI 元素基类
     struct IGUIElement
     {
@@ -45,18 +46,18 @@ namespace airkit
 
     public:
         // 获取父UI
-        UIPtr getParentUI() { return mParentUI; }
-        const UIPtr getParentUI() const { return mParentUI; }
+        UIHolder getParentUI() { return mParentUI.lock(); }
+        const UIHolder getParentUI() const { return mParentUI.lock(); }
 
         // 获取窗口
-        UIPtr getWindowUI();
-        const UIPtr getWindowUI() const;
+        UIHolder getWindowUI();
+        const UIHolder getWindowUI() const;
 
     protected:
-        UIFlag mUIFlag;            // UI 标志
-        UIArea mArea;              // UI 区域位置大小
-        UIPtr mParentUI;           // 父 UI
-        std::list<UIPtr> mChildUI; // 子 UI
+        UIFlag mUIFlag;               // UI 标志
+        UIArea mArea;                 // UI 区域位置大小
+        UIWatcher mParentUI;          // 父 UI
+        std::list<UIHolder> mChildUI; // 子 UI
     };
 
     // UI 布局元素基类：一般不会绘制，只响应布局操作

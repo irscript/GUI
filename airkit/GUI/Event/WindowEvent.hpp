@@ -34,7 +34,7 @@ namespace airkit
     };
 
     // 窗口焦点事件
-    struct WindowFocusEvent : public IWindowEvent
+    struct WindowFocusEvent final: public IWindowEvent
     {
         WindowFocusEvent(bool focused)
             : IWindowEvent(focused ? WindowAction::Focused : WindowAction::Unfocused) {}
@@ -43,7 +43,7 @@ namespace airkit
         bool isFocused() const { return getAction() == WindowAction::Focused; }
     };
     // 窗口移动事件
-    struct WindowMoveEvent : public IWindowEvent
+    struct WindowMoveEvent final: public IWindowEvent
     {
         WindowMoveEvent(float x, float y)
             : IWindowEvent(WindowAction::Moved), mX(x), mY(y) {}
@@ -56,5 +56,21 @@ namespace airkit
         float mX;
         float mY;
     };
+
+    // 窗口大小改变事件
+    struct WindowResizeEvent final : public IWindowEvent
+    {
+        WindowResizeEvent(float width, float height)
+            : IWindowEvent(WindowAction::Resized), mWidth(width), mHeight(height) {}
+        virtual ~WindowResizeEvent() = default;
+
+        float getWidth() const { return mWidth; }
+        float getHeight() const { return mHeight; }
+
+    private:
+        float mWidth;
+        float mHeight;
+    };
+
 }
 #endif // __WINDOWEVENT_H__

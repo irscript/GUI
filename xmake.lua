@@ -2,14 +2,20 @@ add_rules("mode.debug", "mode.release")
 
 set_languages("c17", "c++17")
 
+target("glad2")
+    set_kind("static")
+    add_includedirs("airkit/3Part/Glad2/")
+    add_files("airkit/3Part/Glad2/**.c")
+
+
 target("airkit")
     set_kind("static")
+    add_deps("glad2")
     add_includedirs("."
     ,"airkit/3Part/"
     ,"airkit/3Part/Glad2/")
 
-    add_files("airkit/**.cpp",
-            "airkit/**.c")
+    add_files("airkit/**.cpp")
 
 target("demo") 
     add_deps("airkit")

@@ -2,14 +2,15 @@
 #define __GLWINDOW_H__
 
 #include <airkit/Plat/PlatWin/WinWindow.hpp>
-#include <airkit/Render/GL/GLDriver.hpp>
+
 namespace airkit
 {
 
     struct GLWindow : WinWindow
     {
-        GLWindow(HWND h, HDC dc, HGLRC context, GLDriver &gl)
-            : WinWindow(h), mWinDC(dc), mGLContext(context), mGL(gl) {}
+        GLWindow(HWND hd, float x, float y, float w, float h,
+                 HDC dc, HGLRC context)
+            : WinWindow(hd, x, y, w, h), mWinDC(dc), mGLContext(context) {}
 
         virtual void prepare() override;
         virtual void present() override;
@@ -18,7 +19,6 @@ namespace airkit
     private:
         HDC mWinDC;
         HGLRC mGLContext;
-        GLDriver &mGL;
     };
 }
 #endif // __GLWINDOW_H__
