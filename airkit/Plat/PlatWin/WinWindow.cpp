@@ -22,8 +22,16 @@ namespace airkit
 
         return 0;
     }
+    void WinWindow::onCharInput(uint32_t utf32)
+    {
+        printf("char:%X\n", utf32);
+    }
     LRESULT WinWindow::onHitTest(UIPoint &cursor)
     {
         return HTCLIENT;
+    }
+    bool WinWindow::onClose()
+    {
+        return true;
     }
 }

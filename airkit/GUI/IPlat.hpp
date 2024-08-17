@@ -16,6 +16,10 @@ namespace airkit
 
         // 获取窗口管理器
         const WindowHub &getWinHub() const { return mWinHub; }
+        // 创建窗口
+        virtual UIHolder createWindow(uint32_t width, uint32_t height, const char *title) = 0;
+        // 释放窗口
+        virtual void releaseWindow(const IGUIElement *win) = 0;
 
         // 获取渲染接口API
         RenderAPI getRenderAPI() const { return mRenderAPI; }

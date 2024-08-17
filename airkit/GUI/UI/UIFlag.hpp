@@ -16,6 +16,20 @@ namespace airkit
         {
             Window = Bitop::bit<FlagType>(0), // 用于识别UI元素是否为窗口
 
+            // 窗口元素的标记位
+            WindowClose = Bitop::bit<FlagType>(1),       // 窗口是否已经关闭
+            WindowFocus = Bitop::bit<FlagType>(2),       // 窗口是否获得焦点
+            WindowMinimize = Bitop::bit<FlagType>(3),    // 窗口是否最小化
+            WindowMaximize = Bitop::bit<FlagType>(4),    // 窗口是否最大化
+            WindowResize = Bitop::bit<FlagType>(5),      // 窗口是否可改变大小
+            WindowFullscreen = Bitop::bit<FlagType>(6),  // 窗口是否全屏
+            WindowAlwaysOnTop = Bitop::bit<FlagType>(7), // 窗口是否始终置顶
+            WindowModal = Bitop::bit<FlagType>(8),       // 窗口是否为模态窗口
+            WindowTransparent = Bitop::bit<FlagType>(9), // 窗口是否透明
+            WindowHide = Bitop::bit<FlagType>(10),       // 窗口是否隐藏
+
+            // UI元素的标记位
+
             Enabled = Bitop::bit<FlagType>(1),   // 用于识别UI元素是否可用
             Movable = Bitop::bit<FlagType>(2),   // 用于识别UI元素是否可移动
             Draggable = Bitop::bit<FlagType>(3), // 用于识别UI元素是否可拖动

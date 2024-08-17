@@ -13,6 +13,7 @@
 namespace airkit
 {
     HMODULE PlatWin::mGLDll = 0;
+    const uint32_t PlatWin::DPIBase = USER_DEFAULT_SCREEN_DPI;
 
     PlatWin::PlatWin()
         : IPlat(),
@@ -32,7 +33,7 @@ namespace airkit
     }
 
     UIHolder PlatWin::createWindow(uint32_t width, uint32_t height, const char *title)
-    {
+    { // TODO:多线程安全
         IWindow *win;
         switch (mRenderAPI)
         {
@@ -46,6 +47,12 @@ namespace airkit
         }
         // 添加到窗口管理器
         return mWinHub.addWindow(win);
+    }
+
+    void PlatWin::releaseWindow(const IGUIElement *win)
+    {
+        // TODO:多线程安全
+        mWinHub.removeWindow(win);
     }
 
     void PlatWin::init(RenderAPI api)
@@ -222,12 +229,92 @@ namespace airkit
             SetCursor(LoadCursor(NULL, IDC_ARROW));
             break;
         }
+        case WM_CLOSE:
+        {
+            auto userdata = GetWindowLongPtr(handle, GWLP_USERDATA);
+            if (userdata != 0)
+            {
+                WinWindow &win = *(WinWindow *)userdata;
+                if (true == win.onClose())
+                {
+                    win.setShouldClose(true);
+                    DestroyWindow(handle);
+                }
+            }
+            return 0;
+        }
+        break;
         case WM_DESTROY:
         {
             auto userdata = GetWindowLongPtr(handle, GWLP_USERDATA);
-            WinWindow &win = *(WinWindow *)userdata;
-            win.setShouldClose(true);
+            if (userdata != 0)
+            {
+                WinWindow &win = *(WinWindow *)userdata;
+                // 窗口销毁应当从管理器中删除
+                IPlat::getInstance().releaseWindow(&win);
+                return 0;
+            }
+        }
+        break;
+        case WM_SYSCOMMAND:
+        {
+            auto userdata = GetWindowLongPtr(handle, GWLP_USERDATA);
+            if (userdata != 0)
+            {
+                WinWindow &win = *(WinWindow *)userdata;
+                // 当窗口处于全屏时，禁止进入系统保护模式
+                auto flag = w_param & 0xfff0;
+                if (win.isFullScreen() &&
+                    (SC_SCREENSAVE == flag ||
+                     SC_MONITORPOWER == flag))
+                    return 0;
+            }
+        }
+        break;
+        case WM_CHAR:
+        case WM_SYSCHAR:
+        {
+            auto userdata = GetWindowLongPtr(handle, GWLP_USERDATA);
+            if (userdata != 0)
+            {
+                WinWindow &win = *(WinWindow *)userdata;
+                if (w_param >= 0xd800 && w_param <= 0xdbff)
+                    win.setHighSurrogate(w_param);
+                else
+                {
+                    uint32_t codepoint = 0;
 
+                    if (w_param >= 0xdc00 && w_param <= 0xdfff)
+                    {
+                        auto high = win.getHighSurrogate();
+                        if (high)
+                        {
+                            codepoint += (high - 0xd800) << 10;
+                            codepoint += (WCHAR)w_param - 0xdc00;
+                            codepoint += 0x10000;
+                        }
+                    }
+                    else
+                        codepoint = (WCHAR)w_param;
+
+                    win.setHighSurrogate(0);
+                    win.onCharInput(codepoint);
+                }
+            }
+            return 0;
+        }
+        break;
+        case WM_UNICHAR:
+        {
+            // 测试是否支持UNICODE
+            if (w_param == UNICODE_NOCHAR)
+                return TRUE;
+            auto userdata = GetWindowLongPtr(handle, GWLP_USERDATA);
+            if (userdata != 0)
+            {
+                WinWindow &win = *(WinWindow *)userdata;
+                win.onCharInput(w_param);
+            }
             return 0;
         }
         }

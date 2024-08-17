@@ -131,14 +131,18 @@ const airkit::UIHolder airkit::IGUIElement::getWindowUI() const
     return parent;
 }
 
-
 airkit::IWindow::~IWindow() {}
 void airkit::IWindow::setShouldClose(bool shouldClose)
 {
-    shouldClose == true ? mUIFlag.set(UIFlag::Closed) : mUIFlag.reset(UIFlag::Closed);
+    shouldClose == true ? mUIFlag.set(UIFlag::WindowClose) : mUIFlag.reset(UIFlag::WindowClose);
 }
 
 bool airkit::IWindow::shouldClose() const
 {
-    return mUIFlag.check(UIFlag::Closed);
+    return mUIFlag.check(UIFlag::WindowClose);
+}
+
+bool airkit::IWindow::isFullScreen() const
+{
+    return mUIFlag.check(UIFlag::WindowFullscreen);
 }
