@@ -2,147 +2,276 @@
 #include <airkit/GUI/UI/IWindow.hpp>
 #include <airkit/GUI/IPlat.hpp>
 #include "IWindow.hpp"
+#include "IGUIElement.hpp"
 
-airkit::IGUIElement::~IGUIElement() {}
-
-void airkit::IGUIElement::screenToWindow(UIPoint &point) const
+namespace airkit
 {
-    // 先找到窗口指针
-    UIHolder parent = getParentUI();
-    while (parent.get() != nullptr)
+    IGUIElement::~IGUIElement() {}
+    void IGUIElement::onEvent(IEvent &event)
     {
-        if (parent->mUIFlag.check(UIFlag::Window) == true)
+        auto kind = event.getKind();
+        switch (kind)
+        {
+        case EventKind::Keyboard:
+        {
+            auto &ev = event.as<IKeyEvent>();
+            auto action = ev.getAction();
+            switch (action)
+            {
+            case KeyAction::Down:
+                return onKeyDown(ev.as<KeyDownEvent>());
+            case KeyAction::Up:
+                return onKeyUp(ev.as<KeyUpEvent>());
+            }
+        }
+        break;
+        case EventKind::Mouse:
+        {
+            auto &ev = event.as<IMouseEvent>();
+            auto action = ev.getAction();
+            switch (action)
+            {
+            case MouseAction::Down:
+                return onMouseClick(ev.as<MouseDownEvent>());
+            case MouseAction::Move:
+                return onMouseMove(ev.as<MouseMoveEvent>());
+            case MouseAction::Up:
+                return onMouseUp(ev.as<MouseUpEvent>());
+            case MouseAction::Enter:
+                return onMouseEnter(ev.as<MouseEnterEvent>());
+            case MouseAction::Hover:
+                return onMouseHover(ev.as<MouseHoverEvent>());
+            case MouseAction::Leave:
+                return onMouseLeave(ev.as<MouseLeaveEvent>());
+            case MouseAction::Wheel:
+                return onMouseWheel(ev.as<MouseWheelEvent>());
+            }
+        }
+        break;
+        case EventKind::CharInput:
+            return onCharInput(event.as<CharInputEvent>());
+        case EventKind::UI:
+        {
+            auto &ev = event.as<UIEvent>();
+            auto action = ev.getAction();
+            switch (action)
+            {
+            case UIAction::Focus:
+                return onFocus(ev.as<UIFocusEvent>());
+            case UIAction::Show:
+                return onShow(ev.as<UIShowEvent>());
+            case UIAction::Resizing:
+                return onSizing(ev.as<UIResizingEvent>());
+            case UIAction::Resized:
+                return onSized(ev.as<UIResizedEvent>());
+            case UIAction::Moving:
+                return onMoving(ev.as<UIMovingEvent>());
+            case UIAction::Moved:
+                return onMoved(ev.as<UIMovedEvent>());
+            }
+        }
+        break;
+
+        default:
             break;
-        parent = parent->getParentUI();
+        }
     }
-    // 调用窗口的转换函数
-    if (parent.get() == nullptr)
-        return;
-    auto x = mArea.getX() - point.getX();
-    auto y = mArea.getY() - point.getY();
-    point.setXY(x, y);
-}
-void airkit::IGUIElement::windowToScreen(UIPoint &point) const
-{
-    // 先找到窗口指针
-    UIHolder parent = getParentUI();
-    while (parent.get() != nullptr)
+
+    void IGUIElement::onFocus(UIFocusEvent &event)
     {
-        if (parent->mUIFlag.check(UIFlag::Window) == true)
-            break;
-        parent = parent->getParentUI();
     }
-    // 调用窗口的转换函数
-    if (parent.get() != nullptr)
-        return;
 
-    auto x = mArea.getX() + point.getX();
-    auto y = mArea.getY() + point.getY();
-    point.setXY(x, y);
-}
-void airkit::IGUIElement::UIToWindow(UIPoint &point) const
-{
-    auto x = point.getX() + mArea.getX();
-    auto y = point.getY() + mArea.getY();
-    // 先找到窗口指针
-    UIHolder parent = getParentUI();
-    while (parent.get() != nullptr)
+    void IGUIElement::onShow(UIShowEvent &event)
     {
-        // 父UI是窗口
-        if (parent->mUIFlag.check(UIFlag::Window) == true)
-            break;
-        // 计算坐标
-        x += parent->mArea.getX();
-        y += parent->mArea.getY();
-
-        // 继续找父UI
-        parent = parent->getParentUI();
     }
-    point.setXY(x, y);
-}
-void airkit::IGUIElement::windowToUI(UIPoint &point) const
-{
-    // 先将UI原点转换为窗口坐标
-    UIPoint uiPoint(0, 0);
-    UIToWindow(uiPoint);
 
-    // 在减去UI的窗口坐标
-    auto x = point.getX() - uiPoint.getX();
-    auto y = point.getY() - uiPoint.getY();
-    point.setXY(x, y);
-}
-void airkit::IGUIElement::UIToscreen(UIPoint &point) const
-{
-    auto x = point.getX() + mArea.getX();
-    auto y = point.getY() + mArea.getY();
-    // 先找到窗口指针
-    UIHolder parent = getParentUI();
-    while (parent.get() != nullptr)
+    void IGUIElement::onSizing(UIResizingEvent &event)
     {
-        // 计算坐标
-        x += parent->mArea.getX();
-        y += parent->mArea.getY();
-        // 继续找父UI
-        parent = parent->getParentUI();
     }
-    point.setXY(x, y);
-}
-void airkit::IGUIElement::screenToUI(UIPoint &point) const
-{
-    // 先将UI原点转换为屏幕坐标
-    UIPoint uiPoint(0, 0);
-    UIToscreen(uiPoint);
 
-    // 在减去UI的屏幕坐标
-    auto x = point.getX() - uiPoint.getX();
-    auto y = point.getY() - uiPoint.getY();
-    point.setXY(x, y);
-}
-
-airkit::UIHolder airkit::IGUIElement::getWindowUI()
-{
-    // 如果自己就是窗口
-    if (mUIFlag.check(UIFlag::Window) == true)
-        return IPlat::getInstance().getWinHub().findWindow(this);
-
-    UIHolder parent = getParentUI();
-    while (parent.get() != nullptr)
+    void IGUIElement::onSized(UIResizedEvent &event)
     {
-        if (parent->mUIFlag.check(UIFlag::Window) == true)
-            break;
-        parent = parent->getParentUI();
     }
-    return parent;
-}
 
-const airkit::UIHolder airkit::IGUIElement::getWindowUI() const
-{
-    // 如果自己就是窗口
-    if (mUIFlag.check(UIFlag::Window) == true)
-        return IPlat::getInstance().getWinHub().findWindow(this);
-
-    UIHolder parent = getParentUI();
-    while (parent.get() != nullptr)
+    void IGUIElement::onMoving(UIMovingEvent &event)
     {
-        if (parent->mUIFlag.check(UIFlag::Window) == true)
-            break;
-        parent = parent->getParentUI();
     }
-    return parent;
-}
 
-airkit::IWindow::~IWindow() {}
-void airkit::IWindow::setShouldClose(bool shouldClose)
-{
-    shouldClose == true ? mUIFlag.set(UIFlag::WindowClose) : mUIFlag.reset(UIFlag::WindowClose);
-}
+    void IGUIElement::onMoved(UIMovedEvent &event)
+    {
+    }
+    void IGUIElement::onCharInput(CharInputEvent &event)
+    {
+        printf("%d\n", event.getUtf32());
+    }
 
-bool airkit::IWindow::shouldClose() const
-{
-    return mUIFlag.check(UIFlag::WindowClose);
-}
+    void IGUIElement::onKeyDown(KeyDownEvent &event)
+    {
+    }
+    void IGUIElement::onKeyUp(KeyUpEvent &event)
+    {
+    }
 
-bool airkit::IWindow::isFullScreen() const
-{
-    return mUIFlag.check(UIFlag::WindowFullscreen);
+    void IGUIElement::onMouseClick(MouseDownEvent &event)
+    {
+        printf("mouse down[ %u ]:(%f,%f)\n", event.getButton(), event.getX(), event.getY());
+    }
+
+    
+
+    void IGUIElement::onMouseUp(MouseUpEvent &event)
+    {
+        printf("mouse up[ %u ]:(%f,%f)\n", event.getButton(), event.getX(), event.getY());
+    }
+
+    void IGUIElement::onMouseMove(MouseMoveEvent &event)
+    {
+        printf("mouse move:(%f,%f)\n", event.getX(), event.getY());
+    }
+
+    void IGUIElement::onMouseEnter(MouseEnterEvent &event)
+    {
+        printf("mouse enter:(%f,%f)\n", event.getX(), event.getY());
+    }
+
+    void IGUIElement::onMouseLeave(MouseLeaveEvent &event)
+    {
+        printf("mouse leave:(%f,%f)\n", event.getX(), event.getY());
+    }
+
+    void IGUIElement::onMouseHover(MouseHoverEvent &event)
+    {
+        printf("mouse hover:(%f,%f)\n", event.getX(), event.getY());
+    }
+
+    void IGUIElement::onMouseWheel(MouseWheelEvent &event)
+    {
+    }
+
+    void IGUIElement::screenToWindow(UIPoint &point) const
+    {
+        // 先找到窗口指针
+        UIHolder parent = getParentUI();
+        while (parent.get() != nullptr)
+        {
+            if (parent->mUIFlag.check(UIFlag::Window) == true)
+                break;
+            parent = parent->getParentUI();
+        }
+        // 调用窗口的转换函数
+        if (parent.get() == nullptr)
+            return;
+        auto x = mArea.getX() - point.getX();
+        auto y = mArea.getY() - point.getY();
+        point.setXY(x, y);
+    }
+    void IGUIElement::windowToScreen(UIPoint &point) const
+    {
+        // 先找到窗口指针
+        UIHolder parent = getParentUI();
+        while (parent.get() != nullptr)
+        {
+            if (parent->mUIFlag.check(UIFlag::Window) == true)
+                break;
+            parent = parent->getParentUI();
+        }
+        // 调用窗口的转换函数
+        if (parent.get() != nullptr)
+            return;
+
+        auto x = mArea.getX() + point.getX();
+        auto y = mArea.getY() + point.getY();
+        point.setXY(x, y);
+    }
+    void IGUIElement::UIToWindow(UIPoint &point) const
+    {
+        auto x = point.getX() + mArea.getX();
+        auto y = point.getY() + mArea.getY();
+        // 先找到窗口指针
+        UIHolder parent = getParentUI();
+        while (parent.get() != nullptr)
+        {
+            // 父UI是窗口
+            if (parent->mUIFlag.check(UIFlag::Window) == true)
+                break;
+            // 计算坐标
+            x += parent->mArea.getX();
+            y += parent->mArea.getY();
+
+            // 继续找父UI
+            parent = parent->getParentUI();
+        }
+        point.setXY(x, y);
+    }
+    void IGUIElement::windowToUI(UIPoint &point) const
+    {
+        // 先将UI原点转换为窗口坐标
+        UIPoint uiPoint(0, 0);
+        UIToWindow(uiPoint);
+
+        // 在减去UI的窗口坐标
+        auto x = point.getX() - uiPoint.getX();
+        auto y = point.getY() - uiPoint.getY();
+        point.setXY(x, y);
+    }
+    void IGUIElement::UIToscreen(UIPoint &point) const
+    {
+        auto x = point.getX() + mArea.getX();
+        auto y = point.getY() + mArea.getY();
+        // 先找到窗口指针
+        UIHolder parent = getParentUI();
+        while (parent.get() != nullptr)
+        {
+            // 计算坐标
+            x += parent->mArea.getX();
+            y += parent->mArea.getY();
+            // 继续找父UI
+            parent = parent->getParentUI();
+        }
+        point.setXY(x, y);
+    }
+    void IGUIElement::screenToUI(UIPoint &point) const
+    {
+        // 先将UI原点转换为屏幕坐标
+        UIPoint uiPoint(0, 0);
+        UIToscreen(uiPoint);
+
+        // 在减去UI的屏幕坐标
+        auto x = point.getX() - uiPoint.getX();
+        auto y = point.getY() - uiPoint.getY();
+        point.setXY(x, y);
+    }
+
+    UIHolder IGUIElement::getWindowUI()
+    {
+        // 如果自己就是窗口
+        if (mUIFlag.check(UIFlag::Window) == true)
+            return IPlat::getInstance().getWinHub().findWindow(this);
+
+        UIHolder parent = getParentUI();
+        while (parent.get() != nullptr)
+        {
+            if (parent->mUIFlag.check(UIFlag::Window) == true)
+                break;
+            parent = parent->getParentUI();
+        }
+        return parent;
+    }
+
+    const UIHolder IGUIElement::getWindowUI() const
+    {
+        // 如果自己就是窗口
+        if (mUIFlag.check(UIFlag::Window) == true)
+            return IPlat::getInstance().getWinHub().findWindow(this);
+
+        UIHolder parent = getParentUI();
+        while (parent.get() != nullptr)
+        {
+            if (parent->mUIFlag.check(UIFlag::Window) == true)
+                break;
+            parent = parent->getParentUI();
+        }
+        return parent;
+    }
+
 }

@@ -152,12 +152,14 @@ namespace airkit
 
     struct IKeyEvent : public IEvent
     {
-        IKeyEvent(KeyAction action, KeyButton button)
-            : IEvent(EventKind::Keyboard), mAction(action), mButton(button) {}
 
-        virtual ~IKeyEvent() = 0;
+        virtual ~IKeyEvent() = default;
         KeyAction getAction() const { return mAction; }
         KeyButton getButton() const { return mButton; }
+
+    protected:
+        IKeyEvent(KeyAction action, KeyButton button)
+            : IEvent(EventKind::Keyboard), mAction(action), mButton(button) {}
 
     private:
         KeyAction mAction;

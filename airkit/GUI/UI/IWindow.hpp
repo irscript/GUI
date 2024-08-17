@@ -7,7 +7,7 @@ namespace airkit
 {
     struct IWindow : public IGUIElement
     {
-        IWindow() : IGUIElement() { mUIFlag.set(UIFlag::Window); }
+        IWindow() : IGUIElement() { mUIFlag.setMask(UIFlag::Window); }
 
         virtual ~IWindow() = 0;
 
@@ -18,7 +18,7 @@ namespace airkit
         virtual void prepare() = 0; // 渲染准备：切换上下文等
         virtual void present() = 0; // 渲染完成：显示结果等
 
-        virtual void onCharInput(uint32_t utf32) = 0; // 输入字符
+        
 
         virtual int32_t doModal() = 0;
     };

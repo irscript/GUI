@@ -27,6 +27,8 @@ namespace airkit
             WindowModal = Bitop::bit<FlagType>(8),       // 窗口是否为模态窗口
             WindowTransparent = Bitop::bit<FlagType>(9), // 窗口是否透明
             WindowHide = Bitop::bit<FlagType>(10),       // 窗口是否隐藏
+            MouseEnter = Bitop::bit<FlagType>(11),       // 鼠标在窗口内
+            MouseTrack = Bitop::bit<FlagType>(12),       // 跟踪鼠标中
 
             // UI元素的标记位
 

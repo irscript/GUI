@@ -18,7 +18,35 @@ namespace airkit
 
     public:
         // 事件响应
-        virtual void onEvent(const IEvent &event) = 0;
+        virtual void onEvent(IEvent &event);
+
+        // 响应焦点变化
+        virtual void onFocus(UIFocusEvent &event);
+        // 响应显示状态变化
+        virtual void onShow(UIShowEvent &event);
+
+        // 响应大小变化
+        virtual void onSizing(UIResizingEvent &event);
+        virtual void onSized(UIResizedEvent &event);
+        // 响应位置变化
+        virtual void onMoving(UIMovingEvent &event);
+        virtual void onMoved(UIMovedEvent &event);
+
+        // 响应字符输入
+        virtual void onCharInput(CharInputEvent &event);
+
+        // 响应键盘事件
+        virtual void onKeyDown(KeyDownEvent &event);
+        virtual void onKeyUp(KeyUpEvent &event);
+
+        // 响应鼠标事件
+        virtual void onMouseClick(MouseDownEvent &event);
+        virtual void onMouseUp(MouseUpEvent &event);
+        virtual void onMouseMove(MouseMoveEvent &event);
+        virtual void onMouseEnter(MouseEnterEvent &event);
+        virtual void onMouseLeave(MouseLeaveEvent &event);
+        virtual void onMouseHover(MouseHoverEvent &event);
+        virtual void onMouseWheel(MouseWheelEvent &event);
 
     public:
         // 坐标转换
@@ -43,6 +71,11 @@ namespace airkit
         /// @brief 屏幕坐标转UI坐标
         /// @param point 屏幕坐标值
         void screenToUI(UIPoint &point) const;
+
+        uint32_t getUIFlag(uint32_t mask) const { return mUIFlag.getValue() & mask; }
+        void setUIFlag(uint32_t mask) { mUIFlag.setMask(mask); }
+        void resetUIFlag(uint32_t mask) { mUIFlag.resetMask(mask); }
+        void flipUIFlag(uint32_t mask) { mUIFlag.flipMask(mask); }
 
     public:
         // 获取父UI

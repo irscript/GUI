@@ -7,9 +7,6 @@ namespace airkit
     WinWindow::~WinWindow()
     {
     }
-    void airkit::WinWindow::onEvent(const IEvent &event)
-    {
-    }
 
     int32_t WinWindow::doModal()
     {
@@ -22,10 +19,7 @@ namespace airkit
 
         return 0;
     }
-    void WinWindow::onCharInput(uint32_t utf32)
-    {
-        printf("char:%X\n", utf32);
-    }
+
     LRESULT WinWindow::onHitTest(UIPoint &cursor)
     {
         return HTCLIENT;

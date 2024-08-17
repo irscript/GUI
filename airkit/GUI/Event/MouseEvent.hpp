@@ -9,17 +9,15 @@ namespace airkit
     {
         Unknow,
 
-        Down,         // 按下：鼠标按键按下
-        Click = Down, // 单击：鼠标按键按下
-        Up,           // 抬起：鼠标按键抬起
-
-        DblClk, // 双击：鼠标按键按下、抬起、按下，两个按下事件之间间隔小于系统定义的间隔时间
+        Down, // 按下：鼠标按键按下
+        Up,   // 抬起：鼠标按键抬起
 
         Move,
         Wheel,
 
-        Enter,
-        Leave,
+        Enter, // 鼠标进入
+        Leave, // 鼠标离开
+        Hover, // 鼠标停留
 
         Drag,
         Drop,
@@ -47,52 +45,52 @@ namespace airkit
     };
     struct IMouseEvent : public IEvent
     {
-        IMouseEvent(MouseAction action, MouseButton button = MouseButton::Unknow)
-            : IEvent(EventKind::Mouse),
-              mAction(action), mButton(button) {}
 
-        virtual ~IMouseEvent() = 0;
+        virtual ~IMouseEvent() = default;
         MouseAction getAction() const { return mAction; }
-        MouseButton getButton() const { return mButton; }
-
-    protected:
-        MouseAction mAction; // 鼠标动作
-        MouseButton mButton; // 鼠标按键
-    };
-    // 鼠标按键事件
-    struct IMouseButtonEvent : public IMouseEvent
-    {
-    public:
-        IMouseButtonEvent(MouseAction action, MouseButton button, float x, float y)
-            : IMouseEvent(action, button), mX(x), mY(y) {}
-
-        virtual ~IMouseButtonEvent() = 0;
 
         float getX() const { return mX; }
         float getY() const { return mY; }
 
     protected:
-        float mX;
-        float mY;
+        IMouseEvent(MouseAction action, float x, float y)
+            : IEvent(EventKind::Mouse),
+              mX(x), mY(y),
+              mAction(action) {}
+
+    protected:
+        float mX; // 鼠标坐标x
+        float mY; // 鼠标坐标y
+
+        MouseAction mAction; // 鼠标动作
+    };
+    // 鼠标按键事件
+    struct IMouseButtonEvent : public IMouseEvent
+    {
+    public:
+        virtual ~IMouseButtonEvent() = default;
+        MouseButton getButton() const { return mButton; }
+
+    protected:
+        IMouseButtonEvent(MouseAction action, MouseButton button, float x, float y)
+            : IMouseEvent(action, x, y), mButton(button) {}
+
+        MouseButton mButton; // 鼠标按键
     };
 
     // 鼠标单击事件
-    struct MouseClickEvent : public IMouseButtonEvent
+    struct MouseDownEvent : public IMouseButtonEvent
     {
     public:
-        MouseClickEvent(MouseButton button, float x, float y)
-            : IMouseButtonEvent(MouseAction::Click, button, x, y) {}
+        MouseDownEvent(MouseButton button, float x, float y, bool isDblClk = false)
+            : IMouseButtonEvent(MouseAction::Down, button, x, y) {}
 
-        virtual ~MouseClickEvent() = default;
-    };
-    // 鼠标双击事件
-    struct MouseDblClkEvent : public IMouseButtonEvent
-    {
-    public:
-        MouseDblClkEvent(MouseButton button, float x, float y)
-            : IMouseButtonEvent(MouseAction::DblClk, button, x, y) {}
+        virtual ~MouseDownEvent() = default;
 
-        virtual ~MouseDblClkEvent() = default;
+        bool isDblClk() const { return mIsDblClk; }
+
+    protected:
+        bool mIsDblClk = false;
     };
     // 鼠标抬起事件
     struct MouseUpEvent : public IMouseButtonEvent
@@ -109,16 +107,9 @@ namespace airkit
     {
     public:
         MouseMoveEvent(float x, float y)
-            : IMouseEvent(MouseAction::Move), mX(x), mY(y) {}
+            : IMouseEvent(MouseAction::Move, x, y) {}
 
         virtual ~MouseMoveEvent() = default;
-
-        float getX() const { return mX; }
-        float getY() const { return mY; }
-
-    protected:
-        float mX;
-        float mY;
     };
 
     // 鼠标滚轮事件：X、Y 是水平和垂直方向的偏移量
@@ -126,17 +117,34 @@ namespace airkit
     {
     public:
         MouseWheelEvent(float x, float y)
-            : IMouseEvent(MouseAction::Wheel), mX(x), mY(y) {}
+            : IMouseEvent(MouseAction::Wheel, x, y) {}
 
         virtual ~MouseWheelEvent() = default;
-
-        float getX() const { return mX; }
-        float getY() const { return mY; }
-
-    protected:
-        float mX;
-        float mY;
     };
 
+    struct MouseEnterEvent : public IMouseEvent
+    {
+    public:
+        MouseEnterEvent(float x, float y)
+            : IMouseEvent(MouseAction::Enter, x, y) {}
+
+        virtual ~MouseEnterEvent() = default;
+    };
+    struct MouseLeaveEvent : public IMouseEvent
+    {
+    public:
+        MouseLeaveEvent(float x, float y)
+            : IMouseEvent(MouseAction::Leave, x, y) {}
+
+        virtual ~MouseLeaveEvent() = default;
+    };
+    struct MouseHoverEvent : public IMouseEvent
+    {
+    public:
+        MouseHoverEvent(float x, float y)
+            : IMouseEvent(MouseAction::Hover, x, y) {}
+
+        virtual ~MouseHoverEvent() = default;
+    };
 }
 #endif // __MOUSEEVENT_H__

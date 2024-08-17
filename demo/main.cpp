@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
     PlatWin plat;
     plat.init(RenderAPI::OpenGL);
 
-    auto win = plat.createWindow(1280, 720, "Hello World");
+    auto win = plat.createWindow(800, 600, "Hello World");
 
     auto render = plat.getRender();
     //render->createShader("test", "F:\\gitee\\gui\\demo\\FlatColor.glsl");
