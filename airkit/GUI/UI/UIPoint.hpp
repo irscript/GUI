@@ -53,9 +53,67 @@ namespace airkit
         float getWidth() const { return mWidth; }
         float getHeight() const { return mHeight; }
 
+        float getMin() const { return mMin; }
+        float getMax() const { return mMax; }
+
+        void set(float width, float height)
+        {
+            mWidth = width;
+            mHeight = height;
+        }
+
+        bool operator==(const UISize &size) const
+        {
+            return mWidth == size.mWidth &&
+                   mHeight == size.mHeight;
+        }
+
     protected:
-        float mWidth;
-        float mHeight;
+        union
+        {
+            struct
+            {
+                float mWidth;
+                float mHeight;
+            };
+            struct
+            {
+                float mMin;
+                float mMax;
+            };
+        };
+    };
+
+    // UI元素的大小限制
+    struct UILimit
+    {
+        UILimit() : mH(10, max), mV(10, max) {}
+        UILimit(const UISize &h, const UISize &v)
+            : mH(h), mV(v) {}
+        UILimit(float minWidth, float minHeight, float maxWidth, float maxHeight)
+            : mH(minWidth, maxWidth), mV(minHeight, maxHeight) {}
+        UILimit(const UILimit &limit) : mH(limit.mH), mV(limit.mV) {}
+
+        UILimit &operator=(const UILimit &limit)
+        {
+            mH = limit.mH;
+            mV = limit.mV;
+            return *this;
+        }
+
+        void setH(const UISize &h) { mH = h; }
+        void setV(const UISize &v) { mV = v; }
+
+        // 水平方向限制值
+        const UISize &getH() const { return mH; }
+        // 垂直方向限制值
+        const UISize &getV() const { return mV; }
+
+        static constexpr float max = 1E30; // 最大限制值
+
+    protected:
+        UISize mH; // 水平方向限制值
+        UISize mV; // 垂直方向限制值
     };
 
 }

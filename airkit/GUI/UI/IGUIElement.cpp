@@ -99,6 +99,8 @@ namespace airkit
 
     void IGUIElement::onMoved(UIMovedEvent &event)
     {
+        auto &pos = event.getPos();
+        printf("ui moved:(%f,%f)\n", pos.getX(), pos.getY());
     }
     void IGUIElement::onCharInput(CharInputEvent &event)
     {
@@ -116,8 +118,6 @@ namespace airkit
     {
         printf("mouse down[ %u ]:(%f,%f)\n", event.getButton(), event.getX(), event.getY());
     }
-
-    
 
     void IGUIElement::onMouseUp(MouseUpEvent &event)
     {
@@ -146,17 +146,18 @@ namespace airkit
 
     void IGUIElement::onMouseWheel(MouseWheelEvent &event)
     {
+        printf("mouse wheel:(%f,%f)->%f\n", event.getX(), event.getY(), event.getDelta());
     }
 
     void IGUIElement::screenToWindow(UIPoint &point) const
     {
         // 先找到窗口指针
-        UIHolder parent = getParentUI();
+        UIHolder parent = getUIParent();
         while (parent.get() != nullptr)
         {
             if (parent->mUIFlag.check(UIFlag::Window) == true)
                 break;
-            parent = parent->getParentUI();
+            parent = parent->getUIParent();
         }
         // 调用窗口的转换函数
         if (parent.get() == nullptr)
@@ -168,12 +169,12 @@ namespace airkit
     void IGUIElement::windowToScreen(UIPoint &point) const
     {
         // 先找到窗口指针
-        UIHolder parent = getParentUI();
+        UIHolder parent = getUIParent();
         while (parent.get() != nullptr)
         {
             if (parent->mUIFlag.check(UIFlag::Window) == true)
                 break;
-            parent = parent->getParentUI();
+            parent = parent->getUIParent();
         }
         // 调用窗口的转换函数
         if (parent.get() != nullptr)
@@ -188,7 +189,7 @@ namespace airkit
         auto x = point.getX() + mArea.getX();
         auto y = point.getY() + mArea.getY();
         // 先找到窗口指针
-        UIHolder parent = getParentUI();
+        UIHolder parent = getUIParent();
         while (parent.get() != nullptr)
         {
             // 父UI是窗口
@@ -199,7 +200,7 @@ namespace airkit
             y += parent->mArea.getY();
 
             // 继续找父UI
-            parent = parent->getParentUI();
+            parent = parent->getUIParent();
         }
         point.setXY(x, y);
     }
@@ -219,14 +220,14 @@ namespace airkit
         auto x = point.getX() + mArea.getX();
         auto y = point.getY() + mArea.getY();
         // 先找到窗口指针
-        UIHolder parent = getParentUI();
+        UIHolder parent = getUIParent();
         while (parent.get() != nullptr)
         {
             // 计算坐标
             x += parent->mArea.getX();
             y += parent->mArea.getY();
             // 继续找父UI
-            parent = parent->getParentUI();
+            parent = parent->getUIParent();
         }
         point.setXY(x, y);
     }
@@ -242,36 +243,61 @@ namespace airkit
         point.setXY(x, y);
     }
 
-    UIHolder IGUIElement::getWindowUI()
+    UIHolder IGUIElement::getUIWindow()
     {
         // 如果自己就是窗口
         if (mUIFlag.check(UIFlag::Window) == true)
             return IPlat::getInstance().getWinHub().findWindow(this);
 
-        UIHolder parent = getParentUI();
+        UIHolder parent = getUIParent();
         while (parent.get() != nullptr)
         {
             if (parent->mUIFlag.check(UIFlag::Window) == true)
                 break;
-            parent = parent->getParentUI();
+            parent = parent->getUIParent();
         }
         return parent;
     }
 
-    const UIHolder IGUIElement::getWindowUI() const
+    const UIHolder IGUIElement::getUIWindow() const
     {
         // 如果自己就是窗口
         if (mUIFlag.check(UIFlag::Window) == true)
             return IPlat::getInstance().getWinHub().findWindow(this);
 
-        UIHolder parent = getParentUI();
+        UIHolder parent = getUIParent();
         while (parent.get() != nullptr)
         {
             if (parent->mUIFlag.check(UIFlag::Window) == true)
                 break;
-            parent = parent->getParentUI();
+            parent = parent->getUIParent();
         }
         return parent;
     }
 
+    void IGUIElement::setUILimit(const UILimit &limit)
+    {
+        // 修正水平最小尺寸
+        {
+            auto h = limit.getH();
+            auto min = std::min(h.getMin(), h.getMax());
+            auto max = std::max(h.getMin(), h.getMax());
+            if (min < 10)
+                min = 10;
+            if (max < 10)
+                max = 10;
+            mLimit.setH(UISize(min, max));
+        }
+        // 修正垂直最小尺寸
+        {
+            auto v = limit.getV();
+            auto min = std::min(v.getMin(), v.getMax());
+            auto max = std::max(v.getMin(), v.getMax());
+            if (min < 10)
+                min = 10;
+            if (max < 10)
+                max = 10;
+            mLimit.setV(UISize(min, max));
+        }
+    }
 }

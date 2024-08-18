@@ -66,6 +66,9 @@ namespace airkit
         UIMoveEvent(const UIPoint &pos, UIAction act)
             : UIEvent(act), mPos(pos) {}
 
+        UIMoveEvent(float x, float y, UIAction act)
+            : UIEvent(act), mPos(x, y) {}
+
     protected:
         UIPoint mPos;
     };
@@ -74,6 +77,9 @@ namespace airkit
     {
         UIMovingEvent(const UIPoint &pos)
             : UIMoveEvent(pos, UIAction::Moving) {}
+
+        UIMovingEvent(float x, float y)
+            : UIMoveEvent(x, y, UIAction::Moving) {}
         UIPoint &getPos() { return mPos; }
         virtual ~UIMovingEvent() = default;
     };
@@ -81,6 +87,8 @@ namespace airkit
     {
         UIMovedEvent(const UIPoint &pos)
             : UIMoveEvent(pos, UIAction::Moved) {}
+        UIMovedEvent(float x, float y)
+            : UIMoveEvent(x, y, UIAction::Moved) {}
         const UIPoint &getPos() const { return mPos; }
         virtual ~UIMovedEvent() = default;
     };
@@ -100,14 +108,14 @@ namespace airkit
     {
         UIResizingEvent(const UIArea &area)
             : UIResizeEvent(area, UIAction::Resizing) {}
-        UIArea &getSize() { return mArea; }
+        UIArea &getArea() { return mArea; }
         virtual ~UIResizingEvent() = default;
     };
     struct UIResizedEvent : public UIResizeEvent
     {
         UIResizedEvent(const UIArea &area)
             : UIResizeEvent(area, UIAction::Resized) {}
-        const UIArea &getSize() const { return mArea; }
+        const UIArea &getArea() const { return mArea; }
         virtual ~UIResizedEvent() = default;
     };
 }

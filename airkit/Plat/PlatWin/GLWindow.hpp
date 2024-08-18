@@ -14,7 +14,10 @@ namespace airkit
 
         virtual void prepare() override;
         virtual void present() override;
+        virtual void render() override;
         virtual int32_t doModal() override;
+
+        virtual void onSized(UIResizedEvent &event)override;
 
     private:
         HDC mWinDC;

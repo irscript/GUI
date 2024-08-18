@@ -8,6 +8,22 @@ namespace airkit
     {
     }
 
+    UIPoint WinWindow::getCursorPos()
+    {
+        POINT cursor;
+        RECT rect;
+        if (false == GetCursorPos(&cursor) ||
+            false == GetWindowRect(mHWnd, &rect))
+            return UIPoint();
+        cursor.x -= rect.left;
+        cursor.y -= rect.top;
+        return UIPoint(cursor.x, cursor.y);
+    }
+
+    
+
+    
+
     int32_t WinWindow::doModal()
     {
         MSG msg = {0};
@@ -22,7 +38,8 @@ namespace airkit
 
     LRESULT WinWindow::onHitTest(UIPoint &cursor)
     {
-        return HTCLIENT;
+         return  HTCLIENT;
+       // return HTCAPTION;
     }
     bool WinWindow::onClose()
     {

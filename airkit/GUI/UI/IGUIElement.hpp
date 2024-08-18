@@ -79,18 +79,23 @@ namespace airkit
 
     public:
         // 获取父UI
-        UIHolder getParentUI() { return mParentUI.lock(); }
-        const UIHolder getParentUI() const { return mParentUI.lock(); }
+        UIHolder getUIParent() { return mParentUI.lock(); }
+        const UIHolder getUIParent() const { return mParentUI.lock(); }
 
         // 获取窗口
-        UIHolder getWindowUI();
-        const UIHolder getWindowUI() const;
+        UIHolder getUIWindow();
+        const UIHolder getUIWindow() const;
+        // 设置UI大小限制的最值
+        virtual void setUILimit(const UILimit &limit);
+        const UILimit &getUILimit() const { return mLimit; }
+        UILimit &getUILimit() { return mLimit; }
 
     protected:
         UIFlag mUIFlag;               // UI 标志
         UIArea mArea;                 // UI 区域位置大小
         UIWatcher mParentUI;          // 父 UI
         std::list<UIHolder> mChildUI; // 子 UI
+        UILimit mLimit;               // UI 大小限制的最值
     };
 
 }

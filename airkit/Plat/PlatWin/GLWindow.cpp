@@ -1,6 +1,7 @@
 #include <airkit/Plat/PlatWin/GLWindow.hpp>
 #include <airkit/GUI/IPlat.hpp>
 #include <airkit/Render/GL/GLRender.hpp>
+#include "GLWindow.hpp"
 namespace airkit
 {
     void GLWindow::prepare()
@@ -13,10 +14,18 @@ namespace airkit
     {
         SwapBuffers(mWinDC);
     }
+    void GLWindow::render()
+    {
+        auto render = IPlat::getInstance().getRender();
+        prepare();
+
+        auto tick = GetTickCount();
+        render->clearColor(tick % 3 / 3.0f, tick % 5 / 5.0f, tick % 7 / 7.0f, 1.0f);
+        render->clear();
+        present();
+    }
     int32_t GLWindow::doModal()
     {
-        prepare();
-        auto render = IPlat::getInstance().getRender();
 
         while (shouldClose() == false)
         {
@@ -30,11 +39,13 @@ namespace airkit
                     DispatchMessageW(&message);
                 }
             }
-            auto tick = GetTickCount();
-            render->clearColor(tick % 3 / 3.0f, tick % 5 / 5.0f, tick % 7 / 7.0f, 1.0f);
-            render->clear();
-            present();
+            render();
         }
         return 0;
+    }
+    void airkit::GLWindow::onSized(UIResizedEvent &event)
+    {
+        mArea = event.getArea();
+        render();
     }
 }

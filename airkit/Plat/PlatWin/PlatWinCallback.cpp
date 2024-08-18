@@ -11,22 +11,7 @@
 
 namespace airkit
 {
-    template <typename T>
-    inline void mouse_event_pos(HWND handle)
-    {
-        auto userdata = GetWindowLongPtr(handle, GWLP_USERDATA);
-        if (userdata != 0)
-        {
-            WinWindow &win = *(WinWindow *)userdata;
-            POINT cursor;
-            if (false == GetCursorPos(&cursor) ||
-                false == ScreenToClient(handle, &cursor))
-                return;
 
-            T ev(cursor.x, cursor.y);
-            win.onEvent(ev);
-        }
-    }
     template <typename T>
     inline void mouse_event_btn(HWND handle, MouseButton btn, LPARAM l_param)
     {
@@ -35,9 +20,8 @@ namespace airkit
         {
             WinWindow &win = *(WinWindow *)userdata;
 
-            auto x = GET_X_LPARAM(l_param);
-            auto y = GET_Y_LPARAM(l_param);
-            T ev(btn, x, y);
+            auto cursor = win.getCursorPos();
+            T ev(btn, cursor);
             win.onEvent(ev);
         }
     }
@@ -107,6 +91,103 @@ namespace airkit
             }
         }
         break;
+
+        // 限制窗口大小
+        case WM_GETMINMAXINFO:
+        {
+            auto userdata = GetWindowLongPtr(handle, GWLP_USERDATA);
+            if (userdata != 0)
+            {
+                WinWindow &win = *(WinWindow *)userdata;
+
+                auto limit = win.getUILimit();
+                auto &h = limit.getH();
+                auto &v = limit.getV();
+                auto info = (MINMAXINFO *)l_param;
+
+                info->ptMinTrackSize.x = h.getMin();
+                auto bx = info->ptMaxTrackSize.x;
+                info->ptMaxTrackSize.x = h.getMax();
+                if (info->ptMaxTrackSize.x < 0)
+                    info->ptMaxTrackSize.x = bx;
+
+                info->ptMinTrackSize.y = v.getMin();
+                auto by = info->ptMaxTrackSize.y;
+                info->ptMaxTrackSize.y = v.getMax();
+                if (info->ptMaxTrackSize.y < 0)
+                    info->ptMaxTrackSize.y = by;
+
+                return 0;
+            }
+        }
+        break;
+
+        case WM_WINDOWPOSCHANGING:
+        {
+            auto userdata = GetWindowLongPtr(handle, GWLP_USERDATA);
+            if (userdata != 0)
+            {
+                WinWindow &win = *(WinWindow *)userdata;
+                auto pos = (WINDOWPOS *)l_param;
+
+                auto w = pos->cx;
+                auto h = pos->cy;
+                auto x = pos->x;
+                auto y = pos->y;
+
+                // 判断大小是否有变化
+                auto &area = win.mArea;
+                if (area.getWidth() != w || area.getHeight() != h)
+                {
+                    // 生成大小变化事件
+                    UIArea na(x, y, w, h);
+                    UIResizingEvent ev(na);
+                    win.onEvent(ev);
+                }
+                // 判断位置是否有变化
+                if (area.getPos().getX() != x || area.getPos().getY() != y)
+                {
+                    // 生成位置变化事件
+                    UIMovingEvent ev(x, y);
+                    win.onEvent(ev);
+                }
+                return 0;
+            }
+        }
+        break;
+        case WM_WINDOWPOSCHANGED:
+        {
+            auto userdata = GetWindowLongPtr(handle, GWLP_USERDATA);
+            if (userdata != 0)
+            {
+                WinWindow &win = *(WinWindow *)userdata;
+                auto pos = (WINDOWPOS *)l_param;
+                auto w = pos->cx;
+                auto h = pos->cy;
+                auto x = pos->x;
+                auto y = pos->y;
+
+                // 判断大小是否有变化
+                auto &area = win.mArea;
+                if (area.getWidth() != w || area.getHeight() != h)
+                {
+                    // 生成大小变化事件
+                    UIArea na(x, y, w, h);
+                    UIResizedEvent ev(na);
+                    win.onEvent(ev);
+                }
+                // 判断位置是否有变化
+                if (area.getPos().getX() != x || area.getPos().getY() != y)
+                {
+                    // 生成位置变化事件
+                    UIMovedEvent ev(x, y);
+                    win.onEvent(ev);
+                }
+                return 0;
+            }
+        }
+        break;
+
         case WM_SYSCOMMAND:
         {
             auto userdata = GetWindowLongPtr(handle, GWLP_USERDATA);
@@ -195,25 +276,23 @@ namespace airkit
             }
         }
         break;
-        // case WM_NCMOUSEMOVE:
+        case WM_NCMOUSEMOVE:
         case WM_MOUSEMOVE:
         {
             auto userdata = GetWindowLongPtr(handle, GWLP_USERDATA);
             if (userdata != 0)
             {
                 WinWindow &win = *(WinWindow *)userdata;
-                POINT cursor;
-                if (false == GetCursorPos(&cursor) ||
-                    false == ScreenToClient(handle, &cursor))
-                    break;
+                auto cursor = win.getCursorPos();
 
                 // 判断鼠标是否进入窗口
                 if (0 == win.getUIFlag(UIFlag::MouseEnter))
                 {
                     win.setUIFlag(UIFlag::MouseEnter);
-                    MouseEnterEvent ev(cursor.x, cursor.y);
+                    MouseEnterEvent ev(cursor);
                     win.onEvent(ev);
                 }
+                /*
                 // 判断是否跟踪鼠标悬停
                 if (0 == win.getUIFlag(UIFlag::MouseTrack))
                 {
@@ -225,65 +304,63 @@ namespace airkit
                     if (false == TrackMouseEvent(&tme))
                         break;
                 }
+                */
 
                 // 判断鼠标是否在窗口内
-                auto x = GET_X_LPARAM(l_param);
-                auto y = GET_Y_LPARAM(l_param);
-                MouseMoveEvent ev(x, y);
+
+                MouseMoveEvent ev(cursor);
                 win.onEvent(ev);
             }
         }
         break;
 
-        // case WM_NCMOUSELEAVE:
+        case WM_NCMOUSELEAVE:
         case WM_MOUSELEAVE:
         {
             auto userdata = GetWindowLongPtr(handle, GWLP_USERDATA);
             if (userdata != 0)
             {
                 WinWindow &win = *(WinWindow *)userdata;
-                POINT cursor;
-                if (false == GetCursorPos(&cursor) ||
-                    false == ScreenToClient(handle, &cursor))
-                    break;
-
-                RECT rect;
-                if (false == GetWindowRect(handle, &rect))
-                    break;
-
-                // 判断鼠标是否在窗口内
-                if (cursor.x < rect.left ||
-                    cursor.x > rect.right ||
-                    cursor.y < rect.top ||
-                    cursor.y > rect.bottom)
-                {
-                }
+                auto cursor = win.getCursorPos();
                 win.resetUIFlag(UIFlag::MouseEnter);
-                auto x = GET_X_LPARAM(l_param);
-                auto y = GET_Y_LPARAM(l_param);
-                // MouseLeaveEvent ev(cursor.x, cursor.y);
-                MouseLeaveEvent ev(x, y);
+                MouseLeaveEvent ev(cursor);
                 win.onEvent(ev);
             }
         }
         break;
-            // case WM_NCMOUSEHOVER:
-        case WM_MOUSEHOVER:
+            /*
+             case WM_NCMOUSEHOVER:
+             case WM_MOUSEHOVER:
+             {
+                 auto userdata = GetWindowLongPtr(handle, GWLP_USERDATA);
+                 if (userdata != 0)
+                 {
+                     WinWindow &win = *(WinWindow *)userdata;
+
+                     win.resetUIFlag(UIFlag::MouseTrack);
+                     auto x = GET_X_LPARAM(l_param);
+                     auto y = GET_Y_LPARAM(l_param);
+                     MouseHoverEvent ev(x, y);
+                     win.onEvent(ev);
+                 }
+             }
+             break;
+             */
+
+        case WM_MOUSEWHEEL:
         {
             auto userdata = GetWindowLongPtr(handle, GWLP_USERDATA);
             if (userdata != 0)
             {
                 WinWindow &win = *(WinWindow *)userdata;
+                auto cursor = win.getCursorPos();
 
-                win.resetUIFlag(UIFlag::MouseTrack);
-                auto x = GET_X_LPARAM(l_param);
-                auto y = GET_Y_LPARAM(l_param);
-                MouseHoverEvent ev(x, y);
+                auto z = GET_WHEEL_DELTA_WPARAM(w_param);
+                MouseWheelEvent ev(cursor, float(z) / float(WHEEL_DELTA));
                 win.onEvent(ev);
             }
         }
         break;
-
         case WM_NCLBUTTONDOWN:
         case WM_LBUTTONDOWN:
             mouse_event_btn<MouseDownEvent>(handle, MouseButton::Left, l_param);
@@ -309,8 +386,6 @@ namespace airkit
         case WM_MBUTTONUP:
             mouse_event_btn<MouseUpEvent>(handle, MouseButton::Middle, l_param);
             break;
-
-        
         }
         return DefWindowProcA(handle, message, w_param, l_param);
     }

@@ -43,6 +43,7 @@ namespace airkit
         Right = Button1, // 右键
         Middle = Button2 // 中键
     };
+    // 鼠标事件：X、Y 是UI坐标
     struct IMouseEvent : public IEvent
     {
 
@@ -51,6 +52,8 @@ namespace airkit
 
         float getX() const { return mX; }
         float getY() const { return mY; }
+
+        UIPoint getCursorPos() const { return UIPoint(mX, mY); }
 
     protected:
         IMouseEvent(MouseAction action, float x, float y)
@@ -84,7 +87,8 @@ namespace airkit
     public:
         MouseDownEvent(MouseButton button, float x, float y, bool isDblClk = false)
             : IMouseButtonEvent(MouseAction::Down, button, x, y) {}
-
+        MouseDownEvent(MouseButton button, const UIPoint &point, bool isDblClk = false)
+            : MouseDownEvent(button, point.getX(), point.getY(), isDblClk) {}
         virtual ~MouseDownEvent() = default;
 
         bool isDblClk() const { return mIsDblClk; }
@@ -98,28 +102,39 @@ namespace airkit
     public:
         MouseUpEvent(MouseButton button, float x, float y)
             : IMouseButtonEvent(MouseAction::Up, button, x, y) {}
-
+        MouseUpEvent(MouseButton button, const UIPoint &point)
+            : MouseUpEvent(button, point.getX(), point.getY()) {}
         virtual ~MouseUpEvent() = default;
     };
 
-    // 鼠标移动事件：X、Y 是窗口坐标
+    // 鼠标移动事件
     struct MouseMoveEvent : public IMouseEvent
     {
     public:
         MouseMoveEvent(float x, float y)
             : IMouseEvent(MouseAction::Move, x, y) {}
+        MouseMoveEvent(const UIPoint &point)
+            : MouseMoveEvent(point.getX(), point.getY()) {}
 
         virtual ~MouseMoveEvent() = default;
     };
 
-    // 鼠标滚轮事件：X、Y 是水平和垂直方向的偏移量
+    // 鼠标滚轮事件：X、Y 是UI 坐标，delta 是滚动量，正数表示向上滚动，负数表示向下滚动
+
     struct MouseWheelEvent : public IMouseEvent
     {
     public:
-        MouseWheelEvent(float x, float y)
-            : IMouseEvent(MouseAction::Wheel, x, y) {}
+        MouseWheelEvent(float x, float y, float delta)
+            : IMouseEvent(MouseAction::Wheel, x, y), mDelta(delta) {}
+        MouseWheelEvent(const UIPoint &point, float delta)
+            : MouseWheelEvent(point.getX(), point.getY(), delta) {}
 
         virtual ~MouseWheelEvent() = default;
+
+        float getDelta() const { return mDelta; }
+
+    protected:
+        float mDelta;
     };
 
     struct MouseEnterEvent : public IMouseEvent
@@ -128,6 +143,9 @@ namespace airkit
         MouseEnterEvent(float x, float y)
             : IMouseEvent(MouseAction::Enter, x, y) {}
 
+        MouseEnterEvent(const UIPoint &point)
+            : MouseEnterEvent(point.getX(), point.getY()) {}
+
         virtual ~MouseEnterEvent() = default;
     };
     struct MouseLeaveEvent : public IMouseEvent
@@ -135,7 +153,8 @@ namespace airkit
     public:
         MouseLeaveEvent(float x, float y)
             : IMouseEvent(MouseAction::Leave, x, y) {}
-
+        MouseLeaveEvent(const UIPoint &point)
+            : MouseLeaveEvent(point.getX(), point.getY()) {}
         virtual ~MouseLeaveEvent() = default;
     };
     struct MouseHoverEvent : public IMouseEvent
@@ -143,7 +162,8 @@ namespace airkit
     public:
         MouseHoverEvent(float x, float y)
             : IMouseEvent(MouseAction::Hover, x, y) {}
-
+        MouseHoverEvent(const UIPoint &point)
+            : MouseHoverEvent(point.getX(), point.getY()) {}
         virtual ~MouseHoverEvent() = default;
     };
 }

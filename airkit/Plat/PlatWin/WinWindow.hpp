@@ -14,6 +14,10 @@ namespace airkit
         }
         virtual ~WinWindow() = 0;
 
+        virtual UIPoint getCursorPos() override; // 获取鼠标位置，窗口坐标
+
+        
+
         virtual int32_t doModal() override;
 
         virtual LRESULT onHitTest(UIPoint &cursor);
