@@ -2,25 +2,16 @@
 
 #type vertex
 #version 330 core
-
-layout(location = 0) in vec3 a_Position;
-
-uniform mat4 u_ViewProjection;
-uniform mat4 u_Transform;
-
+layout (location = 0) in vec3 aPos;
 void main()
 {
-	gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
+    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
 }
 
 #type fragment
 #version 330 core
-
-layout(location = 0) out vec4 color;
-
-uniform vec4 u_Color;
-
+out vec4 FragColor;
 void main()
 {
-	color = u_Color;
-}
+    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+};

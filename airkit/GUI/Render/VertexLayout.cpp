@@ -67,4 +67,10 @@ namespace airkit
         return 0;
     }
     uint32_t VertexElement::getComponentCount() const { return ::airkit::getComponentCount(mType); }
+
+    VertexElement::VertexElement(const std::string &name, ShaderDataType type, bool normalized)
+        : mName(name), mType(type),
+          mSize(getShaderDataTypeSize(type)),
+          mOffset(0), mNormalized(normalized) {}
+
 }
