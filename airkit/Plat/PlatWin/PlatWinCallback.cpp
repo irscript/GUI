@@ -452,9 +452,8 @@ namespace airkit
         ScreenToClient(handle, &cursor_point);
         ScreenToClient(handle, &cursor_point);
         if (cursor_point.y > 0 && cursor_point.y < frame_y + padding)
-        {
             return HTTOP;
-        }
+        
 
         auto userdata = GetWindowLongPtr(handle, GWLP_USERDATA);
         if (userdata == 0)

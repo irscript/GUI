@@ -2,6 +2,7 @@
 #define __GLRENDER_H__
 
 #include <airkit/GUI/Render/IRender.hpp>
+#include <airkit/GUI/IPlat.hpp>
 #include <airkit/3Part/Glad2/glad/gl.h>
 
 namespace airkit
@@ -30,18 +31,41 @@ namespace airkit
         // 设置裁剪区域
         virtual void setScissor(int x, int y, int width, int height) override;
 
-        virtual ShaderWatcher createShader(const std::string &name, const std::string &vertex, const std::string &fragment,bool isfile) override;
-        virtual ShaderWatcher createShader(const std::string &name, const std::string &file) override;
+        virtual ShaderWatcher createShader(const std::string &name, const std::string &vertex, const std::string &fragment, bool isfile) override;
+        virtual ShaderWatcher createShader(const std::string &name, const std::string &src, bool isfile) override;
+
+        // 创建渲染管线
+        virtual PipelineHolder createPipeline(const std::string &name, const VertexLayout &layout, const ShaderWatcher &shader) override;
+
+        // 创建顶点缓存
+        virtual VBOHolder createVertexBuffer(const VertexLayout &layout, const void *data, uint32_t size) override;
+        // 创建索引缓存
+        virtual IBOHolder createIndexBuffer(const void *data, uint32_t size, uint32_t count) override;
+        // 创建顶点数组
+        virtual VAOHolder createVertexArray() override;
+
+        // 索引绘制
+        virtual void drawIndexs(uint32_t offset, uint32_t count, bool isI32) override;
+        // 顶点绘制
+        virtual void drawVertices(uint32_t offset, uint32_t count) override;
 
     private:
         std::string readFile(const std::string &filepath);
+        void splitShader(const std::string &src, const std::string &name, std::vector<std::string> &sublist, std::unordered_map<uint32_t, const char *> &result);
         ShaderWatcher createShader(const std::string &name, std::unordered_map<uint32_t, const char *> &src);
         static const char *getShaderStageName(uint32_t stage);
-        static uint32_t getShaderStage( const std::string& type);
+        static uint32_t getShaderStage(const std::string &type);
 
     private:
         GladGLContext gl;
         uint32_t mVersion; // 版本号
     };
+
+    inline GladGLContext &getGlDriver()
+    {
+        auto rh = IPlat::getInstance().getRender();
+        auto glr = (GLRender *)rh.get();
+        return glr->getGL();
+    }
 }
 #endif // __GLRENDER_H__

@@ -1,9 +1,11 @@
+#include <airkit/Render/GL/GLShader.hpp>
 #include <airkit/Render/GL/GLRender.hpp>
+#include <airkit/Render/GL/GLBuffer.hpp>
+#include <airkit/Render/GL/GLPipeline.hpp>
 #include <airkit/GUI/IPlat.hpp>
 #define FMT_HEADER_ONLY
 #include <airkit/3Part/Fmt/core.h>
-
-#include <airkit/Render/GL/GLShader.hpp>
+#include "GLRender.hpp"
 
 namespace airkit
 {
@@ -15,7 +17,8 @@ namespace airkit
         mVersion = gladLoadGLContext(&gl, (GLADloadfunc)data);
         return mVersion != 0;
     }
-    void GLRender::shutdown() {
+    void GLRender::shutdown()
+    {
         mShaderLibrary.clear();
     }
     void GLRender::clear() { gl.Clear(GL_COLOR_BUFFER_BIT); }
@@ -37,37 +40,50 @@ namespace airkit
         }
         return createShader(name, codes);
     }
-    ShaderWatcher GLRender::createShader(const std::string &name, const std::string &filepath)
+    ShaderWatcher GLRender::createShader(const std::string &name, const std::string &src, bool isfile)
     {
         std::unordered_map<uint32_t, const char *> codes;
-        std::string source = readFile(filepath);
         std::vector<std::string> srclist;
+
         // 解析分段
-        const char *typeToken = "#type";
-        size_t typeTokenLength = strlen(typeToken);
-        size_t pos = source.find(typeToken, 0); // Start of shader type declaration line
-        while (pos != std::string::npos)
+        if (true == isfile)
         {
-            size_t eol = source.find_first_of("\r\n", pos); // End of shader type declaration line
-            if (eol == std::string::npos)
-                IPlat::getInstance().error(fmt::format("shader file '{0}' syntax error", filepath));
-
-            size_t begin = pos + typeTokenLength + 1; // Start of shader type name (after "#type " keyword)
-            std::string type = source.substr(begin, eol - begin);
-            auto stage = getShaderStage(type);
-            if (stage == 0)
-                IPlat::getInstance().error(fmt::format("shader file '{0}' Invalid shader type specified {1}", filepath, type));
-
-            size_t nextLinePos = source.find_first_not_of("\r\n", eol); // Start of shader code after shader type declaration line
-            if (nextLinePos == std::string::npos)
-                IPlat::getInstance().error(fmt::format("shader file '{0}' syntax error", filepath));
-
-            pos = source.find(typeToken, nextLinePos); // Start of next shader type declaration line
-            auto src = (pos == std::string::npos) ? source.substr(nextLinePos) : source.substr(nextLinePos, pos - nextLinePos);
-            srclist.push_back(src);
-            codes[stage] = srclist.back().c_str();
+            std::string source = readFile(src);
+            splitShader(source, name, srclist, codes);
         }
+        else
+        {
+            splitShader(src, name, srclist, codes);
+        }
+        // 创建着色器
         return createShader(name, codes);
+    }
+    PipelineHolder GLRender::createPipeline(const std::string &name,
+                                            const VertexLayout &layout,
+                                            const ShaderWatcher &shader)
+    {
+        return PipelineHolder(new GLPipeline(name, layout, shader));
+    }
+    VBOHolder GLRender::createVertexBuffer(const VertexLayout &layout, const void *data, uint32_t size)
+    {
+        return VBOHolder(new GLVertexBuffer(layout, data, size));
+    }
+    IBOHolder GLRender::createIndexBuffer(const void *data, uint32_t size, uint32_t count)
+    {
+        return IBOHolder(new GLIndexBuffer(data, size, count));
+    }
+    VAOHolder GLRender::createVertexArray()
+    {
+        return VAOHolder(new GLVertexArray());
+    }
+    void GLRender::drawIndexs(uint32_t offset, uint32_t count, bool isI32)
+    {
+        gl.DrawElements(GL_TRIANGLES, count,
+                        isI32 == true ? GL_UNSIGNED_INT : GL_UNSIGNED_SHORT, (void *)offset);
+    }
+    void GLRender::drawVertices(uint32_t offset, uint32_t count)
+    {
+        gl.DrawArrays(GL_TRIANGLES, offset, count);
     }
     std::string GLRender::readFile(const std::string &filepath)
     {
@@ -90,6 +106,35 @@ namespace airkit
             IPlat::getInstance().error(fmt::format("Could not open file '{0}'", filepath));
 
         return result;
+    }
+    void GLRender::splitShader(const std::string &source, const std::string &name,
+                               std::vector<std::string> &srclist,
+                               std::unordered_map<uint32_t, const char *> &codes)
+    {
+        const char *typeToken = "#type";
+        size_t typeTokenLength = strlen(typeToken);
+        size_t pos = source.find(typeToken, 0); // Start of shader type declaration line
+        while (pos != std::string::npos)
+        {
+            size_t eol = source.find_first_of("\r\n", pos); // End of shader type declaration line
+            if (eol == std::string::npos)
+                IPlat::getInstance().error(fmt::format("shader file '{0}' syntax error", name));
+
+            size_t begin = pos + typeTokenLength + 1; // Start of shader type name (after "#type " keyword)
+            std::string type = source.substr(begin, eol - begin);
+            auto stage = getShaderStage(type);
+            if (stage == 0)
+                IPlat::getInstance().error(fmt::format("shader file '{0}' Invalid shader type specified {1}", name, type));
+
+            size_t nextLinePos = source.find_first_not_of("\r\n", eol); // Start of shader code after shader type declaration line
+            if (nextLinePos == std::string::npos)
+                IPlat::getInstance().error(fmt::format("shader file '{0}' syntax error", name));
+
+            pos = source.find(typeToken, nextLinePos); // Start of next shader type declaration line
+            auto src = (pos == std::string::npos) ? source.substr(nextLinePos) : source.substr(nextLinePos, pos - nextLinePos);
+            srclist.push_back(src);
+            codes[stage] = srclist.back().c_str();
+        }
     }
     ShaderWatcher GLRender::createShader(const std::string &name, std::unordered_map<uint32_t, const char *> &src)
     {

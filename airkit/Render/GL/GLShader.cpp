@@ -4,12 +4,7 @@
 #include "GLShader.hpp"
 namespace airkit
 {
-    inline auto &getGlDriver()
-    {
-        auto rh = IPlat::getInstance().getRender();
-        auto glr = (GLRender *)rh.get();
-        return glr->getGL();
-    }
+
     GLShader::~GLShader()
     {
         auto &gl = getGlDriver();
