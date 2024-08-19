@@ -12,7 +12,7 @@ namespace airkit
         virtual const uint32_t getSize() const = 0;
     };
 
-        // 顶点缓冲：VBO
+    // 顶点缓冲：VBO
     struct IVertexBuffer : public IBuffer
     {
         virtual ~IVertexBuffer() = default;
@@ -29,7 +29,9 @@ namespace airkit
         // 设置索引数据
         virtual void setData(const void *data, uint32_t size, uint32_t count) = 0;
     };
+    // vertex buffer
     using VBOHolder = std::shared_ptr<IVertexBuffer>;
+    // index buffer
     using IBOHolder = std::shared_ptr<IIndexBuffer>;
     // 顶点数组：VAO
     struct IVertexArray
@@ -42,6 +44,15 @@ namespace airkit
         virtual const std::vector<VBOHolder> &getVertexBuffers() const = 0;
         virtual const IBOHolder &getIndexBuffer() const = 0;
     };
-
+    // vertex array
     using VAOHolder = std::shared_ptr<IVertexArray>;
+
+    // uniform buffer
+    struct IUniformBuffer
+    {
+        virtual ~IUniformBuffer() = default;
+        virtual void setData(const void *data, uint32_t size, uint32_t offset = 0) = 0;
+    };
+    // uniform buffer
+    using UBOHolder = std::shared_ptr<IUniformBuffer>;
 }

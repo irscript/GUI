@@ -23,6 +23,8 @@ namespace airkit
         virtual void setMat3(const std::string &name, const float *const value) override;
         virtual void setMat4(const std::string &name, const float *const value) override;
 
+        virtual uint32_t bindUniformBuffer(const std::string &name, const uint32_t binding) override;
+
         void upInt(const std::string &name, int32_t value);
         void upIntArray(const std::string &name, uint32_t count, const int32_t *const value);
         void upFloat(const std::string &name, float value);

@@ -27,6 +27,8 @@ namespace airkit
         virtual void setMat3(const std::string &name, const float *const value) = 0;
         virtual void setMat4(const std::string &name, const float *const value) = 0;
 
+        virtual uint32_t bindUniformBuffer(const std::string &name, const uint32_t binding) = 0;
+
     private:
         std::string mName;
     };
@@ -42,6 +44,7 @@ namespace airkit
         ShaderWatcher get(const std::string &name) { return mShaders.find(name)->second; }
 
         void clear() { mShaders.clear(); }
+
     private:
         std::unordered_map<std::string, ShaderHolder> mShaders;
     };

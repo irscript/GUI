@@ -68,6 +68,7 @@ namespace airkit
     IBOHolder GLRender::createIndexBuffer(const void *data, uint32_t size, uint32_t count) { return IBOHolder(new GLIndexBuffer(data, size, count)); }
     IBOHolder GLRender::createIndexBuffer(uint32_t size) { return IBOHolder(new GLIndexBuffer(size)); }
     VAOHolder GLRender::createVertexArray() { return VAOHolder(new GLVertexArray()); }
+    UBOHolder GLRender::createUniformBuffer(uint32_t size, uint32_t binding) { return UBOHolder(new GLUniformBuffer(size, binding)); }
     void GLRender::drawIndexs(uint32_t offset, uint32_t count, bool isI32)
     {
         uint32_t type;

@@ -69,4 +69,15 @@ namespace airkit
         static GLenum getShaderDataTypeToOpenGLBaseType(ShaderDataType type);
     };
 
+    struct GLUniformBuffer : public IUniformBuffer
+    {
+    public:
+        GLUniformBuffer(uint32_t size, uint32_t binding);
+        ~GLUniformBuffer();
+
+        virtual void setData(const void *data, uint32_t size, uint32_t offset = 0) override;
+
+    private:
+        uint32_t mResID;
+    };
 }

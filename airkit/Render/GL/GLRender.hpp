@@ -35,7 +35,7 @@ namespace airkit
         virtual ShaderHolder createShader(const std::string &name, const std::string &src, bool isfile) override;
 
         // 创建渲染管线
-        virtual PipelineHolder createPipeline(const std::string &name, const VertexLayout &layout,const ShaderHolder &shader) override;
+        virtual PipelineHolder createPipeline(const std::string &name, const VertexLayout &layout, const ShaderHolder &shader) override;
 
         // 创建顶点缓存
         virtual VBOHolder createVertexBuffer(const VertexLayout &layout, const void *vertices, uint32_t size) override;
@@ -46,8 +46,11 @@ namespace airkit
         // 创建顶点数组
         virtual VAOHolder createVertexArray() override;
 
-        // 索引绘制
-        virtual void drawIndexs(uint32_t offset, uint32_t count, bool isI32) override;
+        // 创建uniform buffer
+        virtual UBOHolder createUniformBuffer(uint32_t size, uint32_t binding)override;
+
+            // 索引绘制
+            virtual void drawIndexs(uint32_t offset, uint32_t count, bool isI32) override;
         // 顶点绘制
         virtual void drawVertices(uint32_t offset, uint32_t count) override;
 

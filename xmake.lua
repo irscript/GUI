@@ -24,7 +24,15 @@ target("demo")
     add_files("demo/*.cpp")
     add_ldflags("-lopengl32 -lgdi32 -luxtheme")
     set_rundir("demo")
-   
+
+target("test") 
+    add_deps("airkit")
+    set_kind("binary")
+    add_includedirs(".")
+    add_files("test/*.cpp")
+    add_ldflags("-lopengl32 -lgdi32 -luxtheme")
+    set_rundir("test")
+
 --
 -- If you want to known more usage about xmake, please see https://xmake.io
 --

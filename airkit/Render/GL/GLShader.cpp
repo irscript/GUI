@@ -31,6 +31,19 @@ namespace airkit
     void GLShader::setMat3(const std::string &name, const float *const value) { upMat3(name, value); }
     void GLShader::setMat4(const std::string &name, const float *const value) { upMat4(name, value); }
 
+    uint32_t GLShader::bindUniformBuffer(const std::string &name, const uint32_t binding)
+    {
+        auto &gl = getGlDriver();
+        uint32_t index = gl.GetUniformBlockIndex(mResID, name.c_str());
+        auto error = gl.GetError();
+        gl.UniformBlockBinding(mResID, index, binding);
+        error = gl.GetError();
+        int32_t ubosize = 0;
+        gl.GetActiveUniformBlockiv(mResID, index, GL_UNIFORM_BLOCK_DATA_SIZE, &ubosize);
+        error = gl.GetError();
+        return ubosize;
+    }
+
     void GLShader::upInt(const std::string &name, int32_t value)
     {
         auto &gl = getGlDriver();

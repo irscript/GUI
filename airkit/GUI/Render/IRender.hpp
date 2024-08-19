@@ -42,6 +42,9 @@ namespace airkit
         // 创建顶点数组
         virtual VAOHolder createVertexArray() = 0;
 
+        //创建uniform buffer
+        virtual UBOHolder createUniformBuffer(uint32_t size,uint32_t binding) = 0;
+
         // 索引绘制
         virtual void drawIndexs(uint32_t offset, uint32_t count, bool isI32) = 0;
         // 顶点绘制

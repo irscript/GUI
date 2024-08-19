@@ -12,6 +12,7 @@ namespace airkit
         gl.CreateBuffers(1, &mResID);
         gl.BindBuffer(GL_ARRAY_BUFFER, mResID);
         gl.BufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+        gl.BindBuffer(GL_ARRAY_BUFFER, 0);
     }
     GLVertexBuffer::GLVertexBuffer(const VertexLayout &layout, const void *vertices, uint32_t size)
         : mLayout(layout), mSize(size)
@@ -20,6 +21,7 @@ namespace airkit
         gl.CreateBuffers(1, &mResID);
         gl.BindBuffer(GL_ARRAY_BUFFER, mResID);
         gl.BufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+        gl.BindBuffer(GL_ARRAY_BUFFER, 0);
     }
     GLVertexBuffer::~GLVertexBuffer()
     {
@@ -48,6 +50,7 @@ namespace airkit
             mSize = size;
         }
         gl.BufferSubData(GL_ARRAY_BUFFER, 0, size, vertices);
+        gl.BindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     const uint32_t GLVertexBuffer::getSize() const { return mSize; }
@@ -59,6 +62,7 @@ namespace airkit
         gl.CreateBuffers(1, &mResID);
         gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, mResID);
         gl.BufferData(GL_ELEMENT_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+        gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
     GLIndexBuffer::GLIndexBuffer(const void *indices, uint32_t size, uint32_t count)
         : mCount(count)
@@ -67,6 +71,7 @@ namespace airkit
         gl.CreateBuffers(1, &mResID);
         gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, mResID);
         gl.BufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_STATIC_DRAW);
+        gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
     GLIndexBuffer::~GLIndexBuffer()
     {
@@ -96,6 +101,7 @@ namespace airkit
         else
             gl.BufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, isize, idata);
         mCount = icount;
+        gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     const uint32_t GLIndexBuffer::getSize() const { return mSize; }
@@ -215,6 +221,8 @@ namespace airkit
         }
 
         mVBOs.push_back(vbo);
+        gl.BindVertexArray(0);
+        vbo->unbind();
     }
     void GLVertexArray::setIndexBuffer(IBOHolder ibo)
     {
@@ -222,7 +230,26 @@ namespace airkit
         gl.BindVertexArray(mResID);
         ibo->bind();
         mIBO = ibo;
+        gl.BindVertexArray(0);
     }
     const std::vector<VBOHolder> &GLVertexArray::getVertexBuffers() const { return mVBOs; }
     const IBOHolder &GLVertexArray::getIndexBuffer() const { return mIBO; }
+
+    GLUniformBuffer::GLUniformBuffer(uint32_t size, uint32_t binding)
+    {
+        auto &gl = getGlDriver();
+        gl.CreateBuffers(1, &mResID);
+        gl.BindBuffer(GL_UNIFORM_BUFFER, mResID);
+        gl.BufferData(GL_UNIFORM_BUFFER, 152, NULL, GL_DYNAMIC_DRAW);
+        gl.BindBufferBase(GL_UNIFORM_BUFFER, binding, mResID);
+        gl.BindBuffer(GL_UNIFORM_BUFFER, 0);
+    }
+    GLUniformBuffer::~GLUniformBuffer()
+    {
+        auto &gl = getGlDriver();
+        gl.DeleteBuffers(1, &mResID);
+    }
+    void GLUniformBuffer::setData(const void *data, uint32_t size, uint32_t offset)
+    {
+    }
 }
