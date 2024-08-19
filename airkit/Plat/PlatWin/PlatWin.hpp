@@ -20,14 +20,14 @@ namespace airkit
         virtual void warning(const std::string &msg) override;
 
         // 创建窗口
-        UIHolder createWindow(uint32_t width, uint32_t height, const char *title) override;
+        UIHolder createWindow(uint32_t width, uint32_t height, const char *title,const UIHolder& shared) override;
         // 释放窗口
         void releaseWindow(const IGUIElement *win) override;
 
     private:
         HWND createWin(uint32_t width, uint32_t height, const char *title);
         static void *GLLoad(const char *name);
-        IWindow *createGLWin(uint32_t width, uint32_t height, const char *title);
+        IWindow *createGLWin(uint32_t width, uint32_t height, const char *title,const IWindow *const shared);
 
     protected:
         virtual IWindow *createGLWin(HWND hd, float x, float y, float w, float h,

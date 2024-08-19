@@ -95,8 +95,8 @@ int main(int argc, char *argv[])
     Plat plat;
     plat.init(RenderAPI::OpenGL);
 
-    auto win = plat.createWindow(800, 600, "win");
-    auto win2 = plat.createWindow(800, 600, "win2");
+    auto win = plat.createWindow(800, 600, "win",{});
+    auto win2 = plat.createWindow(800, 600, "win2",win);
 
     Window *winptr = (Window *)win.get();
     Window *winptr2 = (Window *)win2.get();

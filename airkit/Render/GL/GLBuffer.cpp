@@ -173,7 +173,7 @@ namespace airkit
                                        getShaderDataTypeToOpenGLBaseType(element.mType),
                                        element.mNormalized ? GL_TRUE : GL_FALSE,
                                        layout.getStride(),
-                                       (const void *)element.mOffset);
+                                       (const void *)(uintptr_t)element.mOffset);
                 mVAPos++;
                 break;
             }
@@ -188,7 +188,7 @@ namespace airkit
                                         element.getComponentCount(),
                                         getShaderDataTypeToOpenGLBaseType(element.mType),
                                         layout.getStride(),
-                                        (const void *)element.mOffset);
+                                        (const void *)(uintptr_t)element.mOffset);
                 mVAPos++;
                 break;
             }

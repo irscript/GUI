@@ -32,13 +32,14 @@ namespace airkit
         UnregisterClassA(mWinCls, nullptr);
     }
 
-    UIHolder PlatWin::createWindow(uint32_t width, uint32_t height, const char *title)
+    UIHolder PlatWin::createWindow(uint32_t width, uint32_t height, const char *title, const UIHolder &shared)
     { // TODO:多线程安全
         IWindow *win;
+        const IWindow *const sharedwin = (IWindow *)shared.get();
         switch (mRenderAPI)
         {
         case RenderAPI::OpenGL:
-            win = createGLWin(width, height, title);
+            win = createGLWin(width, height, title, sharedwin);
             break;
 
         default:
@@ -117,7 +118,7 @@ namespace airkit
     }
 
     // 创建GL窗口
-    IWindow *PlatWin::createGLWin(uint32_t width, uint32_t height, const char *title)
+    IWindow *PlatWin::createGLWin(uint32_t width, uint32_t height, const char *title, const IWindow *const shared)
     {
         // 创建窗口
         auto whd = createWin(width, height, title);
@@ -152,6 +153,12 @@ namespace airkit
 
             glrc = wglCreateContext(wdc);
             wglMakeCurrent(wdc, glrc);
+            // 判断共享
+            if (nullptr != shared)
+            {
+                const GLWindow *const win = (GLWindow *)shared;
+                wglShareLists(win->getGLContext(), glrc);
+            }
 
             if (mGLInit == false)
             {
