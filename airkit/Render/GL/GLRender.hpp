@@ -47,10 +47,10 @@ namespace airkit
         virtual VAOHolder createVertexArray() override;
 
         // 创建uniform buffer
-        virtual UBOHolder createUniformBuffer(uint32_t size, uint32_t binding)override;
+        virtual UBOHolder createUniformBuffer(uint32_t size, uint32_t binding) override;
 
-            // 索引绘制
-            virtual void drawIndexs(uint32_t offset, uint32_t count, bool isI32) override;
+        // 索引绘制
+        virtual void drawIndexs(uint32_t offset, uint32_t count, bool isI32) override;
         // 顶点绘制
         virtual void drawVertices(uint32_t offset, uint32_t count) override;
 
@@ -72,5 +72,15 @@ namespace airkit
         auto glr = (GLRender *)rh.get();
         return glr->getGL();
     }
+
+#define DEBUG
+
+#ifdef DEBUG
+void glCheckError(GladGLContext &gl, const char *file, int line);
+#define GL_CHECK() glCheckError(gl, __FILE__, __LINE__)
+#else
+#define GL_CHECK()
+#endif
+
 }
 #endif // __GLRENDER_H__

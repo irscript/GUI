@@ -19,16 +19,53 @@ struct Window : public GLWindow
             {"aPos", ShaderDataType::Float2},
             {"aClr", ShaderDataType::Float4},
         };
-        auto ubosize = shader->bindUniformBuffer("pc", 0);
-        mUBO = render->createUniformBuffer(ubosize, 0);
-        // 创建管线
+        // auto ubosize = shader->bindUniformBuffer("uPushConstant", 0);
+        // mUBO = render->createUniformBuffer(ubosize, 0);
+        //  创建管线
         mPipeline = render->createPipeline("UI", layout, shader);
+
         // 创建顶点数组
         mVAO = render->createVertexArray();
+        // 创建顶点缓冲
+        float vertices[] = {
+            200.0f,
+            400.0f, // top right
+            1.0f,
+            0.0f,
+            0.0f,
+            1.0f,
 
-        mVBO = render->createVertexBuffer(mPipeline->getVertexLayout(), 48);
+            400,
+            400, // bottom right
+            0.0f,
+            1.0f,
+            0.0f,
+            1.0f,
+
+            400,
+            200,
+            // bottom left
+            0.0f,
+            0.0f,
+            1.0f,
+            1.0f,
+
+            200,
+            200,
+            // top left
+            1.0f,
+            1.0f,
+            1.0f,
+            1.0f,
+        };
+        uint16_t indices[] = {
+            // note that we start from 0!
+            0, 1, 3, // first Triangle
+            1, 2, 3  // second Triangle
+        };
+        mVBO = render->createVertexBuffer(mPipeline->getVertexLayout(), vertices, sizeof(vertices));
         // 创建索引缓冲
-        mIBO = render->createIndexBuffer(12);
+        mIBO = render->createIndexBuffer(indices, sizeof(indices), 6);
         mVAO->addVertexBuffer(mVBO);
         mVAO->setIndexBuffer(mIBO);
     }
@@ -41,74 +78,41 @@ struct Window : public GLWindow
                 MSG message = {0};
                 BOOL bRet = PeekMessageW(&message, mHWnd, 0, 0, PM_REMOVE);
                 if (bRet)
+                {
+                    TranslateMessage(&message);
                     DispatchMessageW(&message);
+                }
             }
-            // 先生成数据
-            auto wsize = mArea.getSize();
-            float ubo[4];
-            ubo[0] = 2.0f / wsize.getWidth();
-            ubo[1] = 2.0f / wsize.getHeight();
-            ubo[2] = -1.0f - wsize.getWidth() * ubo[0];
-            ubo[3] = -1.0f - wsize.getHeight() * ubo[1];
-
-            mUBO->setData(ubo, 16);
-
-            // 创建顶点缓冲
-            float vertices[] = {
-                0.5f,
-                0.5f,
-                0.0f, // top right
-                0.5f,
-                0.0f,
-                0.0f,
-                1.0f,
-                0.5f,
-                -0.5f,
-                0.0f, // bottom right
-                0.0f,
-                0.3f,
-                0.0f,
-                1.0f,
-                -0.5f,
-                -0.5f,
-                0.0f, // bottom left
-                0.0f,
-                0.0f,
-                0.11f,
-                1.0f,
-                -0.5f,
-                0.5f,
-                0.0f, // top left
-                0.5f,
-                0.3f,
-                0.11f,
-                1.0f,
-            };
-            uint16_t indices[] = {
-                // note that we start from 0!
-                0, 1, 3, // first Triangle
-                1, 2, 3  // second Triangle
-            };
-
-            mVBO->setData(vertices, sizeof(vertices));
-            mIBO->setData(indices, sizeof(indices), 6);
 
             prepare();
 
             render->clearColor(1.0f, 1.0f, 1.0f, 1.0f);
             render->clear();
 
-            mPipeline->bind();
+            mPipeline->bind(); // 先生成数据
+            auto wsize = mArea.getSize();
+            printf("wsize: %f, %f\n", wsize.getWidth(), wsize.getHeight());
+            float ubo[4];
+            ubo[0] = 2.0f / wsize.getWidth();
+            ubo[1] = 2.0f / wsize.getHeight();
+            ubo[2] = -wsize.getWidth() / 2.0f * ubo[0];
+            ubo[3] = -wsize.getHeight() / 2.0f * ubo[1];
+            printf("ubo: %f, %f, %f, %f\n", ubo[0], ubo[1], ubo[2], ubo[3]);
+            // mUBO->setData(ubo, 16);
 
             auto shader = mPipeline->getShader();
+            shader->setFloat2("uScale", ubo);
+            shader->setFloat2("uTranslate", ubo + 2);
 
             mVAO->bind();
 
-            auto tick = GetTickCount();
+            /*auto tick = GetTickCount();
             if ((tick % 10) < 5)
                 render->drawIndexs(3, 3, false);
             else
                 render->drawIndexs(0, 3, false);
+            */
+            render->drawIndexs(0, 6, false);
 
             present();
         }

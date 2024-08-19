@@ -9,16 +9,19 @@ namespace airkit
     {
         auto &gl = getGlDriver();
         gl.DeleteProgram(mResID);
+        GL_CHECK();
     }
     void GLShader::bind()
     {
         auto &gl = getGlDriver();
         gl.UseProgram(mResID);
+        GL_CHECK();
     }
     void GLShader::unbind()
     {
         auto &gl = getGlDriver();
         gl.UseProgram(0);
+        GL_CHECK();
     }
 
     void GLShader::setInt(const std::string &name, int32_t value) { upInt(name, value); }
@@ -35,12 +38,12 @@ namespace airkit
     {
         auto &gl = getGlDriver();
         uint32_t index = gl.GetUniformBlockIndex(mResID, name.c_str());
-        auto error = gl.GetError();
+        GL_CHECK();
         gl.UniformBlockBinding(mResID, index, binding);
-        error = gl.GetError();
+        GL_CHECK();
         int32_t ubosize = 0;
         gl.GetActiveUniformBlockiv(mResID, index, GL_UNIFORM_BLOCK_DATA_SIZE, &ubosize);
-        error = gl.GetError();
+        GL_CHECK();
         return ubosize;
     }
 
@@ -48,24 +51,32 @@ namespace airkit
     {
         auto &gl = getGlDriver();
         auto loc = gl.GetUniformLocation(mResID, name.c_str());
+        GL_CHECK();
         gl.Uniform1i(loc, value);
+        GL_CHECK();
     }
 
     void GLShader::upIntArray(const std::string &name, uint32_t count, const int32_t *const value)
     {
         auto &gl = getGlDriver();
         auto loc = gl.GetUniformLocation(mResID, name.c_str());
+        GL_CHECK();
         gl.Uniform1iv(loc, count, value);
+        GL_CHECK();
     }
     void GLShader::upFloat(const std::string &name, float value)
     {
         auto &gl = getGlDriver();
         auto loc = gl.GetUniformLocation(mResID, name.c_str());
+        GL_CHECK();
     }
     void GLShader::upFloat2(const std::string &name, const float *const value)
     {
         auto &gl = getGlDriver();
         auto loc = gl.GetUniformLocation(mResID, name.c_str());
+        GL_CHECK();
+        gl.Uniform2f(loc, value[0], value[1]);
+        GL_CHECK();
     }
     void GLShader::upFloat3(const std::string &name, const float *const value)
     {

@@ -5,12 +5,15 @@
 layout(location = 0) in vec2 aPos;
 //layout(location = 1) in vec2 aUV;
 layout(location = 1) in vec4 aClr;
-
+/*
 layout (std140) uniform uPushConstant
 {
     vec2 uScale;// 缩放
     vec2 uTranslate;// 平移
-}pc;
+};*/
+
+uniform vec2 uScale;// 缩放
+uniform vec2 uTranslate;// 平移
 
 out struct { 
     vec4 Color;
@@ -21,7 +24,7 @@ void main()
 {
     texclr.Color = aClr;
     //texclr.UV = aUV;
-    gl_Position = vec4(aPos * pc.uScale + pc.uTranslate, 0, 1);
+    gl_Position = vec4(aPos * uScale + uTranslate, 0, 1);
 }
 
 #type fragment

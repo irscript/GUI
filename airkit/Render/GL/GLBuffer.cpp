@@ -11,7 +11,7 @@ namespace airkit
         auto &gl = getGlDriver();
         gl.CreateBuffers(1, &mResID);
         gl.BindBuffer(GL_ARRAY_BUFFER, mResID);
-        gl.BufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+        gl.BufferData(GL_ARRAY_BUFFER, size, nullptr, GL_STREAM_DRAW);
         gl.BindBuffer(GL_ARRAY_BUFFER, 0);
     }
     GLVertexBuffer::GLVertexBuffer(const VertexLayout &layout, const void *vertices, uint32_t size)
@@ -19,24 +19,31 @@ namespace airkit
     {
         auto &gl = getGlDriver();
         gl.CreateBuffers(1, &mResID);
+        GL_CHECK();
         gl.BindBuffer(GL_ARRAY_BUFFER, mResID);
+        GL_CHECK();
         gl.BufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+        GL_CHECK();
         gl.BindBuffer(GL_ARRAY_BUFFER, 0);
+        GL_CHECK();
     }
     GLVertexBuffer::~GLVertexBuffer()
     {
         auto &gl = getGlDriver();
         gl.DeleteBuffers(1, &mResID);
+        GL_CHECK();
     }
     void GLVertexBuffer::bind()
     {
         auto &gl = getGlDriver();
         gl.BindBuffer(GL_ARRAY_BUFFER, mResID);
+        GL_CHECK();
     }
     void GLVertexBuffer::unbind()
     {
         auto &gl = getGlDriver();
         gl.BindBuffer(GL_ARRAY_BUFFER, 0);
+        GL_CHECK();
     }
     const VertexLayout &GLVertexBuffer::getLayout() const { return mLayout; }
 
@@ -44,13 +51,21 @@ namespace airkit
     {
         auto &gl = getGlDriver();
         gl.BindBuffer(GL_ARRAY_BUFFER, mResID);
+        GL_CHECK();
         if (size > mSize)
         {
-            gl.BufferData(GL_ARRAY_BUFFER, size, vertices, GL_DYNAMIC_DRAW);
+            gl.BufferData(GL_ARRAY_BUFFER, size, vertices, GL_STREAM_DRAW);
+            GL_CHECK();
             mSize = size;
         }
-        gl.BufferSubData(GL_ARRAY_BUFFER, 0, size, vertices);
+        else
+        {
+            gl.BufferSubData(GL_ARRAY_BUFFER, 0, size, vertices);
+            GL_CHECK();
+        }
+
         gl.BindBuffer(GL_ARRAY_BUFFER, 0);
+        GL_CHECK();
     }
 
     const uint32_t GLVertexBuffer::getSize() const { return mSize; }
@@ -60,48 +75,66 @@ namespace airkit
     {
         auto &gl = getGlDriver();
         gl.CreateBuffers(1, &mResID);
+        GL_CHECK();
         gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, mResID);
-        gl.BufferData(GL_ELEMENT_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+        GL_CHECK();
+        gl.BufferData(GL_ELEMENT_ARRAY_BUFFER, size, nullptr, GL_STREAM_DRAW);
+        GL_CHECK();
         gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        GL_CHECK();
     }
     GLIndexBuffer::GLIndexBuffer(const void *indices, uint32_t size, uint32_t count)
         : mCount(count)
     {
         auto &gl = getGlDriver();
         gl.CreateBuffers(1, &mResID);
+        GL_CHECK();
         gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, mResID);
+        GL_CHECK();
         gl.BufferData(GL_ELEMENT_ARRAY_BUFFER, size, indices, GL_STATIC_DRAW);
+        GL_CHECK();
         gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        GL_CHECK();
     }
     GLIndexBuffer::~GLIndexBuffer()
     {
         auto &gl = getGlDriver();
         gl.DeleteBuffers(1, &mResID);
+        GL_CHECK();
     }
     void GLIndexBuffer::bind()
     {
         auto &gl = getGlDriver();
         gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, mResID);
+        GL_CHECK();
     }
     void GLIndexBuffer::unbind()
     {
         auto &gl = getGlDriver();
         gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, mResID);
+        GL_CHECK();
     }
     uint32_t GLIndexBuffer::getCount() const { return mCount; }
     void GLIndexBuffer::setData(const void *idata, uint32_t isize, uint32_t icount)
     {
         auto &gl = getGlDriver();
         gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, mResID);
+        GL_CHECK();
         if (isize > mSize)
         {
-            gl.BufferData(GL_ELEMENT_ARRAY_BUFFER, isize, idata, GL_DYNAMIC_DRAW);
+            gl.BufferData(GL_ELEMENT_ARRAY_BUFFER, isize, idata, GL_STREAM_DRAW);
+            GL_CHECK();
             mSize = isize;
         }
         else
+        {
             gl.BufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, isize, idata);
+            GL_CHECK();
+        }
+
         mCount = icount;
         gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        GL_CHECK();
     }
 
     const uint32_t GLIndexBuffer::getSize() const { return mSize; }
@@ -110,21 +143,25 @@ namespace airkit
     {
         auto &gl = getGlDriver();
         gl.CreateVertexArrays(1, &mResID);
+        GL_CHECK();
     }
     GLVertexArray::~GLVertexArray()
     {
         auto &gl = getGlDriver();
         gl.DeleteVertexArrays(1, &mResID);
+        GL_CHECK();
     }
     void GLVertexArray::bind()
     {
         auto &gl = getGlDriver();
         gl.BindVertexArray(mResID);
+        GL_CHECK();
     }
     void GLVertexArray::unbind()
     {
         auto &gl = getGlDriver();
         gl.BindVertexArray(0);
+        GL_CHECK();
     }
     GLenum GLVertexArray::getShaderDataTypeToOpenGLBaseType(ShaderDataType type)
     {
@@ -173,12 +210,14 @@ namespace airkit
             case ShaderDataType::Float4:
             {
                 gl.EnableVertexAttribArray(mVAPos);
+                GL_CHECK();
                 gl.VertexAttribPointer(mVAPos,
                                        element.getComponentCount(),
                                        getShaderDataTypeToOpenGLBaseType(element.mType),
                                        element.mNormalized ? GL_TRUE : GL_FALSE,
                                        layout.getStride(),
                                        (const void *)(uintptr_t)element.mOffset);
+                GL_CHECK();
                 mVAPos++;
                 break;
             }
@@ -189,11 +228,13 @@ namespace airkit
             case ShaderDataType::Bool:
             {
                 gl.EnableVertexAttribArray(mVAPos);
+                GL_CHECK();
                 gl.VertexAttribIPointer(mVAPos,
                                         element.getComponentCount(),
                                         getShaderDataTypeToOpenGLBaseType(element.mType),
                                         layout.getStride(),
                                         (const void *)(uintptr_t)element.mOffset);
+                GL_CHECK();
                 mVAPos++;
                 break;
             }
@@ -204,13 +245,16 @@ namespace airkit
                 for (uint8_t i = 0; i < count; i++)
                 {
                     gl.EnableVertexAttribArray(mVAPos);
+                    GL_CHECK();
                     gl.VertexAttribPointer(mVAPos,
                                            count,
                                            getShaderDataTypeToOpenGLBaseType(element.mType),
                                            element.mNormalized ? GL_TRUE : GL_FALSE,
                                            layout.getStride(),
                                            (const void *)(element.mOffset + sizeof(float) * count * i));
+                    GL_CHECK();
                     gl.VertexAttribDivisor(mVAPos, 1);
+                    GL_CHECK();
                     mVAPos++;
                 }
                 break;
@@ -222,6 +266,7 @@ namespace airkit
 
         mVBOs.push_back(vbo);
         gl.BindVertexArray(0);
+        GL_CHECK();
         vbo->unbind();
     }
     void GLVertexArray::setIndexBuffer(IBOHolder ibo)
@@ -231,6 +276,7 @@ namespace airkit
         ibo->bind();
         mIBO = ibo;
         gl.BindVertexArray(0);
+        GL_CHECK();
     }
     const std::vector<VBOHolder> &GLVertexArray::getVertexBuffers() const { return mVBOs; }
     const IBOHolder &GLVertexArray::getIndexBuffer() const { return mIBO; }
@@ -240,16 +286,27 @@ namespace airkit
         auto &gl = getGlDriver();
         gl.CreateBuffers(1, &mResID);
         gl.BindBuffer(GL_UNIFORM_BUFFER, mResID);
-        gl.BufferData(GL_UNIFORM_BUFFER, 152, NULL, GL_DYNAMIC_DRAW);
+        GL_CHECK();
+        gl.BufferData(GL_UNIFORM_BUFFER, size, NULL, GL_DYNAMIC_DRAW);
+        GL_CHECK();
         gl.BindBufferBase(GL_UNIFORM_BUFFER, binding, mResID);
+        GL_CHECK();
         gl.BindBuffer(GL_UNIFORM_BUFFER, 0);
     }
     GLUniformBuffer::~GLUniformBuffer()
     {
         auto &gl = getGlDriver();
         gl.DeleteBuffers(1, &mResID);
+        GL_CHECK();
     }
     void GLUniformBuffer::setData(const void *data, uint32_t size, uint32_t offset)
     {
+        auto &gl = getGlDriver();
+        gl.BindBuffer(GL_UNIFORM_BUFFER, mResID);
+        GL_CHECK();
+        gl.BufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
+        GL_CHECK();
+        gl.BindBuffer(GL_UNIFORM_BUFFER, 0);
+        GL_CHECK();
     }
 }
