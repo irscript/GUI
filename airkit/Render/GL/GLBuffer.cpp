@@ -147,8 +147,7 @@ namespace airkit
         case ShaderDataType::Bool:
             return GL_BOOL;
         }
-
-        IPlat::getInstance().error("Unknown ShaderDataType!");
+        checkError(false, "Unknown ShaderDataType:{}!", uint32_t(type));
         return 0;
     }
     void GLVertexArray::addVertexBuffer(VBOHolder vbo)
@@ -211,7 +210,7 @@ namespace airkit
                 break;
             }
             default:
-                IPlat::getInstance().error("Unknown ShaderDataType!");
+                checkError(false, "Unknown ShaderDataType:{}!", uint32_t(element.mType));
             }
         }
 

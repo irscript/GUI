@@ -24,4 +24,6 @@
 #include <initializer_list>
 #include <fstream>
 
+
+#include <airkit/AIR_COMPILE_OPTION.h>
 #endif //!__AIR_PCH__H__

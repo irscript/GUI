@@ -5,8 +5,8 @@
 namespace airkit
 {
 
-    constexpr uint32_t getShaderDataTypeSize(ShaderDataType type);
-    constexpr uint32_t getComponentCount(ShaderDataType type);
+    uint32_t getShaderDataTypeSize(ShaderDataType type);
+    uint32_t getComponentCount(ShaderDataType type);
 
     // 顶点元素
     struct VertexElement

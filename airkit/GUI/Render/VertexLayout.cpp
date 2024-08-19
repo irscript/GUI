@@ -4,7 +4,7 @@
 
 namespace airkit
 {
-    constexpr uint32_t getShaderDataTypeSize(ShaderDataType type)
+    uint32_t getShaderDataTypeSize(ShaderDataType type)
     {
         switch (type)
         {
@@ -32,10 +32,10 @@ namespace airkit
             return 1;
         }
 
-        IPlat::getInstance().error("Unknown ShaderDataType!");
+        checkError(false, "Unknown ShaderDataType:{}!", uint32_t(type));
         return 0;
     }
-    constexpr uint32_t getComponentCount(ShaderDataType type)
+    uint32_t getComponentCount(ShaderDataType type)
     {
         switch (type)
         {
@@ -63,7 +63,7 @@ namespace airkit
             return 1;
         }
 
-        IPlat::getInstance().error("Unknown ShaderDataType!");
+        checkError(false, "Unknown ShaderDataType:{}!", uint32_t(type));
         return 0;
     }
     uint32_t VertexElement::getComponentCount() const { return ::airkit::getComponentCount(mType); }

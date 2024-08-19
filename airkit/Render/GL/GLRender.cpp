@@ -92,21 +92,16 @@ namespace airkit
     {
         std::string result;
         std::ifstream in(filepath, std::ios::in | std::ios::binary); // ifstream closes itself due to RAII
-        if (in)
-        {
-            in.seekg(0, std::ios::end);
-            size_t size = in.tellg();
-            if (size != -1)
-            {
-                result.resize(size);
-                in.seekg(0, std::ios::beg);
-                in.read(&result[0], size);
-            }
-            else
-                IPlat::getInstance().error(fmt::format("Could not read from file '{0}'", filepath));
-        }
-        else
-            IPlat::getInstance().error(fmt::format("Could not open file '{0}'", filepath));
+
+        checkError(in, "Could not open file '{0}'", filepath);
+
+        in.seekg(0, std::ios::end);
+        size_t size = in.tellg();
+        checkError(size != -1, "Could not read from file '{0}'", filepath);
+
+        result.resize(size);
+        in.seekg(0, std::ios::beg);
+        in.read(&result[0], size);
 
         return result;
     }
@@ -120,18 +115,15 @@ namespace airkit
         while (pos != std::string::npos)
         {
             size_t eol = source.find_first_of("\r\n", pos); // End of shader type declaration line
-            if (eol == std::string::npos)
-                IPlat::getInstance().error(fmt::format("shader file '{0}' syntax error", name));
+            checkError(eol != std::string::npos, "shader file '{0}' syntax error", name);
 
             size_t begin = pos + typeTokenLength + 1; // Start of shader type name (after "#type " keyword)
             std::string type = source.substr(begin, eol - begin);
             auto stage = getShaderStage(type);
-            if (stage == 0)
-                IPlat::getInstance().error(fmt::format("shader file '{0}' Invalid shader type specified {1}", name, type));
+            checkError(stage != 0, "shader file '{0}' Invalid shader type specified {1}", name, type);
 
             size_t nextLinePos = source.find_first_not_of("\r\n", eol); // Start of shader code after shader type declaration line
-            if (nextLinePos == std::string::npos)
-                IPlat::getInstance().error(fmt::format("shader file '{0}' syntax error", name));
+            checkError(nextLinePos != std::string::npos, "shader file '{0}' syntax error", name);
 
             pos = source.find(typeToken, nextLinePos); // Start of next shader type declaration line
             auto src = (pos == std::string::npos) ? source.substr(nextLinePos) : source.substr(nextLinePos, pos - nextLinePos);
@@ -160,8 +152,7 @@ namespace airkit
                 std::string log;
                 log.resize(len);
                 gl.GetShaderInfoLog(sid, len, nullptr, log.data());
-                IPlat::getInstance().error(fmt::format("Shader '{0}.{1}' compile failed!\nlog: {2}",
-                                                       name, getShaderStageName(stage), log));
+                checkError(false, "Shader '{0}.{1}' compile failed!\nlog: {2}", name, getShaderStageName(stage), log);
             }
         }
         // 再链接着色器
@@ -179,7 +170,7 @@ namespace airkit
             std::string log;
             log.resize(len);
             gl.GetProgramInfoLog(pid, len, nullptr, log.data());
-            IPlat::getInstance().error(fmt::format("Program '{0}' compile failed!\ncode: {1}\nlog: {2}", name, code, log));
+            checkError(false, "Program '{0}' compile failed!\ncode: {1}\nlog: {2}", name, code, log);
         }
         for (auto &it : shaders)
             gl.DeleteShader(it);
@@ -198,7 +189,7 @@ namespace airkit
         case GL_FRAGMENT_SHADER:
             return "opengl.frag";
         }
-        IPlat::getInstance().error("unknown shader stage");
+        checkError(false, "unknown shader stage:{0}", stage);
         return nullptr;
     }
     uint32_t GLRender::getShaderStage(const std::string &type)

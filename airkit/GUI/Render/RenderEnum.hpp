@@ -21,7 +21,7 @@ namespace airkit
     // 着色器数据类型
     enum class ShaderDataType
     {
-        None = 0,
+        Unknow = 0,
         Float,
         Float2,
         Float3,

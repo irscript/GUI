@@ -189,6 +189,11 @@ namespace airkit
                            wdc, glrc);
     }
 
+    IWindow *PlatWin::createGLWin(HWND hd, float x, float y, float w, float h, HDC dc, HGLRC context)
+    {
+       return new GLWindow(hd, x, y, w, h, dc, context);
+    }
+
     void airkit::PlatWin::registerClass()
     {
         WNDCLASSEXA window_class = {0};

@@ -31,7 +31,7 @@ namespace airkit
 
     protected:
         virtual IWindow *createGLWin(HWND hd, float x, float y, float w, float h,
-                                     HDC dc, HGLRC context) = 0;
+                                     HDC dc, HGLRC context) ;
 
     private:
         void registerClass();
