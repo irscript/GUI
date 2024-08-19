@@ -62,7 +62,7 @@ struct Window : public GLWindow
 
             mPipeline->bind();
             mVAO->bind();
-            render->drawIndexs(0, 6, false);
+            render->drawIndexs(3, 3, false);
 
             present();
         }

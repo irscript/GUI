@@ -31,16 +31,18 @@ namespace airkit
         // 设置裁剪区域
         virtual void setScissor(int x, int y, int width, int height) override;
 
-        virtual ShaderWatcher createShader(const std::string &name, const std::string &vertex, const std::string &fragment, bool isfile) override;
-        virtual ShaderWatcher createShader(const std::string &name, const std::string &src, bool isfile) override;
+        virtual ShaderHolder createShader(const std::string &name, const std::string &vertex, const std::string &fragment, bool isfile) override;
+        virtual ShaderHolder createShader(const std::string &name, const std::string &src, bool isfile) override;
 
         // 创建渲染管线
-        virtual PipelineHolder createPipeline(const std::string &name, const VertexLayout &layout, const ShaderWatcher &shader) override;
+        virtual PipelineHolder createPipeline(const std::string &name, const VertexLayout &layout,const ShaderHolder &shader) override;
 
         // 创建顶点缓存
-        virtual VBOHolder createVertexBuffer(const VertexLayout &layout, const void *data, uint32_t size) override;
+        virtual VBOHolder createVertexBuffer(const VertexLayout &layout, const void *vertices, uint32_t size) override;
+        virtual VBOHolder createVertexBuffer(const VertexLayout &layout, uint32_t size) override;
         // 创建索引缓存
-        virtual IBOHolder createIndexBuffer(const void *data, uint32_t size, uint32_t count) override;
+        virtual IBOHolder createIndexBuffer(const void *indices, uint32_t size, uint32_t count) override;
+        virtual IBOHolder createIndexBuffer(uint32_t size) override;
         // 创建顶点数组
         virtual VAOHolder createVertexArray() override;
 
@@ -52,7 +54,7 @@ namespace airkit
     private:
         std::string readFile(const std::string &filepath);
         void splitShader(const std::string &src, const std::string &name, std::vector<std::string> &sublist, std::unordered_map<uint32_t, const char *> &result);
-        ShaderWatcher createShader(const std::string &name, std::unordered_map<uint32_t, const char *> &src);
+        ShaderHolder createShader(const std::string &name, std::unordered_map<uint32_t, const char *> &src);
         static const char *getShaderStageName(uint32_t stage);
         static uint32_t getShaderStage(const std::string &type);
 

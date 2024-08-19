@@ -15,7 +15,7 @@ namespace airkit
         virtual void unbind() = 0;
         virtual const std::string &getName() const = 0;
         virtual const VertexLayout &getVertexLayout() const = 0;
-        virtual const ShaderWatcher &getShader() const = 0;
+        virtual const ShaderHolder &getShader() const = 0;
     };
 
     using PipelineHolder = std::shared_ptr<IPipeline>;

@@ -9,6 +9,7 @@ namespace airkit
 
         virtual void bind() = 0;
         virtual void unbind() = 0;
+        virtual const uint32_t getSize() const = 0;
     };
 
         // 顶点缓冲：VBO
@@ -17,7 +18,7 @@ namespace airkit
         virtual ~IVertexBuffer() = default;
         virtual const VertexLayout &getLayout() const = 0;
         // 设置顶点数据
-        virtual void setData(const void *data, uint32_t size) = 0;
+        virtual void setData(const void *vertices, uint32_t size) = 0;
     };
 
     // 索引缓冲：IBO

@@ -4,7 +4,7 @@ namespace airkit
 {
     GLPipeline::GLPipeline(const std::string &name,
                            const VertexLayout &layout,
-                           ShaderWatcher shader)
+                           const ShaderHolder &shader)
         : mName(name), mLayout(layout),
           mShader(shader)
     {
@@ -14,13 +14,13 @@ namespace airkit
     }
     void GLPipeline::bind()
     {
-        mShader.lock()->bind();
+        mShader->bind();
     }
     void GLPipeline::unbind()
     {
-        mShader.lock()->unbind();
+        mShader->unbind();
     }
     const std::string &GLPipeline::getName() const { return mName; }
     const VertexLayout &GLPipeline::getVertexLayout() const { return mLayout; }
-    const ShaderWatcher &GLPipeline::getShader() const { return mShader; }
+    const ShaderHolder &GLPipeline::getShader() const { return mShader; }
 }

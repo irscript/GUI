@@ -6,7 +6,7 @@
 namespace airkit
 {
     GLVertexBuffer::GLVertexBuffer(const VertexLayout &layout, uint32_t size)
-        : mLayout(layout)
+        : mLayout(layout), mSize(size)
     {
         auto &gl = getGlDriver();
         gl.CreateBuffers(1, &mResID);
@@ -14,7 +14,7 @@ namespace airkit
         gl.BufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
     }
     GLVertexBuffer::GLVertexBuffer(const VertexLayout &layout, const void *vertices, uint32_t size)
-        : mLayout(layout)
+        : mLayout(layout), mSize(size)
     {
         auto &gl = getGlDriver();
         gl.CreateBuffers(1, &mResID);
@@ -38,15 +38,22 @@ namespace airkit
     }
     const VertexLayout &GLVertexBuffer::getLayout() const { return mLayout; }
 
-    void GLVertexBuffer::setData(const void *data, uint32_t size)
+    void GLVertexBuffer::setData(const void *vertices, uint32_t size)
     {
         auto &gl = getGlDriver();
         gl.BindBuffer(GL_ARRAY_BUFFER, mResID);
-        gl.BufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+        if (size > mSize)
+        {
+            gl.BufferData(GL_ARRAY_BUFFER, size, vertices, GL_DYNAMIC_DRAW);
+            mSize = size;
+        }
+        gl.BufferSubData(GL_ARRAY_BUFFER, 0, size, vertices);
     }
 
+    const uint32_t GLVertexBuffer::getSize() const { return mSize; }
+
     GLIndexBuffer::GLIndexBuffer(uint32_t size)
-        : mCount(0)
+        : mCount(0), mSize(size)
     {
         auto &gl = getGlDriver();
         gl.CreateBuffers(1, &mResID);
@@ -81,9 +88,17 @@ namespace airkit
     {
         auto &gl = getGlDriver();
         gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, mResID);
-        gl.BufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, isize, idata);
+        if (isize > mSize)
+        {
+            gl.BufferData(GL_ELEMENT_ARRAY_BUFFER, isize, idata, GL_DYNAMIC_DRAW);
+            mSize = isize;
+        }
+        else
+            gl.BufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, isize, idata);
         mCount = icount;
     }
+
+    const uint32_t GLIndexBuffer::getSize() const { return mSize; }
 
     GLVertexArray::GLVertexArray()
     {

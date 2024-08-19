@@ -24,7 +24,7 @@ namespace airkit
     void GLRender::clearColor(float r, float g, float b, float a) { gl.ClearColor(r, g, b, a); }
     void GLRender::setViewport(int x, int y, int width, int height) { gl.Viewport(x, y, width, height); }
     void GLRender::setScissor(int x, int y, int width, int height) { gl.Scissor(x, y, width, height); }
-    ShaderWatcher GLRender::createShader(const std::string &name, const std::string &vertex, const std::string &fragment, bool isfile)
+    ShaderHolder GLRender::createShader(const std::string &name, const std::string &vertex, const std::string &fragment, bool isfile)
     {
         std::unordered_map<uint32_t, const char *> codes;
         if (isfile == true)
@@ -39,7 +39,7 @@ namespace airkit
         }
         return createShader(name, codes);
     }
-    ShaderWatcher GLRender::createShader(const std::string &name, const std::string &src, bool isfile)
+    ShaderHolder GLRender::createShader(const std::string &name, const std::string &src, bool isfile)
     {
         std::unordered_map<uint32_t, const char *> codes;
         std::vector<std::string> srclist;
@@ -59,26 +59,30 @@ namespace airkit
     }
     PipelineHolder GLRender::createPipeline(const std::string &name,
                                             const VertexLayout &layout,
-                                            const ShaderWatcher &shader)
+                                            const ShaderHolder &shader)
     {
         return PipelineHolder(new GLPipeline(name, layout, shader));
     }
-    VBOHolder GLRender::createVertexBuffer(const VertexLayout &layout, const void *data, uint32_t size)
-    {
-        return VBOHolder(new GLVertexBuffer(layout, data, size));
-    }
-    IBOHolder GLRender::createIndexBuffer(const void *data, uint32_t size, uint32_t count)
-    {
-        return IBOHolder(new GLIndexBuffer(data, size, count));
-    }
-    VAOHolder GLRender::createVertexArray()
-    {
-        return VAOHolder(new GLVertexArray());
-    }
+    VBOHolder GLRender::createVertexBuffer(const VertexLayout &layout, const void *data, uint32_t size) { return VBOHolder(new GLVertexBuffer(layout, data, size)); }
+    VBOHolder GLRender::createVertexBuffer(const VertexLayout &layout, uint32_t size) { return VBOHolder(new GLVertexBuffer(layout, size)); }
+    IBOHolder GLRender::createIndexBuffer(const void *data, uint32_t size, uint32_t count) { return IBOHolder(new GLIndexBuffer(data, size, count)); }
+    IBOHolder GLRender::createIndexBuffer(uint32_t size) { return IBOHolder(new GLIndexBuffer(size)); }
+    VAOHolder GLRender::createVertexArray() { return VAOHolder(new GLVertexArray()); }
     void GLRender::drawIndexs(uint32_t offset, uint32_t count, bool isI32)
     {
-        gl.DrawElements(GL_TRIANGLES, count,
-                        isI32 == true ? GL_UNSIGNED_INT : GL_UNSIGNED_SHORT, (void *)offset);
+        uint32_t type;
+        uintptr_t realoffset;
+        if (isI32 == true)
+        {
+            type = GL_UNSIGNED_INT;
+            realoffset = offset * sizeof(uint32_t);
+        }
+        else
+        {
+            type = GL_UNSIGNED_SHORT;
+            realoffset = offset * sizeof(uint16_t);
+        }
+        gl.DrawElements(GL_TRIANGLES, count, type, (void *)realoffset);
     }
     void GLRender::drawVertices(uint32_t offset, uint32_t count)
     {
@@ -135,7 +139,7 @@ namespace airkit
             codes[stage] = srclist.back().c_str();
         }
     }
-    ShaderWatcher GLRender::createShader(const std::string &name, std::unordered_map<uint32_t, const char *> &src)
+    ShaderHolder GLRender::createShader(const std::string &name, std::unordered_map<uint32_t, const char *> &src)
     {
 
         // 先编译着色器
@@ -166,15 +170,16 @@ namespace airkit
             gl.AttachShader(pid, it);
         gl.LinkProgram(pid);
         int32_t status;
-        gl.GetProgramiv(pid, GL_COMPILE_STATUS, &status);
+        gl.GetProgramiv(pid, GL_LINK_STATUS, &status);
         if (status == 0)
         {
+            auto code = gl.GetError();
             GLint len = 0;
             gl.GetProgramiv(pid, GL_INFO_LOG_LENGTH, &len);
             std::string log;
             log.resize(len);
             gl.GetProgramInfoLog(pid, len, nullptr, log.data());
-            IPlat::getInstance().error(fmt::format("Program '{0}' compile failed!\nlog: {1}", name, log));
+            IPlat::getInstance().error(fmt::format("Program '{0}' compile failed!\ncode: {1}\nlog: {2}", name, code, log));
         }
         for (auto &it : shaders)
             gl.DeleteShader(it);
@@ -182,7 +187,7 @@ namespace airkit
         // 返回Shader
         ShaderHolder shader(new GLShader(name, pid));
 
-        return ShaderWatcher(shader);
+        return shader;
     }
     const char *GLRender::getShaderStageName(uint32_t stage)
     {

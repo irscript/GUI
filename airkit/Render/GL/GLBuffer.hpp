@@ -18,8 +18,10 @@ namespace airkit
         virtual const VertexLayout &getLayout() const override;
         // 设置顶点数据
         virtual void setData(const void *data, uint32_t size) override;
+        virtual const uint32_t getSize() const override;
 
     private:
+        uint32_t mSize;
         uint32_t mResID;
         const VertexLayout &mLayout;
     };
@@ -36,8 +38,10 @@ namespace airkit
         virtual uint32_t getCount() const override;
         // 设置索引数据
         virtual void setData(const void *idata, uint32_t isize, uint32_t icount) override;
+        virtual const uint32_t getSize() const override;
 
     private:
+        uint32_t mSize;
         uint32_t mResID;
         uint32_t mCount;
     };

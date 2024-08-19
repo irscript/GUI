@@ -27,17 +27,18 @@ namespace airkit
         virtual void setScissor(int x, int y, int width, int height) = 0;
 
         // 创建着色器
-        virtual ShaderWatcher createShader(const std::string &name, const std::string &vertex, const std::string &fragment, bool isfile = true) = 0;
-        virtual ShaderWatcher createShader(const std::string &name, const std::string &src, bool isfile = true) = 0;
-        
+        virtual ShaderHolder createShader(const std::string &name, const std::string &vertex, const std::string &fragment, bool isfile = true) = 0;
+        virtual ShaderHolder createShader(const std::string &name, const std::string &src, bool isfile = true) = 0;
 
         // 创建渲染管线
-        virtual PipelineHolder createPipeline(const std::string &name, const VertexLayout &layout, const ShaderWatcher &shader) = 0;
+        virtual PipelineHolder createPipeline(const std::string &name, const VertexLayout &layout, const ShaderHolder &shader) = 0;
 
         // 创建顶点缓存
-        virtual VBOHolder createVertexBuffer(const VertexLayout &layout, const void *data, uint32_t size) = 0;
+        virtual VBOHolder createVertexBuffer(const VertexLayout &layout, const void *vertices, uint32_t size) = 0;
+        virtual VBOHolder createVertexBuffer(const VertexLayout &layout, uint32_t size) = 0;
         // 创建索引缓存
-        virtual IBOHolder createIndexBuffer(const void *data, uint32_t size, uint32_t count) = 0;
+        virtual IBOHolder createIndexBuffer(const void *indices, uint32_t size, uint32_t count) = 0;
+        virtual IBOHolder createIndexBuffer(uint32_t size) = 0;
         // 创建顶点数组
         virtual VAOHolder createVertexArray() = 0;
 
@@ -45,7 +46,6 @@ namespace airkit
         virtual void drawIndexs(uint32_t offset, uint32_t count, bool isI32) = 0;
         // 顶点绘制
         virtual void drawVertices(uint32_t offset, uint32_t count) = 0;
-
     };
 
     using RenderHolder = std::shared_ptr<IRender>;
