@@ -29,8 +29,7 @@ namespace airkit
         // 创建着色器
         virtual ShaderWatcher createShader(const std::string &name, const std::string &vertex, const std::string &fragment, bool isfile = true) = 0;
         virtual ShaderWatcher createShader(const std::string &name, const std::string &src, bool isfile = true) = 0;
-        // 获取着色器
-        ShaderWatcher get(const std::string &name) { return mShaderLibrary.get(name); }
+        
 
         // 创建渲染管线
         virtual PipelineHolder createPipeline(const std::string &name, const VertexLayout &layout, const ShaderWatcher &shader) = 0;
@@ -47,8 +46,6 @@ namespace airkit
         // 顶点绘制
         virtual void drawVertices(uint32_t offset, uint32_t count) = 0;
 
-    protected:
-        ShaderLibrary mShaderLibrary;
     };
 
     using RenderHolder = std::shared_ptr<IRender>;

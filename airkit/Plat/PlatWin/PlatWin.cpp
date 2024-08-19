@@ -176,10 +176,10 @@ namespace airkit
         height = size_rect.bottom - size_rect.top;
 
         // 创建GL窗口
-        return new GLWindow(whd,
-                            size_rect.left, size_rect.top,
-                            width, height,
-                            wdc, glrc);
+        return createGLWin(whd,
+                           size_rect.left, size_rect.top,
+                           width, height,
+                           wdc, glrc);
     }
 
     void airkit::PlatWin::registerClass()
@@ -197,4 +197,4 @@ namespace airkit
         if (ret == 0)
             error(fmt::format("RegisterClassEx failed: {}\n", GetLastError()));
     }
-    }
+}

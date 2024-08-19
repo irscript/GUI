@@ -20,6 +20,7 @@ namespace airkit
 
         virtual int32_t doModal() override;
 
+protected:
         virtual LRESULT onHitTest(UIPoint &cursor);
         virtual bool onClose();
 

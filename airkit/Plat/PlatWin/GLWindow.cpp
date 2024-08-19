@@ -29,7 +29,7 @@ namespace airkit
         auto render = IPlat::getInstance().getRender();
         wglMakeCurrent(mWinDC, mGLContext);
         // 创建着色器
-        auto shader = render->createShader("default", "E:\\Project\\gui\\demo\\FlatColor.glsl");
+        auto shader = render->createShader("default", "FlatColor.glsl");
         VertexLayout layout = {
             {"aPos", ShaderDataType::Float3},
         };

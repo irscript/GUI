@@ -19,7 +19,6 @@ namespace airkit
     }
     void GLRender::shutdown()
     {
-        mShaderLibrary.clear();
     }
     void GLRender::clear() { gl.Clear(GL_COLOR_BUFFER_BIT); }
     void GLRender::clearColor(float r, float g, float b, float a) { gl.ClearColor(r, g, b, a); }
@@ -182,7 +181,7 @@ namespace airkit
 
         // 返回Shader
         ShaderHolder shader(new GLShader(name, pid));
-        mShaderLibrary.add(name, shader);
+
         return ShaderWatcher(shader);
     }
     const char *GLRender::getShaderStageName(uint32_t stage)

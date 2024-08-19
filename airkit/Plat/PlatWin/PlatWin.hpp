@@ -29,6 +29,10 @@ namespace airkit
         static void *GLLoad(const char *name);
         IWindow *createGLWin(uint32_t width, uint32_t height, const char *title);
 
+    protected:
+        virtual IWindow *createGLWin(HWND hd, float x, float y, float w, float h,
+                                     HDC dc, HGLRC context) = 0;
+
     private:
         void registerClass();
         static LRESULT wincallback(HWND handle, UINT message, WPARAM w_param, LPARAM l_param);

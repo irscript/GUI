@@ -19,7 +19,7 @@ namespace airkit
 
         virtual void onSized(UIResizedEvent &event)override;
 
-    private:
+    protected:
         HDC mWinDC;
         HGLRC mGLContext;
     };
