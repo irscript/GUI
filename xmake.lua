@@ -23,15 +23,21 @@ target("demo")
     add_includedirs(".")
     add_files("demo/*.cpp")
     add_ldflags("-lopengl32 -lgdi32 -luxtheme")
-    set_rundir("demo")
+    set_rundir("res")
 
-target("test") 
-    add_deps("airkit")
-    set_kind("binary")
-    add_includedirs(".")
-    add_files("test/*.cpp")
-    add_ldflags("-lopengl32 -lgdi32 -luxtheme")
-    set_rundir("test")
+
+    --单元测试
+for _, file in ipairs(os.files("test/*.cpp")) do
+    local name = path.basename(file)
+    target(name)
+        set_kind("binary")
+        add_files("test/" .. name .. ".cpp")
+        add_deps("airkit")
+        set_kind("binary")
+        add_includedirs(".")
+        add_ldflags("-lopengl32 -lgdi32 -luxtheme")
+        set_rundir("res")  
+end
 
 --
 -- If you want to known more usage about xmake, please see https://xmake.io

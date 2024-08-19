@@ -18,17 +18,56 @@ struct Window : public GLWindow
         VertexLayout layout = {
             {"aPos", ShaderDataType::Float2},
             {"aClr", ShaderDataType::Float4},
-        }; //  创建管线
-        mPipeline = render->createPipeline("UI", layout, shader);
-        mVBO = render->createVertexBuffer(mPipeline->getVertexLayout(), 48);
-        // 创建索引缓冲
-        mIBO = render->createIndexBuffer(12);
-
-        mVAO = render->createVertexArray();
-        mVAO->addVertexBuffer(mVBO);
-        mVAO->setIndexBuffer(mIBO);
+        };
         // auto ubosize = shader->bindUniformBuffer("uPushConstant", 0);
         // mUBO = render->createUniformBuffer(ubosize, 0);
+        //  创建管线
+        mPipeline = render->createPipeline("UI", layout, shader);
+
+        // 创建顶点数组
+        mVAO = render->createVertexArray();
+        // 创建顶点缓冲
+        float vertices[] = {
+            200.0f,
+            400.0f, // top right
+            1.0f,
+            0.0f,
+            0.0f,
+            1.0f,
+
+            400,
+            400, // bottom right
+            0.0f,
+            1.0f,
+            0.0f,
+            1.0f,
+
+            400,
+            200,
+            // bottom left
+            0.0f,
+            0.0f,
+            1.0f,
+            1.0f,
+
+            200,
+            200,
+            // top left
+            1.0f,
+            1.0f,
+            1.0f,
+            1.0f,
+        };
+        uint16_t indices[] = {
+            // note that we start from 0!
+            0, 1, 3, // first Triangle
+            1, 2, 3  // second Triangle
+        };
+        mVBO = render->createVertexBuffer(mPipeline->getVertexLayout(), vertices, sizeof(vertices));
+        // 创建索引缓冲
+        mIBO = render->createIndexBuffer(indices, sizeof(indices), 6);
+        mVAO->addVertexBuffer(mVBO);
+        mVAO->setIndexBuffer(mIBO);
     }
     virtual void render() override
     {
@@ -36,7 +75,6 @@ struct Window : public GLWindow
         {
             auto render = IPlat::getInstance().getRender();
             {
-
                 MSG message = {0};
                 BOOL bRet = PeekMessageW(&message, mHWnd, 0, 0, PM_REMOVE);
                 if (bRet)
@@ -44,16 +82,6 @@ struct Window : public GLWindow
                     TranslateMessage(&message);
                     DispatchMessageW(&message);
                 }
-                /*
-                {
-                    MSG message = {0};
-                    BOOL result = GetMessageW(&message, 0, 0, 0);
-                    if (result > 0)
-                    {
-                        TranslateMessage(&message);
-                        DispatchMessageW(&message);
-                    }
-                }*/
             }
 
             prepare();
@@ -76,61 +104,16 @@ struct Window : public GLWindow
             shader->setFloat2("uScale", ubo);
             shader->setFloat2("uTranslate", ubo + 2);
 
-            // 创建顶点数组
-            mVAO = render->createVertexArray();
-            // 创建顶点缓冲
-            float vertices[] = {
-                200.0f,
-                400.0f, // top right
-                1.0f,
-                0.0f,
-                0.0f,
-                1.0f,
+            mVAO->bind();
 
-                400,
-                400, // bottom right
-                0.0f,
-                1.0f,
-                0.0f,
-                1.0f,
-
-                400,
-                200,
-                // bottom left
-                0.0f,
-                0.0f,
-                1.0f,
-                1.0f,
-
-                200,
-                200,
-                // top left
-                1.0f,
-                1.0f,
-                1.0f,
-                1.0f,
-            };
-            uint16_t indices[] = {
-                // note that we start from 0!
-                0, 1, 3, // first Triangle
-                1, 2, 3  // second Triangle
-            };
-
-            mVBO->bind();
-            mVBO->setData(vertices, sizeof(vertices));
-            mVBO->unbind();
-            mIBO->bind();
-            mIBO->setData(indices, sizeof(indices), 6);
-            mIBO->unbind();
             /*auto tick = GetTickCount();
             if ((tick % 10) < 5)
                 render->drawIndexs(3, 3, false);
             else
                 render->drawIndexs(0, 3, false);
             */
-            mVAO->bind();
             render->drawIndexs(0, 6, false);
-            Sleep(100);
+
             present();
         }
     }
