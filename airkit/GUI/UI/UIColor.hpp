@@ -6,6 +6,22 @@ namespace airkit
 
     struct RGBA
     {
+        RGBA(uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t a = 0)
+            : mRGBA(r | (g << 8) | (b << 16) | (a << 24)) {}
+        RGBA(uint32_t rgba) : mRGBA(rgba) {}
+        RGBA(int32_t rgba) : mRGBA(rgba) {}
+        RGBA(const RGBA &rgba) : mRGBA(rgba.mRGBA) {}
+        RGBA &operator=(uint32_t rgba)
+        {
+            mRGBA = rgba;
+            return *this;
+        }
+        RGBA &operator=(const RGBA &rgba)
+        {
+            mRGBA = rgba.mRGBA;
+            return *this;
+        }
+
         union
         {
             uint32_t mRGBA;

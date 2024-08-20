@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <airkit/Plat/PlatWin/PlatWin.hpp>
 #include <airkit/Plat/PlatWin/GLWindow.hpp>
+#include <airkit/GUI/UI/UIColor.hpp>
 using namespace airkit;
 
 struct Window : public GLWindow
@@ -18,7 +19,7 @@ struct Window : public GLWindow
         VertexLayout layout = {
             {"aPos", ShaderDataType::Float2},
             {"aUV", ShaderDataType::Float3},
-            {"aClr", ShaderDataType::Float4},
+            {"aClr", ShaderDataType::Int},
         }; //  创建管线
         mPipeline = render->createPipeline("UI", layout, shader);
         mVBO = render->createVertexBuffer(mPipeline->getVertexLayout(), 48);
@@ -85,48 +86,39 @@ struct Window : public GLWindow
             auto w = wsize.getWidth();
             auto h = wsize.getHeight();
             float flg = 0;
-            if ((GetTickCount() % 10) < 5)
-                flg = 1.0f;
+            /*if ((GetTickCount() % 10) < 5)
+                flg = 1.0f;*/
+
+            RGBA clr(255,192,203, 255);
+            float color = *(float *)&clr;
             float vertices[] = {
                 w / 4.0f * 3,
                 h / 4.0f, // top right
                 1.0f,
                 1.0f,
                 flg,
-                1.0f,
-                0.0f,
-                0.0f,
-                1.0f,
+                color,
 
                 w / 4.0f * 3,
                 h / 4.0f * 3, // bottom right
                 1.0f,
                 0.0f,
                 flg,
-                0.0f,
-                1.0f,
-                0.0f,
-                1.0f,
+                color,
 
                 w / 4.0f,
                 h / 4.0f * 3, // bottom left
                 0.0f,
                 0.0f,
                 flg,
-                0.0f,
-                0.0f,
-                1.0f,
-                1.0f,
+                color,
 
                 w / 4.0f,
                 h / 4.0f, // top left
                 0.0f,
                 1.0f,
                 flg,
-                1.0f,
-                1.0f,
-                1.0f,
-                1.0f,
+                color,
             };
 
             uint16_t indices[] = {
@@ -187,7 +179,7 @@ int main(int argc, char *argv[])
     auto win = plat.createWindow(800, 600, "win", {});
 
     Window *winptr = (Window *)win.get();
-    winptr->init("UIProgram2.glsl");
+    winptr->init("UIProgram3.glsl");
 
     while (winptr->shouldClose() == false)
     {
