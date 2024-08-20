@@ -30,7 +30,7 @@ namespace airkit
                 uint8_t mR;
                 uint8_t mG;
                 uint8_t mB;
-                uint8_t mA;
+                uint8_t mA; // alpha：不透明度，透明为0，不透明为255
             };
         };
     };

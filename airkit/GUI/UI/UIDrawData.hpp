@@ -11,10 +11,10 @@ namespace airkit
     // UI 数据顶点结构
     struct UIVertex
     {
-        UIPoint mXY;    // 顶点坐标
-        UIPoint mUV;    // 顶点纹理坐标
-        RGBA mColor;    // 顶点颜色
-        uint32_t mFlag; // 顶点标志
+        UIPoint mXY; // 顶点坐标
+        UIPoint mUV; // 顶点纹理坐标
+        float mFlag; // 顶点标志:负数表示使用纹理,正数表示不使用纹理
+        RGBA mColor; // 顶点颜色
     };
 
     // 绘制命令
