@@ -48,6 +48,9 @@ namespace airkit
 
         // 创建uniform buffer
         virtual UBOHolder createUniformBuffer(uint32_t size, uint32_t binding) override;
+        // 创建纹理
+        virtual TextureHolder createTexture2D(const TextureSpecification &spec) override;
+        virtual TextureHolder createTexture2D(const std::string &path) override;
 
         // 索引绘制
         virtual void drawIndexs(uint32_t offset, uint32_t count, bool isI32) override;
@@ -64,6 +67,7 @@ namespace airkit
     private:
         GladGLContext gl;
         uint32_t mVersion; // 版本号
+
     };
 
     inline GladGLContext &getGlDriver()
@@ -73,11 +77,9 @@ namespace airkit
         return glr->getGL();
     }
 
-#define DEBUG
-
-#ifdef DEBUG
-void glCheckError(GladGLContext &gl, const char *file, int line);
-#define GL_CHECK() glCheckError(gl, __FILE__, __LINE__)
+#ifdef GL_DEBUG
+    void glCheckError(GladGLContext &gl, const char *file, int line);
+#define GL_CHECK() glCheckError(gl, thisfile(), thisline())
 #else
 #define GL_CHECK()
 #endif

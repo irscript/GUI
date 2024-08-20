@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __GLBUFFER_H__
+#define __GLBUFFER_H__
 
 #include <airkit/GUI/Render/IBuffer.hpp>
 #include <airkit/Render/GL/GLRender.hpp>
@@ -24,6 +25,8 @@ namespace airkit
         uint32_t mSize;
         uint32_t mResID;
         const VertexLayout &mLayout;
+        // 禁止拷贝
+        NO_COPY(GLVertexBuffer);
     };
 
     struct GLIndexBuffer : public IIndexBuffer
@@ -81,3 +84,4 @@ namespace airkit
         uint32_t mResID;
     };
 }
+#endif // __GLBUFFER_H__

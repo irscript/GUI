@@ -5,21 +5,21 @@
 namespace airkit
 {
     // 渲染API标识
-    enum class RenderAPI : uint32_t
+    enum class RenderAPI : uint16_t
     {
         Unknow,
 
         OpenGL,
     };
     // 着色器阶段
-    enum class ShaderStage : uint32_t
+    enum class ShaderStage : uint16_t
     {
         Unknow,
         Vertex,
         Fragment,
     };
     // 着色器数据类型
-    enum class ShaderDataType
+    enum class ShaderDataType : uint16_t
     {
         Unknow = 0,
         Float,
@@ -33,6 +33,15 @@ namespace airkit
         Int3,
         Int4,
         Bool
+    };
+
+    // 颜色格式
+    enum class ColorFormat : uint16_t
+    {
+        Unknow,
+        R8,
+        RGB24,
+        RGBA32,
     };
 }
 #endif // __RENDERENUM_H__

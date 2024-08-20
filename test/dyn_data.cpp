@@ -63,49 +63,49 @@ struct Window : public GLWindow
 
             mPipeline->bind(); // 先生成数据
             auto wsize = mArea.getSize();
-            //printf("wsize: %f, %f\n", wsize.getWidth(), wsize.getHeight());
+            // printf("wsize: %f, %f\n", wsize.getWidth(), wsize.getHeight());
             float ubo[4];
             ubo[0] = 2.0f / wsize.getWidth();
             ubo[1] = 2.0f / wsize.getHeight();
             ubo[2] = -wsize.getWidth() / 2.0f * ubo[0];
             ubo[3] = -wsize.getHeight() / 2.0f * ubo[1];
-            //printf("ubo: %f, %f, %f, %f\n", ubo[0], ubo[1], ubo[2], ubo[3]);
-            // mUBO->setData(ubo, 16);
+            // printf("ubo: %f, %f, %f, %f\n", ubo[0], ubo[1], ubo[2], ubo[3]);
+            //  mUBO->setData(ubo, 16);
 
             auto shader = mPipeline->getShader();
             shader->setFloat2("uScale", ubo);
             shader->setFloat2("uTranslate", ubo + 2);
 
             // 创建顶点数组
-           // mVAO = render->createVertexArray();
+            // mVAO = render->createVertexArray();
             // 创建顶点缓冲
-            auto w=wsize.getWidth();
-            auto h=wsize.getHeight();
+            auto w = wsize.getWidth();
+            auto h = wsize.getHeight();
             float vertices[] = {
-                w/4.0f,
-                h/4.0f*3, // top right
+                w / 4.0f * 3,
+                h / 4.0f, // top right
                 1.0f,
                 0.0f,
                 0.0f,
                 1.0f,
 
-                w/4.0f*3,
-                h/4.0f*3, // bottom right
+                w / 4.0f * 3,
+                h / 4.0f * 3, // bottom right
                 0.0f,
                 1.0f,
                 0.0f,
                 1.0f,
 
-                w/4.0f*3,
-                h/4.0f,
+                w / 4.0f,
+                h / 4.0f * 3,
                 // bottom left
                 0.0f,
                 0.0f,
                 1.0f,
                 1.0f,
 
-                w/4.0f,
-                h/4.0f,
+                w / 4.0f,
+                h / 4.0f,
                 // top left
                 1.0f,
                 1.0f,
@@ -125,15 +125,15 @@ struct Window : public GLWindow
             mIBO->setData(indices, sizeof(indices), 6);
             mIBO->unbind();
             mVAO->bind();
+            /*
             auto tick = GetTickCount();
             if ((tick % 10) < 5)
                 render->drawIndexs(3, 3, false);
             else
                 render->drawIndexs(0, 3, false);
-            
-            
-            //render->drawIndexs(0, 6, false);
-           // Sleep(100);
+            */
+             render->drawIndexs(0, 6, false);
+            // Sleep(100);
             present();
         }
     }

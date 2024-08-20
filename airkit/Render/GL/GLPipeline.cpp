@@ -1,5 +1,4 @@
 #include <airkit/Render/GL/GLPipeline.hpp>
-#include "GLPipeline.hpp"
 namespace airkit
 {
     GLPipeline::GLPipeline(const std::string &name,

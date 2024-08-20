@@ -17,6 +17,7 @@ struct Window : public GLWindow
         auto shader = render->createShader(name, name);
         VertexLayout layout = {
             {"aPos", ShaderDataType::Float2},
+            {"aUV", ShaderDataType::Float2},
             {"aClr", ShaderDataType::Float4},
         }; //  创建管线
         mPipeline = render->createPipeline("UI", layout, shader);
@@ -29,6 +30,8 @@ struct Window : public GLWindow
         mVAO->setIndexBuffer(mIBO);
         // auto ubosize = shader->bindUniformBuffer("uPushConstant", 0);
         // mUBO = render->createUniformBuffer(ubosize, 0);
+
+        mTexture=render->createTexture2D("bug.png");
     }
     virtual void render() override
     {
@@ -67,8 +70,8 @@ struct Window : public GLWindow
             float ubo[4];
             ubo[0] = 2.0f / wsize.getWidth();
             ubo[1] = 2.0f / wsize.getHeight();
-            ubo[2] = -wsize.getWidth() / 2.0f * ubo[0];
-            ubo[3] = -wsize.getHeight() / 2.0f * ubo[1];
+            ubo[2] = -1.0f;//-wsize.getWidth() / 2.0f * ubo[0];
+            ubo[3] = -1.0f;//-wsize.getHeight() / 2.0f * ubo[1];
             printf("ubo: %f, %f, %f, %f\n", ubo[0], ubo[1], ubo[2], ubo[3]);
             // mUBO->setData(ubo, 16);
 
@@ -82,36 +85,39 @@ struct Window : public GLWindow
             auto w=wsize.getWidth();
             auto h=wsize.getHeight();
             float vertices[] = {
-                w/4.0f,
-                h/4.0f*3, // top right
+                w / 4.0f * 3,
+                h / 4.0f, // top right
+                1.0f,1.0f,
                 1.0f,
                 0.0f,
                 0.0f,
                 1.0f,
 
-                w/4.0f*3,
-                h/4.0f*3, // bottom right
+                w / 4.0f * 3,
+                h / 4.0f * 3, // bottom right
+                1.0f,0.0f,
                 0.0f,
                 1.0f,
                 0.0f,
                 1.0f,
 
-                w/4.0f*3,
-                h/4.0f,
-                // bottom left
+                w / 4.0f,
+                h / 4.0f * 3,// bottom left
+                0.0f,0.0f,
                 0.0f,
                 0.0f,
                 1.0f,
                 1.0f,
 
-                w/4.0f,
-                h/4.0f,
-                // top left
+                w / 4.0f,
+                h / 4.0f,// top left
+                0.0f,1.0f,
                 1.0f,
                 1.0f,
                 1.0f,
                 1.0f,
             };
+            
             uint16_t indices[] = {
                 // note that we start from 0!
                 0, 1, 3, // first Triangle
@@ -131,8 +137,9 @@ struct Window : public GLWindow
                 render->drawIndexs(0, 3, false);
             */
             mVAO->bind();
+            mTexture->bind();
             render->drawIndexs(0, 6, false);
-            Sleep(100);
+            //Sleep(100);
             present();
         }
     }
@@ -147,6 +154,7 @@ private:
     VBOHolder mVBO;
     IBOHolder mIBO;
     UBOHolder mUBO;
+    TextureHolder mTexture;
 };
 
 struct Plat : public PlatWin
@@ -168,7 +176,7 @@ int main(int argc, char *argv[])
     auto win = plat.createWindow(800, 600, "win", {});
 
     Window *winptr = (Window *)win.get();
-    winptr->init("UIProgram.glsl");
+    winptr->init("UIProgram2.glsl");
 
     while (winptr->shouldClose() == false)
     {

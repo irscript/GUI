@@ -1,9 +1,12 @@
-#pragma once
+#ifndef __IBUFFER_H__
+#define __IBUFFER_H__
+
 #include <airkit/GUI/Render/VertexLayout.hpp>
+#include<airkit/Core/Uncopyable.hpp>
 namespace airkit
 {
 
-    struct IBuffer
+    struct IBuffer:public Uncopyable
     {
         virtual ~IBuffer() = default;
 
@@ -56,3 +59,4 @@ namespace airkit
     // uniform buffer
     using UBOHolder = std::shared_ptr<IUniformBuffer>;
 }
+#endif // __IBUFFER_H__

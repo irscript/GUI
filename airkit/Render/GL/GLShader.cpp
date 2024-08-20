@@ -1,7 +1,6 @@
 #include <airkit/Render/GL/GLShader.hpp>
 #include <airkit/Render/GL/GLRender.hpp>
 #include <airkit/GUI/IPlat.hpp>
-#include "GLShader.hpp"
 namespace airkit
 {
 

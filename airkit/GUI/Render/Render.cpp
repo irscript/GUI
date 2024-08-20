@@ -2,7 +2,5 @@
 
 namespace airkit
 {
-    IShader::~IShader() {}
-    IRender::~IRender() {}
-    
+
 }

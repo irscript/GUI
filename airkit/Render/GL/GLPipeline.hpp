@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __GLPIPELINE_H__
+#define __GLPIPELINE_H__
 
 #include <airkit/GUI/Render/IPipeline.hpp>
 
@@ -20,5 +21,7 @@ namespace airkit
         std::string mName;
         VertexLayout mLayout;
         ShaderHolder mShader;
+
     };
 }
+#endif // __GLPIPELINE_H__

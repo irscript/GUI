@@ -4,13 +4,15 @@
 #include <airkit/GUI/Render/RenderEnum.hpp>
 #include <airkit/GUI/Render/IPipeline.hpp>
 #include <airkit/GUI/Render/IBuffer.hpp>
+#include <airkit/GUI/Render/ITexture.hpp>
 
+#include <airkit/Core/Uncopyable.hpp>
 namespace airkit
 {
 
-    struct IRender
+    struct IRender : public Uncopyable
     {
-        virtual ~IRender() = 0;
+        virtual ~IRender() = default;
 
         virtual RenderAPI getAPI() const = 0;
         virtual const char *getAPIName() const = 0;
@@ -42,13 +44,19 @@ namespace airkit
         // 创建顶点数组
         virtual VAOHolder createVertexArray() = 0;
 
-        //创建uniform buffer
-        virtual UBOHolder createUniformBuffer(uint32_t size,uint32_t binding) = 0;
+        // 创建uniform buffer
+        virtual UBOHolder createUniformBuffer(uint32_t size, uint32_t binding) = 0;
+
+        // 创建纹理
+        virtual TextureHolder createTexture2D(const TextureSpecification &spec) = 0;
+        virtual TextureHolder createTexture2D(const std::string &path) = 0;
 
         // 索引绘制
         virtual void drawIndexs(uint32_t offset, uint32_t count, bool isI32) = 0;
         // 顶点绘制
         virtual void drawVertices(uint32_t offset, uint32_t count) = 0;
+
+    protected:
     };
 
     using RenderHolder = std::shared_ptr<IRender>;

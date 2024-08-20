@@ -2,14 +2,14 @@
 #define __ISHADER_H__
 
 #include <airkit/GUI/Render/RenderEnum.hpp>
-
+#include<airkit/Core/Uncopyable.hpp>
 namespace airkit
 {
 
     // 着色器程序
-    struct IShader
+    struct IShader:public Uncopyable
     {
-        virtual ~IShader() = 0;
+        virtual ~IShader() =default;
 
         IShader(const std::string &name) : mName(name) {}
 

@@ -1,13 +1,14 @@
-#pragma once
+#ifndef __IPIPELINE_H__
+#define __IPIPELINE_H__
 
 #include <airkit/GUI/Render/IShader.hpp>
 #include <airkit/GUI/Render/VertexLayout.hpp>
-
+#include<airkit/Core/Uncopyable.hpp>
 namespace airkit
 {
 
     // 渲染管线：顶点属性布局+固定着色程序
-    struct IPipeline
+    struct IPipeline:public Uncopyable
     {
         virtual ~IPipeline() = default;
 
@@ -20,3 +21,5 @@ namespace airkit
 
     using PipelineHolder = std::shared_ptr<IPipeline>;
 }
+
+#endif // __IPIPELINE_H__

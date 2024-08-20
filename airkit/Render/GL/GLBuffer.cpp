@@ -1,4 +1,3 @@
-#include "GLBuffer.hpp"
 
 #include <airkit/Render/GL/GLBuffer.hpp>
 #include <airkit/Render/GL/GLRender.hpp>
@@ -10,9 +9,13 @@ namespace airkit
     {
         auto &gl = getGlDriver();
         gl.CreateBuffers(1, &mResID);
+        GL_CHECK();
         gl.BindBuffer(GL_ARRAY_BUFFER, mResID);
+        GL_CHECK();
         gl.BufferData(GL_ARRAY_BUFFER, size, nullptr, GL_STREAM_DRAW);
+        GL_CHECK();
         gl.BindBuffer(GL_ARRAY_BUFFER, 0);
+        GL_CHECK();
     }
     GLVertexBuffer::GLVertexBuffer(const VertexLayout &layout, const void *vertices, uint32_t size)
         : mLayout(layout), mSize(size)
@@ -52,17 +55,17 @@ namespace airkit
         auto &gl = getGlDriver();
         gl.BindBuffer(GL_ARRAY_BUFFER, mResID);
         GL_CHECK();
-       // if (size > mSize)
-       // {
+        if (size > mSize)
+        {
             gl.BufferData(GL_ARRAY_BUFFER, size, vertices, GL_STREAM_DRAW);
             GL_CHECK();
             mSize = size;
-       // }
-       /* else
+        }
+        else
         {
             gl.BufferSubData(GL_ARRAY_BUFFER, 0, size, vertices);
             GL_CHECK();
-        }*/
+        }
 
         gl.BindBuffer(GL_ARRAY_BUFFER, 0);
         GL_CHECK();
@@ -120,17 +123,17 @@ namespace airkit
         auto &gl = getGlDriver();
         gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, mResID);
         GL_CHECK();
-       // if (isize > mSize)
-       // {
+        if (isize > mSize)
+        {
             gl.BufferData(GL_ELEMENT_ARRAY_BUFFER, isize, idata, GL_STREAM_DRAW);
             GL_CHECK();
             mSize = isize;
-       /*}
+        }
         else
         {
             gl.BufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, isize, idata);
             GL_CHECK();
-        }*/ 
+        }
 
         mCount = icount;
         gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

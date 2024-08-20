@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __VERTEXLAYOUT_H__
+#define __VERTEXLAYOUT_H__
 
 #include <airkit/GUI/Render/RenderEnum.hpp>
 
@@ -54,3 +55,4 @@ namespace airkit
         uint32_t mStride = 0; // 步长:顶点元素总字节数
     };
 }
+#endif // __VERTEXLAYOUT_H__
