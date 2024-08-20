@@ -18,8 +18,8 @@ struct Window : public GLWindow
         auto shader = render->createShader(name, name);
         VertexLayout layout = {
             {"aPos", ShaderDataType::Float2},
-            {"aUV", ShaderDataType::Float3},
-            {"aClr", ShaderDataType::Int},
+            {"aUV", ShaderDataType::Float2},
+            {"aClr", ShaderDataType::Int2},
         }; //  创建管线
         mPipeline = render->createPipeline("UI", layout, shader);
         mVBO = render->createVertexBuffer(mPipeline->getVertexLayout(), 48);
