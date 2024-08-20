@@ -63,13 +63,13 @@ struct Window : public GLWindow
 
             mPipeline->bind(); // 先生成数据
             auto wsize = mArea.getSize();
-            printf("wsize: %f, %f\n", wsize.getWidth(), wsize.getHeight());
+            //printf("wsize: %f, %f\n", wsize.getWidth(), wsize.getHeight());
             float ubo[4];
             ubo[0] = 2.0f / wsize.getWidth();
             ubo[1] = 2.0f / wsize.getHeight();
             ubo[2] = -wsize.getWidth() / 2.0f * ubo[0];
             ubo[3] = -wsize.getHeight() / 2.0f * ubo[1];
-            printf("ubo: %f, %f, %f, %f\n", ubo[0], ubo[1], ubo[2], ubo[3]);
+            //printf("ubo: %f, %f, %f, %f\n", ubo[0], ubo[1], ubo[2], ubo[3]);
             // mUBO->setData(ubo, 16);
 
             auto shader = mPipeline->getShader();
@@ -124,15 +124,16 @@ struct Window : public GLWindow
             mIBO->bind();
             mIBO->setData(indices, sizeof(indices), 6);
             mIBO->unbind();
-            /*auto tick = GetTickCount();
+            mVAO->bind();
+            auto tick = GetTickCount();
             if ((tick % 10) < 5)
                 render->drawIndexs(3, 3, false);
             else
                 render->drawIndexs(0, 3, false);
-            */
-            mVAO->bind();
-            render->drawIndexs(0, 6, false);
-            Sleep(100);
+            
+            
+            //render->drawIndexs(0, 6, false);
+           // Sleep(100);
             present();
         }
     }
