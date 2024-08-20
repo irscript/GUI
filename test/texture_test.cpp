@@ -31,7 +31,7 @@ struct Window : public GLWindow
         // auto ubosize = shader->bindUniformBuffer("uPushConstant", 0);
         // mUBO = render->createUniformBuffer(ubosize, 0);
 
-        mTexture = render->createTexture2D("bug.png");
+        mTexture=render->createTexture2D("bug.png");
     }
     virtual void render() override
     {
@@ -66,13 +66,13 @@ struct Window : public GLWindow
 
             mPipeline->bind(); // 先生成数据
             auto wsize = mArea.getSize();
-
+            printf("wsize: %f, %f\n", wsize.getWidth(), wsize.getHeight());
             float ubo[4];
             ubo[0] = 2.0f / wsize.getWidth();
             ubo[1] = 2.0f / wsize.getHeight();
-            ubo[2] = -1.0f; //-wsize.getWidth() / 2.0f * ubo[0];
-            ubo[3] = -1.0f; //-wsize.getHeight() / 2.0f * ubo[1];
-
+            ubo[2] = -1.0f;//-wsize.getWidth() / 2.0f * ubo[0];
+            ubo[3] = -1.0f;//-wsize.getHeight() / 2.0f * ubo[1];
+            printf("ubo: %f, %f, %f, %f\n", ubo[0], ubo[1], ubo[2], ubo[3]);
             // mUBO->setData(ubo, 16);
 
             auto shader = mPipeline->getShader();
@@ -80,19 +80,17 @@ struct Window : public GLWindow
             shader->setFloat2("uTranslate", ubo + 2);
 
             // 创建顶点数组
-            // mVAO = render->createVertexArray();
+           // mVAO = render->createVertexArray();
             // 创建顶点缓冲
-            auto w = wsize.getWidth();
-            auto h = wsize.getHeight();
-            float flg = 0;
+            auto w=wsize.getWidth();
+            auto h=wsize.getHeight();
+            float flg=0;
             if ((GetTickCount() % 10) < 5)
-                flg = 1.0f;
+                flg=1.0f;
             float vertices[] = {
                 w / 4.0f * 3,
                 h / 4.0f, // top right
-                1.0f,
-                1.0f,
-                flg,
+                1.0f,1.0f,flg,
                 1.0f,
                 0.0f,
                 0.0f,
@@ -100,35 +98,29 @@ struct Window : public GLWindow
 
                 w / 4.0f * 3,
                 h / 4.0f * 3, // bottom right
-                1.0f,
-                0.0f,
-                flg,
+                1.0f,0.0f,flg,
                 0.0f,
                 1.0f,
                 0.0f,
                 1.0f,
 
                 w / 4.0f,
-                h / 4.0f * 3, // bottom left
-                0.0f,
-                0.0f,
-                flg,
+                h / 4.0f * 3,// bottom left
+                0.0f,0.0f,flg,
                 0.0f,
                 0.0f,
                 1.0f,
                 1.0f,
 
                 w / 4.0f,
-                h / 4.0f, // top left
-                0.0f,
-                1.0f,
-                flg,
+                h / 4.0f,// top left
+                0.0f,1.0f,flg,
                 1.0f,
                 1.0f,
                 1.0f,
                 1.0f,
             };
-
+            
             uint16_t indices[] = {
                 // note that we start from 0!
                 0, 1, 3, // first Triangle
@@ -150,7 +142,7 @@ struct Window : public GLWindow
             mVAO->bind();
             mTexture->bind();
             render->drawIndexs(0, 6, false);
-            // Sleep(100);
+            //Sleep(100);
             present();
         }
     }

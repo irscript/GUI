@@ -3,7 +3,7 @@
 #type vertex
 #version 330 core
 layout(location = 0) in vec2 aPos;
-layout(location = 1) in vec2 aUV;
+layout(location = 1) in vec3 aUV;
 layout(location = 2) in vec4 aClr;
 /*
 layout (std140) uniform uPushConstant
@@ -17,7 +17,7 @@ uniform vec2 uTranslate;// 平移
 
 out struct { 
     vec4 Color;
-    vec2 UV;
+    vec3 UV;
 } texclr;
 
 void main()
@@ -34,9 +34,12 @@ layout(location = 0) out vec4 fColor;
 uniform sampler2D sTexture;
 in struct { 
     vec4 Color;
-    vec2 UV;
+    vec3 UV;
 } texclr;
 void main()
 {
-    fColor = texclr.Color * texture(sTexture, texclr.UV.st);
+    if(texclr.UV.z == 0)
+        fColor = texclr.Color * texture(sTexture, texclr.UV.st);
+    else
+        fColor = texclr.Color;
 }

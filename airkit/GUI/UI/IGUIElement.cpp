@@ -1,8 +1,6 @@
 #include <airkit/GUI/UI/IGUIElement.hpp>
 #include <airkit/GUI/UI/IWindow.hpp>
 #include <airkit/GUI/IPlat.hpp>
-#include "IWindow.hpp"
-#include "IGUIElement.hpp"
 
 namespace airkit
 {
@@ -147,6 +145,31 @@ namespace airkit
     void IGUIElement::onMouseWheel(MouseWheelEvent &event)
     {
         printf("mouse wheel:(%f,%f)->%f\n", event.getX(), event.getY(), event.getDelta());
+    }
+
+    IGUIElement *IGUIElement::onHitTest(const UIHitEvent &event)
+    {
+        // 先判断是否在本区域内
+        if (mArea.isInArea(event.getPos()) == false)
+            return nullptr;
+        // 判断是否没得子UI
+        if (mChildUI.empty())
+            return this;
+
+        // 转换到本UI坐标系中
+        const UIPoint &pos = event.getPos();
+        auto x = pos.getX() - mArea.getX();
+        auto y = pos.getY() - mArea.getY();
+        UIPoint p(x, y);
+
+        // 遍历子UI进行测试
+        for (auto &child : mChildUI)
+        {
+            if (child->onHitTest(UIHitEvent(p)) != nullptr)
+                return child.get();
+        }
+        // 子UI没有命中
+        return this;
     }
 
     void IGUIElement::screenToWindow(UIPoint &point) const

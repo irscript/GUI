@@ -10,6 +10,8 @@ namespace airkit
     {
         Unknow,
 
+        Hit, // UI元素命中测试事件
+
         Show,  // UI元素显示、隐藏事件
         Focus, // UI元素获得焦点、失去焦点事件
 
@@ -34,6 +36,20 @@ namespace airkit
 
     private:
         UIAction mAction;
+    };
+
+    // UI 命中测试事件
+    struct UIHitEvent : public UIEvent
+    {
+        UIHitEvent(const UIPoint &pos)
+            : UIEvent(UIAction::Hit), mPos(pos) {}
+        UIHitEvent(float x, float y)
+            : UIEvent(UIAction::Hit), mPos(x, y) {}
+        const UIPoint &getPos() const { return mPos; }
+        virtual ~UIHitEvent() = default;
+
+    protected:
+        UIPoint mPos;
     };
 
     struct UIShowEvent : public UIEvent

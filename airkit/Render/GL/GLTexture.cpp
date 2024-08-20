@@ -10,9 +10,9 @@ namespace airkit
         switch (format)
         {
         case ColorFormat::RGB24:
-            return GL_RGB8;
+            return GL_RGB;
         case ColorFormat::RGBA32:
-            return GL_RGBA8;
+            return GL_RGBA;
         }
 
         checkError(false, "Unknown ColorFormat!");
@@ -73,8 +73,8 @@ namespace airkit
 
             gl.CreateTextures(GL_TEXTURE_2D, 1, &mResID);
             GL_CHECK();
-            gl.TextureStorage2D(mResID, 1, mInternalFormat, width, height);
-            GL_CHECK();
+            //gl.TextureStorage2D(mResID, 1, mInternalFormat, width, height);
+            //GL_CHECK();
 
             // 设置纹理采样参数
             gl.TextureParameteri(mResID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -103,8 +103,8 @@ namespace airkit
     void GLTexture2D::bind(uint32_t slot)
     {
         auto &gl = getGlDriver();
-        // gl.BindTextureUnit(slot, mResID);
-        gl.BindTexture(GL_TEXTURE_2D, mResID);
+        gl.BindTextureUnit(slot, mResID);
+        //gl.BindTexture(GL_TEXTURE_2D, mResID);
         GL_CHECK();
         mSlot = slot;
     }
