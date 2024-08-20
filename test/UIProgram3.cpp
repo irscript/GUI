@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
     auto win = plat.createWindow(800, 600, "win", {});
 
     Window *winptr = (Window *)win.get();
-    winptr->init("UIProgram3.glsl");
+    winptr->init("UIProgram3_.glsl");
 
     while (winptr->shouldClose() == false)
     {

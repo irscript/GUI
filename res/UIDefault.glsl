@@ -3,7 +3,7 @@
 #type vertex
 #version 330 core
 layout(location = 0) in vec2 aPos;
-layout(location = 1) in vec3 aUV;
+layout(location = 1) in vec2 aUV;
 layout(location = 2) in uint aClr;
 
 uniform vec2 uScale;
@@ -11,7 +11,7 @@ uniform vec2 uTranslate;
 
 out struct { 
     vec4 Color;
-    vec3 UV;
+    vec2 UV;
 } texclr;
 
 vec4 rgba2vec4(in uint color)
@@ -37,7 +37,7 @@ layout(location = 0) out vec4 fColor;
 uniform sampler2D sTexture;
 in struct { 
     vec4 Color;
-    vec3 UV;
+    vec2 UV;
 } texclr;
 void main()
 {

@@ -16,26 +16,8 @@ uniform vec2 uScale;// 缩放
 uniform vec2 uTranslate;// 平移
 
 
-   //flat out uint Color;
- flat out uvec2 Color;
-   out vec2 UV;
-
-
-void main()
-{
-    Color = aClr;//rgba2vec4(aClr);
-    UV = aUV;
-    gl_Position = vec4(aPos * uScale + uTranslate, 0, 1);
-    gl_Position.y=-gl_Position.y;
-}
-
-#type fragment
-#version 330 core
-layout(location = 0) out vec4 fColor;
-uniform sampler2D sTexture;
-
-  flat in uvec2 Color;
-   in  vec2 UV;
+out vec4 Color;
+out vec2 UV;
 
 vec4 rgba2vec4(in uint color)
 {
@@ -47,6 +29,25 @@ vec4 rgba2vec4(in uint color)
 }
 void main()
 {
-    vec4 color=rgba2vec4(Color.y);fColor = color * texture(sTexture, UV.st);
-    
+    Color = rgba2vec4(aClr.y);
+    UV = aUV;
+    gl_Position = vec4(aPos * uScale + uTranslate, 0, 1);
+    gl_Position.y=-gl_Position.y;
+}
+
+#type fragment
+#version 330 core
+layout(location = 0) out vec4 fColor;
+uniform sampler2D sTexture;
+uniform  int uiflag;
+in vec4 Color;
+in vec2 UV;
+
+
+void main()
+{
+    vec4 clor=texture(sTexture, UV.st);
+    if(uiflag == 0)
+    fColor = Color * clor;
+    else fColor = clor;
 }

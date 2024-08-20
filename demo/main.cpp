@@ -89,7 +89,7 @@ struct Window : public GLWindow
             /*if ((GetTickCount() % 10) < 5)
                 flg = 1.0f;*/
 
-            RGBA clr(255,192,203, 255);
+            RGBA clr(255, 192, 203, 255);
             float color = *(float *)&clr;
             float vertices[] = {
                 w / 4.0f * 3,
@@ -97,28 +97,28 @@ struct Window : public GLWindow
                 1.0f,
                 1.0f,
                 flg,
-                color,
+                RGBA::fromRGBA(255, 0, 0, 255),
 
                 w / 4.0f * 3,
                 h / 4.0f * 3, // bottom right
                 1.0f,
                 0.0f,
                 flg,
-                color,
+                RGBA::fromRGBA(0, 255, 0, 255),
 
                 w / 4.0f,
                 h / 4.0f * 3, // bottom left
                 0.0f,
                 0.0f,
                 flg,
-                color,
+                RGBA::fromRGBA(0, 0, 255, 255),
 
                 w / 4.0f,
                 h / 4.0f, // top left
                 0.0f,
                 1.0f,
                 flg,
-                color,
+                RGBA::fromRGBA(255, 255, 255, 255),
             };
 
             uint16_t indices[] = {
@@ -141,7 +141,10 @@ struct Window : public GLWindow
             */
             mVAO->bind();
             mTexture->bind();
-            render->drawIndexs(0, 6, false);
+            shader->setInt("uiflag", 1);
+            render->drawIndexs(0, 3, false);
+            shader->setInt("uiflag", 0);
+            render->drawIndexs(3, 3, false);
             // Sleep(100);
             present();
         }
@@ -181,6 +184,7 @@ int main(int argc, char *argv[])
     Window *winptr = (Window *)win.get();
     winptr->init("UIProgram3.glsl");
 
+    
     while (winptr->shouldClose() == false)
     {
         winptr->render();

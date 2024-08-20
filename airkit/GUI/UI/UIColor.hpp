@@ -33,6 +33,14 @@ namespace airkit
                 uint8_t mA; // alpha：不透明度，透明为0，不透明为255
             };
         };
+
+        float toFlt() const { return *(float *)&mRGBA; }
+
+        static float fromRGBA(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+        {
+            RGBA clr(r, g, b, a);
+            return *(float *)&clr.mRGBA;
+        }
     };
 }
 #endif // __UICOLOR_H__

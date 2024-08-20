@@ -30,6 +30,16 @@ namespace airkit
         RGBA mColor;
         float mThickness;
         UIDrawList &mDrawList;
+
+    private:
+        struct Point
+        {
+            UIPoint point;
+            RGBA color;
+        };
+        std::vector<Point> mPath; // 绘制路径点集
+
+        inline void addPoint(const UIPoint &point, RGBA color);
     };
 }
 
