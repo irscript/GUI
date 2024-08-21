@@ -4,6 +4,22 @@
 
 namespace airkit
 {
+    void UIHelper::drawPoint(const UIPoint &point, RGBA color, float thickness)
+    {
+        auto hw = thickness * 0.5f;
+        auto top = point.mY + hw;
+        auto bottom = point.mY - hw;
+        auto left = point.mX - hw;
+        auto right = point.mX + hw;
+
+        UIPoint tl{top, left};
+        UIPoint tr{top, right};
+        UIPoint bl{bottom, left};
+        UIPoint br{bottom, right};
+
+        genRect(tl, color, tr, color, bl, color, br, color);
+    }
+
     void UIHelper::drawLine(const UIPoint &start, RGBA color, const UIPoint &end, RGBA color2, float thickness)
     {
         // 计算法向量
@@ -25,13 +41,25 @@ namespace airkit
         genRect(tl, color, tr, color2, bl, color, br, color2);
     }
 
-    void UIHelper::drawTriangle(const UIPoint &a, RGBA color, const UIPoint &b, RGBA color2, const UIPoint &c, RGBA color3, float thickness)
+    void UIHelper::drawTriangle(const UIPoint &a, RGBA color,
+                                const UIPoint &b, RGBA color2,
+                                const UIPoint &c, RGBA color3, float thickness)
     {
-        
     }
 
-    void UIHelper::fillTriangle(const UIPoint &a, RGBA color, const UIPoint &b, RGBA color2, const UIPoint &c, RGBA color3, float thickness)
+    void UIHelper::fillTriangle(const UIPoint &a, RGBA color,
+                                const UIPoint &b, RGBA color2,
+                                const UIPoint &c, RGBA color3)
     {
+        auto idx = mDrawList.mVertices.size();
+        // 先生成顶点
+        mDrawList.mVertices.push_back(UIVertex(a, color));
+        mDrawList.mVertices.push_back(UIVertex(b, color2));
+        mDrawList.mVertices.push_back(UIVertex(c, color3));
+        // 在生成索引
+        mDrawList.mIndices.push_back(idx);
+        mDrawList.mIndices.push_back(idx + 1);
+        mDrawList.mIndices.push_back(idx + 2);
     }
 
     void UIHelper::drawRect(const UIArea &area, RGBA tlc, RGBA trc, RGBA blc, RGBA brc, float thickness)
@@ -112,9 +140,9 @@ namespace airkit
             float angle = i * angleStep;
             points.push_back(UIPoint(center.mX + radius * cos(angle), center.mY + radius * sin(angle)));
         }
-        std::vector<UIPoint> points2;
-        points2.resize(points.size() * 2);
+        auto idx = mDrawList.mVertices.size();
         float hw = thickness * 0.5f;
+        printf("start\n");
         // 然后计算每个端点生成矩形的两个点
         for (int32_t i = 0; i < segments; i++)
         {
@@ -122,18 +150,37 @@ namespace airkit
             // 计算法向量
             UIPoint n = UIPoint(p.mX - center.mX, p.mY - center.mY);
             n.normalize();
-            auto dx = n.mX;
-            auto dy = n.mY;
-            auto pos = i * 2;
-            points2[pos].setXY(p.mX + dx * hw, p.mY + dy * hw);
-            points2[pos + 1].setXY(p.mX - dx * hw, p.mY - dy * hw);
+            auto dx = n.mX * hw;
+            auto dy = n.mY * hw;
+
+            auto &v = mDrawList.mVertices.emplace_back();
+            v.mColor = out;
+            v.mXY.mX = p.mX + dx;
+            v.mXY.mY = p.mY + dy;
+
+            printf("%f,%f\n", v.mXY.mX, v.mXY.mY);
+
+            auto &v2 = mDrawList.mVertices.emplace_back();
+            v2.mColor = in;
+            v2.mXY.mX = p.mX - dx;
+            v2.mXY.mY = p.mY - dy;
+            printf("%f,%f\n", v2.mXY.mX, v2.mXY.mY);
         }
+        printf("end\n");
         // 最后通过生成矩形端点绘制矩形
         for (int32_t i = 0; i < segments; i++)
         {
-            auto start = i * 2;
-            auto end = ((i + 1) % segments) * 2;
-            genRect(points2[start], out, points2[end], out, points2[start + 1], in, points2[end + 1], in);
+            auto start = i * 2+idx;
+            auto end = ((i + 1) % segments) * 2+idx;
+
+            // 生成索引数据
+            mDrawList.mIndices.push_back(end);
+            mDrawList.mIndices.push_back(end + 1);
+            mDrawList.mIndices.push_back(start);
+
+            mDrawList.mIndices.push_back(end + 1);
+            mDrawList.mIndices.push_back(start + 1);
+            mDrawList.mIndices.push_back(start);
         }
     }
     void UIHelper::fillCircle(const UIPoint &center, float radius, RGBA in, RGBA out, uint32_t segments)

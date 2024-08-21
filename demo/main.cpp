@@ -168,6 +168,13 @@ struct Window : public GLWindow
             ui.drawCircle(UIPoint(100, 200), 60.0f, RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 12, 8);
             ui.fillCircle(UIPoint(100, 400), 60.0f, RGBA(255, 0, 0, 255), 32);
             ui.fillCircle(UIPoint(300, 400), 100.0f, RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 32);
+
+            // 绘制点
+            ui.drawPoint(UIPoint(100, 100), RGBA(0, 0, 255, 255), 12);
+
+            // 绘制三角形
+            ui.fillTriangle(UIPoint(200, 100), UIPoint(300, 100), UIPoint(200, 200), RGBA(0, 0, 255, 255));
+
             // 绘制纹理
             ui.drawRactTex(UIPoint(w / 3.0f, h / 3.0f), UIPoint(0, 1), UIPoint(w / 3.0f * 2, h / 3.0f * 2), UIPoint(1, 0));
 
