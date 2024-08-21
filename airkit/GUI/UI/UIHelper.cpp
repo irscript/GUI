@@ -1,6 +1,6 @@
 
 #include <airkit/GUI/UI/UIHelper.hpp>
-#include "UIHelper.hpp"
+
 namespace airkit
 {
     void UIHelper::drawLine(const UIPoint &start, RGBA color, const UIPoint &end, RGBA color2, float thickness)
@@ -90,6 +90,41 @@ namespace airkit
         mDrawList.mIndices.push_back(index + 1);
         mDrawList.mIndices.push_back(index + 3);
         mDrawList.mIndices.push_back(index + 2);
+    }
+
+    void UIHelper::drawCircle(const UIPoint &center, float radius, RGBA in, RGBA out, float thickness, int32_t segments)
+    {
+        // 先生成线段的端点
+        std::vector<UIPoint> points;
+        float angleStep = 2.0f * 3.14159265358979323846f / segments;
+        for (int32_t i = 0; i < segments; i++)
+        {
+            float angle = i * angleStep;
+            points.push_back(UIPoint(center.mX + radius * cos(angle), center.mY + radius * sin(angle)));
+        }
+        std::vector<UIPoint> points2;
+        points2.resize(points.size() * 2);
+        float hw = thickness * 0.5f;
+        // 然后计算每个端点生成矩形的两个点
+        for (int32_t i = 0; i < segments; i++)
+        {
+            auto &p = points[i];
+            // 计算法向量
+            UIPoint n = UIPoint(p.mX - center.mX, p.mY - center.mY);
+            n.normalize();
+            auto dx = n.mX;
+            auto dy = n.mY;
+            auto pos = i * 2;
+            points2[pos].setXY(p.mX + dx * hw, p.mY + dy * hw);
+            points2[pos + 1].setXY(p.mX - dx * hw, p.mY - dy * hw);
+        }
+        // 最后通过生成矩形端点绘制矩形
+        for (int32_t i = 0; i < segments; i++)
+        {
+            auto start = i * 2;
+            auto end = ((i + 1) % segments) * 2;
+            genRect(points2[start], out, points2[end], out, points2[start + 1], in, points2[end + 1], in);
+        }
     }
 
     void UIHelper::genRect(const UIPoint &tl, RGBA tlc, const UIPoint &tr, RGBA trc,

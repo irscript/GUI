@@ -39,6 +39,10 @@ namespace airkit
         // 绘制矩形纹理
         void drawRactTex(const UIPoint &tl, const UIPoint &tluv, const UIPoint &br, const UIPoint &bruv, RGBA color = RGBA(-1));
 
+        //绘制圆形
+        //void drawCircle(const UIPoint &center, RGBA color, float radius, float thickness = 1.0f);
+        void drawCircle(const UIPoint &center, float radius, RGBA in, RGBA out,float thickness = 1.0f, int32_t segments = 32);
+
     public:
         // 设置颜色
         void setColor(RGBA color) { mColor = color; }
