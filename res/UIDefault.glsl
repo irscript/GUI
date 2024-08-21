@@ -35,14 +35,17 @@ void main()
 #version 330 core
 layout(location = 0) out vec4 fColor;
 uniform sampler2D sTexture;
+uniform int drawflag;
 in struct { 
     vec4 Color;
     vec2 UV;
 } texclr;
 void main()
 {
-    if(texclr.UV.z > 0)
-        fColor = texclr.Color * texture(sTexture, texclr.UV.st);
-    else
+    if(drawflag == 0)
+        fColor = texclr.Color*texture(sTexture, texclr.UV.st);
+    else if(drawflag == 1)
         fColor = texclr.Color;
+    else 
+        fColor = vec4(0,1,0,0);
 }

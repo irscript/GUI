@@ -63,6 +63,11 @@ namespace airkit
         float getLeft() const { return mX; }
         float getTop() const { return mY; }
 
+        UIPoint getTL() const { return {mX, mY}; }
+        UIPoint getTR() const { return {mX + mWidth, mY}; }
+        UIPoint getBL() const { return {mX, mY + mHeight}; }
+        UIPoint getBR() const { return {mX + mWidth, mY + mHeight}; }
+
         float getX() const { return mX; }
         float getY() const { return mY; }
         float getWidth() const { return mWidth; }

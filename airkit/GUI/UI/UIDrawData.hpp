@@ -12,6 +12,11 @@ namespace airkit
     // UI 数据顶点结构
     struct UIVertex
     {
+        UIVertex(const UIPoint &xy, const UIPoint &uv, const RGBA &color)
+            : mXY(xy), mUV(uv), mColor(color) {}
+        UIVertex(const UIPoint &xy, const RGBA &color)
+            : mXY(xy), mUV(0.0, 0.0), mColor(color) {}
+
         UIPoint mXY; // 顶点坐标
         UIPoint mUV; // 顶点纹理坐标
         RGBA mColor; // 顶点颜色

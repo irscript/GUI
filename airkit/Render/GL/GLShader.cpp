@@ -68,6 +68,8 @@ namespace airkit
         auto &gl = getGlDriver();
         auto loc = gl.GetUniformLocation(mResID, name.c_str());
         GL_CHECK();
+        gl.Uniform1f(loc, value);
+        GL_CHECK();
     }
     void GLShader::upFloat2(const std::string &name, const float *const value)
     {

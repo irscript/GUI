@@ -29,7 +29,18 @@ namespace airkit
             mY = y;
         }
 
-    protected:
+        // 单位化（归一化）
+        void normalize()
+        {
+            float len = sqrt(mX * mX + mY * mY);
+            if (len > 0.0f)
+            {
+                mX /= len;
+                mY /= len;
+            }
+        }
+
+    //protected:
         float mX;
         float mY;
     };
@@ -68,7 +79,7 @@ namespace airkit
                    mHeight == size.mHeight;
         }
 
-    protected:
+   // protected:
         union
         {
             struct
@@ -111,7 +122,7 @@ namespace airkit
 
         static constexpr float max = 1E30; // 最大限制值
 
-    protected:
+   // protected:
         UISize mH; // 水平方向限制值
         UISize mV; // 垂直方向限制值
     };
