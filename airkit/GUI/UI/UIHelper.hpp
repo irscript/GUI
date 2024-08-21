@@ -16,6 +16,14 @@ namespace airkit
         // 绘制线
         void drawLine(const UIPoint &start, const UIPoint &end, RGBA color, float thickness = 1.0f) { drawLine(start, color, end, color, thickness); }
         void drawLine(const UIPoint &start, RGBA color, const UIPoint &end, RGBA color2, float thickness = 1.0f);
+
+        //绘制三角形
+        void drawTriangle(const UIPoint &a, const UIPoint &b, const UIPoint &c, RGBA color, float thickness = 1.0f) { drawTriangle(a, color, b, color, c, color, thickness); }
+        void drawTriangle(const UIPoint &a, RGBA color, const UIPoint &b, RGBA color2, const UIPoint &c, RGBA color3, float thickness = 1.0f);
+
+        void fillTriangle(const UIPoint &a, const UIPoint &b, const UIPoint &c, RGBA color, float thickness = 1.0f) { fillTriangle(a, color, b, color, c, color, thickness); }
+        void fillTriangle(const UIPoint &a, RGBA color, const UIPoint &b, RGBA color2, const UIPoint &c, RGBA color3, float thickness = 1.0f);
+
         // 绘制矩形线框
         void drawRect(const UIArea &area, RGBA color, float thickness = 1.0) { drawRect(area, color, color, color, color, thickness); }
         void drawRect(const UIArea &area, RGBA left, RGBA right, float thickness = 1.0) { drawRect(area, left, right, left, right, thickness); }
@@ -39,9 +47,13 @@ namespace airkit
         // 绘制矩形纹理
         void drawRactTex(const UIPoint &tl, const UIPoint &tluv, const UIPoint &br, const UIPoint &bruv, RGBA color = RGBA(-1));
 
-        //绘制圆形
-        //void drawCircle(const UIPoint &center, RGBA color, float radius, float thickness = 1.0f);
-        void drawCircle(const UIPoint &center, float radius, RGBA in, RGBA out,float thickness = 1.0f, int32_t segments = 32);
+        // 绘制圆形
+        void drawCircle(const UIPoint &center, float radius, RGBA color, float thickness = 1.0f, uint32_t segments = 32) { drawCircle(center, radius, color, color, thickness, segments); }
+        void drawCircle(const UIPoint &center, float radius, RGBA in, RGBA out, float thickness = 1.0f, uint32_t segments = 32);
+
+        // 填充圆形
+        void fillCircle(const UIPoint &center, float radius, RGBA color, uint32_t segments = 32){fillCircle(center, radius, color, color, segments);}
+        void fillCircle(const UIPoint &center, float radius, RGBA in, RGBA out, uint32_t segments = 32);
 
     public:
         // 设置颜色

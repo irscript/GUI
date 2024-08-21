@@ -165,8 +165,9 @@ struct Window : public GLWindow
             ui.fillRect2(UIPoint(70, 90), UIPoint(80, 100), RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255));
 
             // 绘制圆
-            ui.drawCircle(UIPoint(100, 200), 60.0f, RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 12,8);
-
+            ui.drawCircle(UIPoint(100, 200), 60.0f, RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 12, 8);
+            ui.fillCircle(UIPoint(100, 400), 60.0f, RGBA(255, 0, 0, 255), 32);
+            ui.fillCircle(UIPoint(300, 400), 100.0f, RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 32);
             // 绘制纹理
             ui.drawRactTex(UIPoint(w / 3.0f, h / 3.0f), UIPoint(0, 1), UIPoint(w / 3.0f * 2, h / 3.0f * 2), UIPoint(1, 0));
 
@@ -180,7 +181,7 @@ struct Window : public GLWindow
             render->drawIndexs(0, icount - 6, false);
             shader->setInt("drawflag", 0);
             mTexture->bind();
-            render->drawIndexs(icount - 6, 6, false);
+            // render->drawIndexs(icount - 6, 6, false);
             mVAO->unbind();
             // Sleep(100);
             present();

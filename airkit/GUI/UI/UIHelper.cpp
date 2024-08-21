@@ -1,5 +1,6 @@
 
 #include <airkit/GUI/UI/UIHelper.hpp>
+#include "UIHelper.hpp"
 
 namespace airkit
 {
@@ -22,6 +23,15 @@ namespace airkit
         UIPoint br{end.getX() - dy, end.getY() + dx};
 
         genRect(tl, color, tr, color2, bl, color, br, color2);
+    }
+
+    void UIHelper::drawTriangle(const UIPoint &a, RGBA color, const UIPoint &b, RGBA color2, const UIPoint &c, RGBA color3, float thickness)
+    {
+        
+    }
+
+    void UIHelper::fillTriangle(const UIPoint &a, RGBA color, const UIPoint &b, RGBA color2, const UIPoint &c, RGBA color3, float thickness)
+    {
     }
 
     void UIHelper::drawRect(const UIArea &area, RGBA tlc, RGBA trc, RGBA blc, RGBA brc, float thickness)
@@ -92,7 +102,7 @@ namespace airkit
         mDrawList.mIndices.push_back(index + 2);
     }
 
-    void UIHelper::drawCircle(const UIPoint &center, float radius, RGBA in, RGBA out, float thickness, int32_t segments)
+    void UIHelper::drawCircle(const UIPoint &center, float radius, RGBA in, RGBA out, float thickness, uint32_t segments)
     {
         // 先生成线段的端点
         std::vector<UIPoint> points;
@@ -126,7 +136,33 @@ namespace airkit
             genRect(points2[start], out, points2[end], out, points2[start + 1], in, points2[end + 1], in);
         }
     }
-
+    void UIHelper::fillCircle(const UIPoint &center, float radius, RGBA in, RGBA out, uint32_t segments)
+    {
+        // 先生成顶点
+        float angleStep = 2.0f * 3.14159265358979323846f / segments;
+        auto ic = mDrawList.mVertices.size();
+        auto &c = mDrawList.mVertices.emplace_back();
+        c.mColor = in;
+        c.mXY = center;
+        auto ip2 = mDrawList.mVertices.size();
+        for (int32_t i = 0; i < segments; i++)
+        {
+            float angle = i * angleStep;
+            auto &c = mDrawList.mVertices.emplace_back();
+            c.mColor = out;
+            c.mXY.mX = center.mX + radius * cos(angle);
+            c.mXY.mY = center.mY + radius * sin(angle);
+        }
+        // 然后与圆点组成三角形
+        for (int32_t i = 0; i < segments; i++)
+        {
+            auto start = i;
+            auto end = ((i + 1) % segments);
+            mDrawList.mIndices.push_back(ic);
+            mDrawList.mIndices.push_back(ip2 + start);
+            mDrawList.mIndices.push_back(ip2 + end);
+        }
+    }
     void UIHelper::genRect(const UIPoint &tl, RGBA tlc, const UIPoint &tr, RGBA trc,
                            const UIPoint &bl, RGBA blc, const UIPoint &br, RGBA brc)
     {
