@@ -142,7 +142,6 @@ namespace airkit
         }
         auto idx = mDrawList.mVertices.size();
         float hw = thickness * 0.5f;
-        printf("start\n");
         // 然后计算每个端点生成矩形的两个点
         for (int32_t i = 0; i < segments; i++)
         {
@@ -166,12 +165,11 @@ namespace airkit
             v2.mXY.mY = p.mY - dy;
             printf("%f,%f\n", v2.mXY.mX, v2.mXY.mY);
         }
-        printf("end\n");
         // 最后通过生成矩形端点绘制矩形
         for (int32_t i = 0; i < segments; i++)
         {
-            auto start = i * 2+idx;
-            auto end = ((i + 1) % segments) * 2+idx;
+            auto start = i * 2 + idx;
+            auto end = ((i + 1) % segments) * 2 + idx;
 
             // 生成索引数据
             mDrawList.mIndices.push_back(end);
