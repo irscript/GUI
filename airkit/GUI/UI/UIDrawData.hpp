@@ -50,6 +50,11 @@ namespace airkit
         std::vector<UIVertex> mVertices;
         std::vector<UIIndex> mIndices;
         std::vector<UIDrawCommand> mDrawCommands;
+
+        // 申请顶点内存缓存
+        void needVertex(uint32_t count) { mVertices.reserve(mVertices.size() + count); }
+        // 申请索引内存缓存
+        void needIndex(uint32_t count) { mIndices.reserve(mIndices.size() + count); }
     };
 
 }

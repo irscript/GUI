@@ -114,10 +114,12 @@ namespace airkit
     {
         auto idx = mDrawList.mVertices.size();
         // 先生成顶点
+        mDrawList.needVertex(3);
         mDrawList.mVertices.push_back(UIVertex(a, color));
         mDrawList.mVertices.push_back(UIVertex(b, color2));
         mDrawList.mVertices.push_back(UIVertex(c, color3));
         // 在生成索引
+        mDrawList.needIndex(3);
         mDrawList.mIndices.push_back(idx);
         mDrawList.mIndices.push_back(idx + 1);
         mDrawList.mIndices.push_back(idx + 2);
@@ -176,12 +178,16 @@ namespace airkit
         UIVertex v2(bl, {tluv.mX, bruv.mY}, color);
         UIVertex v3(br, bruv, color);
 
+        mDrawList.needVertex(4);
+
         mDrawList.mVertices.push_back(v0);
         mDrawList.mVertices.push_back(v1);
         mDrawList.mVertices.push_back(v2);
         mDrawList.mVertices.push_back(v3);
 
         // 生成索引数据
+        mDrawList.needIndex(6);
+
         mDrawList.mIndices.push_back(index);
         mDrawList.mIndices.push_back(index + 1);
         mDrawList.mIndices.push_back(index + 2);
@@ -197,6 +203,7 @@ namespace airkit
         float angleStep = 2.0f * 3.14159265358979323846f / segments;
         auto idx = mDrawList.mVertices.size();
         float hw = thickness * 0.5f;
+        mDrawList.needVertex(segments * 2);
         // 然后计算每个端点生成矩形的两个点
         for (int32_t i = 0; i < segments; i++)
         {
@@ -219,6 +226,7 @@ namespace airkit
             v2.mXY.mX = p.mX - dx;
             v2.mXY.mY = p.mY - dy;
         }
+        mDrawList.needIndex(segments * 6);
         // 最后通过生成矩形端点绘制矩形
         for (int32_t i = 0; i < segments; i++)
         {
@@ -239,6 +247,7 @@ namespace airkit
     {
         // 先生成顶点
         float angleStep = 2.0f * 3.14159265358979323846f / segments;
+        mDrawList.needVertex(segments + 1);
         auto ic = mDrawList.mVertices.size();
         auto &c = mDrawList.mVertices.emplace_back(); // 圆心
         c.mColor = in;
@@ -252,6 +261,7 @@ namespace airkit
             c.mXY.mX = center.mX + radius * cos(angle);
             c.mXY.mY = center.mY + radius * sin(angle);
         }
+        mDrawList.needIndex(segments * 3);
         // 然后与圆点组成三角形
         for (int32_t i = 0; i < segments; i++)
         {
@@ -273,6 +283,8 @@ namespace airkit
 
         uint32_t count = segments + 1;
         float hw = thickness * 0.5f;
+
+        mDrawList.needVertex(count * 2);
 
         auto idx = mDrawList.mVertices.size();
         for (int32_t i = 0; i < count; i++)
@@ -298,6 +310,8 @@ namespace airkit
             v2.mXY.mX = p.mX - dx;
             v2.mXY.mY = p.mY - dy;
         }
+
+        mDrawList.needIndex(segments * 6);
         // 在绘制线段
         for (int32_t i = 0; i < segments; i++)
         {
@@ -317,7 +331,7 @@ namespace airkit
 
     void UIHelper::fillSector(const UIPoint &center, float radius,
                               float startAngle, float endAngle,
-                               RGBA in, RGBA out, uint32_t segments)
+                              RGBA in, RGBA out, uint32_t segments)
     {
         // 先生成线段的端点
         auto sradian = 3.14159265358979323846f / 180.0f; // 0.01745329252
@@ -325,7 +339,7 @@ namespace airkit
         float angleStep = subRadian / segments;
 
         uint32_t count = segments + 1;
-
+        mDrawList.needVertex(count + 1);
         // 圆心
         auto ic = mDrawList.mVertices.size();
         auto &c = mDrawList.mVertices.emplace_back();
@@ -340,6 +354,7 @@ namespace airkit
             c.mXY.mX = center.mX + radius * cos(angle);
             c.mXY.mY = center.mY + radius * sin(angle);
         }
+        mDrawList.needIndex(segments * 3);
         // 然后与圆点组成三角形
         for (int32_t i = 0; i < segments; i++)
         {
@@ -362,11 +377,14 @@ namespace airkit
         UIVertex v2(bl, blc);
         UIVertex v3(br, brc);
 
+        mDrawList.needVertex(4);
+
         mDrawList.mVertices.push_back(v0);
         mDrawList.mVertices.push_back(v1);
         mDrawList.mVertices.push_back(v2);
         mDrawList.mVertices.push_back(v3);
 
+        mDrawList.needIndex(6);
         // 生成索引数据
         mDrawList.mIndices.push_back(index);
         mDrawList.mIndices.push_back(index + 1);

@@ -181,11 +181,12 @@ struct Window : public GLWindow
             ui.fillTriangle(UIPoint(200, 100), UIPoint(300, 100), UIPoint(200, 200), RGBA(0, 0, 255, 255));
 
             // 绘制弧线
-            ui.drawArc(UIPoint(400, 400), 80.0f, 0.0f, 90.0f,
-                       RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 8, 2);
-
             ui.fillSector(UIPoint(500, 400), 80.0f, 0.0f, 90.0f,
                           RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255),  2);
+            ui.drawArc(UIPoint(500, 400), 80.0f, 0.0f, 90.0f,
+                       RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 8, 2);
+
+            
 
             // 绘制纹理
             ui.drawRactTex(UIPoint(w / 3.0f, h / 3.0f), UIPoint(0, 1), UIPoint(w / 3.0f * 2, h / 3.0f * 2), UIPoint(1, 0));
