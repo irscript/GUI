@@ -99,12 +99,12 @@ namespace airkit
 
             // 生成索引数据
             mDrawList.mIndices.push_back(end);
-            mDrawList.mIndices.push_back(end + 1);
             mDrawList.mIndices.push_back(start);
+            mDrawList.mIndices.push_back(end + 1);
 
             mDrawList.mIndices.push_back(end + 1);
-            mDrawList.mIndices.push_back(start + 1);
             mDrawList.mIndices.push_back(start);
+            mDrawList.mIndices.push_back(start + 1);
         }
     }
 
@@ -121,8 +121,8 @@ namespace airkit
         // 在生成索引
         mDrawList.needIndex(3);
         mDrawList.mIndices.push_back(idx);
-        mDrawList.mIndices.push_back(idx + 1);
         mDrawList.mIndices.push_back(idx + 2);
+        mDrawList.mIndices.push_back(idx + 1);
     }
 
     void UIHelper::drawRect(const UIArea &area, RGBA tlc, RGBA trc, RGBA blc, RGBA brc, float thickness)
@@ -189,12 +189,12 @@ namespace airkit
         mDrawList.needIndex(6);
 
         mDrawList.mIndices.push_back(index);
-        mDrawList.mIndices.push_back(index + 1);
         mDrawList.mIndices.push_back(index + 2);
+        mDrawList.mIndices.push_back(index + 1);
 
         mDrawList.mIndices.push_back(index + 1);
-        mDrawList.mIndices.push_back(index + 3);
         mDrawList.mIndices.push_back(index + 2);
+        mDrawList.mIndices.push_back(index + 3);
     }
 
     void UIHelper::drawCircle(const UIPoint &center, float radius, RGBA in, RGBA out, float thickness, uint32_t segments)
@@ -235,12 +235,12 @@ namespace airkit
 
             // 生成索引数据
             mDrawList.mIndices.push_back(end);
-            mDrawList.mIndices.push_back(end + 1);
             mDrawList.mIndices.push_back(start);
+            mDrawList.mIndices.push_back(end + 1);
 
             mDrawList.mIndices.push_back(end + 1);
-            mDrawList.mIndices.push_back(start + 1);
             mDrawList.mIndices.push_back(start);
+            mDrawList.mIndices.push_back(start + 1);
         }
     }
     void UIHelper::fillCircle(const UIPoint &center, float radius, RGBA in, RGBA out, uint32_t segments)
@@ -268,8 +268,8 @@ namespace airkit
             auto start = i;
             auto end = ((i + 1) % segments);
             mDrawList.mIndices.push_back(ic);
-            mDrawList.mIndices.push_back(ip2 + start);
             mDrawList.mIndices.push_back(ip2 + end);
+            mDrawList.mIndices.push_back(ip2 + start);
         }
     }
     void UIHelper::drawArc(const UIPoint &center, float radius,
@@ -320,12 +320,12 @@ namespace airkit
 
             // 生成索引数据
             mDrawList.mIndices.push_back(end);
+            mDrawList.mIndices.push_back(start);
+            mDrawList.mIndices.push_back(end + 1);
+            
             mDrawList.mIndices.push_back(end + 1);
             mDrawList.mIndices.push_back(start);
-
-            mDrawList.mIndices.push_back(end + 1);
             mDrawList.mIndices.push_back(start + 1);
-            mDrawList.mIndices.push_back(start);
         }
     }
 
@@ -361,8 +361,8 @@ namespace airkit
             auto start = i;
             auto end = (i + 1);
             mDrawList.mIndices.push_back(ic);
-            mDrawList.mIndices.push_back(ip2 + start);
             mDrawList.mIndices.push_back(ip2 + end);
+            mDrawList.mIndices.push_back(ip2 + start);
         }
     }
 
@@ -387,11 +387,13 @@ namespace airkit
         mDrawList.needIndex(6);
         // 生成索引数据
         mDrawList.mIndices.push_back(index);
-        mDrawList.mIndices.push_back(index + 1);
         mDrawList.mIndices.push_back(index + 2);
+        mDrawList.mIndices.push_back(index + 1);
+        
 
         mDrawList.mIndices.push_back(index + 1);
-        mDrawList.mIndices.push_back(index + 3);
         mDrawList.mIndices.push_back(index + 2);
+        mDrawList.mIndices.push_back(index + 3);
+        
     }
 }

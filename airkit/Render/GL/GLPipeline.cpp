@@ -17,6 +17,7 @@ namespace airkit
         auto &gl=getGlDriver();
         mShader->bind();
         gl.Enable (GL_MULTISAMPLE);
+        gl.Enable (GL_CULL_FACE);
     }
     void GLPipeline::unbind()
     {

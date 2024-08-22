@@ -201,7 +201,7 @@ struct Window : public GLWindow
             render->drawIndexs(0, icount - 6, false);
             shader->setInt("drawflag", 0);
             mTexture->bind();
-            // render->drawIndexs(icount - 6, 6, false);
+            //render->drawIndexs(icount - 6, 6, false);
             mVAO->unbind();
             // Sleep(100);
             present();
