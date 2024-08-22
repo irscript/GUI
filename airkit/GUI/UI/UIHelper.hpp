@@ -57,7 +57,7 @@ namespace airkit
         void fillCircle(const UIPoint &center, float radius, RGBA color, uint32_t segments = 32) { fillCircle(center, radius, color, color, segments); }
         void fillCircle(const UIPoint &center, float radius, RGBA in, RGBA out, uint32_t segments = 32);
 
-        // 绘制弧
+        // 绘制弧：极坐标下角度是逆时针方向增大
         void drawArc(const UIPoint &center, float radius,
                      float startAngle, float endAngle,
                      RGBA color, float thickness = 1.0f,
@@ -70,12 +70,11 @@ namespace airkit
         // 填充扇形
         void fillSector(const UIPoint &center, float radius,
                         float startAngle, float endAngle,
-                        RGBA color, float thickness = 1.0f,
-                        uint32_t segments = 32) { fillSector(center, radius, startAngle, endAngle,
-                                                             color, color, thickness, segments); }
+                        RGBA color, uint32_t segments = 32) { fillSector(center, radius, startAngle, endAngle,
+                                                             color, color, segments); }
         void fillSector(const UIPoint &center, float radius,
                         float startAngle, float endAngle,
-                        RGBA in, RGBA out, float thickness = 1.0f, uint32_t segments = 32);
+                        RGBA in, RGBA out,  uint32_t segments = 32);
 
     public:
         // 设置颜色

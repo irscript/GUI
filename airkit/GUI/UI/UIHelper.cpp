@@ -194,20 +194,16 @@ namespace airkit
     void UIHelper::drawCircle(const UIPoint &center, float radius, RGBA in, RGBA out, float thickness, uint32_t segments)
     {
         // 先生成线段的端点
-        std::vector<UIPoint> points;
         float angleStep = 2.0f * 3.14159265358979323846f / segments;
-        for (int32_t i = 0; i < segments; i++)
-        {
-            float angle = i * angleStep;
-            points.push_back(UIPoint(center.mX + radius * cos(angle), center.mY + radius * sin(angle)));
-        }
         auto idx = mDrawList.mVertices.size();
         float hw = thickness * 0.5f;
         // 然后计算每个端点生成矩形的两个点
         for (int32_t i = 0; i < segments; i++)
         {
-            auto &p = points[i];
-            // 计算法向量
+            float angle = i * angleStep;
+            UIPoint p(center.mX + radius * cos(angle),
+                      center.mY + radius * sin(angle));
+            //  计算法向量
             UIPoint n = UIPoint(p.mX - center.mX, p.mY - center.mY);
             n.normalize();
             auto dx = n.mX * hw;
@@ -244,7 +240,7 @@ namespace airkit
         // 先生成顶点
         float angleStep = 2.0f * 3.14159265358979323846f / segments;
         auto ic = mDrawList.mVertices.size();
-        auto &c = mDrawList.mVertices.emplace_back();
+        auto &c = mDrawList.mVertices.emplace_back(); // 圆心
         c.mColor = in;
         c.mXY = center;
         auto ip2 = mDrawList.mVertices.size();
@@ -266,12 +262,93 @@ namespace airkit
             mDrawList.mIndices.push_back(ip2 + end);
         }
     }
-    void UIHelper::drawArc(const UIPoint &center, float radius, float startAngle, float endAngle, RGBA in, RGBA out, float thickness, uint32_t segments)
+    void UIHelper::drawArc(const UIPoint &center, float radius,
+                           float startAngle, float endAngle, RGBA in, RGBA out,
+                           float thickness, uint32_t segments)
     {
+        // 先生成线段的端点
+        auto sradian = 3.14159265358979323846f / 180.0f; // 0.01745329252
+        auto subRadian = (endAngle - startAngle) * sradian;
+        float angleStep = subRadian / segments;
+
+        uint32_t count = segments + 1;
+        float hw = thickness * 0.5f;
+
+        auto idx = mDrawList.mVertices.size();
+        for (int32_t i = 0; i < count; i++)
+        {
+            float angle = startAngle + i * angleStep;
+            // 端点
+            UIPoint p(center.mX + radius * cos(angle),
+                      center.mY + radius * sin(angle));
+
+            //  计算法向量
+            UIPoint n = UIPoint(p.mX - center.mX, p.mY - center.mY);
+            n.normalize();
+            auto dx = n.mX * hw;
+            auto dy = n.mY * hw;
+
+            auto &v = mDrawList.mVertices.emplace_back();
+            v.mColor = out;
+            v.mXY.mX = p.mX + dx;
+            v.mXY.mY = p.mY + dy;
+
+            auto &v2 = mDrawList.mVertices.emplace_back();
+            v2.mColor = in;
+            v2.mXY.mX = p.mX - dx;
+            v2.mXY.mY = p.mY - dy;
+        }
+        // 在绘制线段
+        for (int32_t i = 0; i < segments; i++)
+        {
+            auto start = i * 2 + idx;
+            auto end = (i + 1) * 2 + idx;
+
+            // 生成索引数据
+            mDrawList.mIndices.push_back(end);
+            mDrawList.mIndices.push_back(end + 1);
+            mDrawList.mIndices.push_back(start);
+
+            mDrawList.mIndices.push_back(end + 1);
+            mDrawList.mIndices.push_back(start + 1);
+            mDrawList.mIndices.push_back(start);
+        }
     }
 
-    void UIHelper::fillSector(const UIPoint &center, float radius, float startAngle, float endAngle, RGBA in, RGBA out, float thickness, uint32_t segments)
+    void UIHelper::fillSector(const UIPoint &center, float radius,
+                              float startAngle, float endAngle,
+                               RGBA in, RGBA out, uint32_t segments)
     {
+        // 先生成线段的端点
+        auto sradian = 3.14159265358979323846f / 180.0f; // 0.01745329252
+        auto subRadian = (endAngle - startAngle) * sradian;
+        float angleStep = subRadian / segments;
+
+        uint32_t count = segments + 1;
+
+        // 圆心
+        auto ic = mDrawList.mVertices.size();
+        auto &c = mDrawList.mVertices.emplace_back();
+        c.mColor = in;
+        c.mXY = center;
+        auto ip2 = mDrawList.mVertices.size();
+        for (int32_t i = 0; i < count; i++)
+        {
+            float angle = startAngle + i * angleStep;
+            auto &c = mDrawList.mVertices.emplace_back();
+            c.mColor = out;
+            c.mXY.mX = center.mX + radius * cos(angle);
+            c.mXY.mY = center.mY + radius * sin(angle);
+        }
+        // 然后与圆点组成三角形
+        for (int32_t i = 0; i < segments; i++)
+        {
+            auto start = i;
+            auto end = (i + 1);
+            mDrawList.mIndices.push_back(ic);
+            mDrawList.mIndices.push_back(ip2 + start);
+            mDrawList.mIndices.push_back(ip2 + end);
+        }
     }
 
     void UIHelper::genRect(const UIPoint &tl, RGBA tlc, const UIPoint &tr, RGBA trc,
