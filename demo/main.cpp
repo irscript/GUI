@@ -34,6 +34,7 @@ struct Window : public GLWindow
         // mUBO = render->createUniformBuffer(ubosize, 0);
 
         mTexture = render->createTexture2D("bug.png");
+        mFont = render->createTexture2D("A_letter.png");
     }
     virtual void render() override
     {
@@ -182,14 +183,14 @@ struct Window : public GLWindow
 
             // 绘制弧线
             ui.fillSector(UIPoint(500, 400), 80.0f, 0.0f, 90.0f,
-                          RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255),  2);
+                          RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 2);
             ui.drawArc(UIPoint(500, 400), 80.0f, 0.0f, 90.0f,
                        RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 8, 2);
 
-            
-
             // 绘制纹理
-            ui.drawRactTex(UIPoint(w / 3.0f, h / 3.0f), UIPoint(0, 1), UIPoint(w / 3.0f * 2, h / 3.0f * 2), UIPoint(1, 0));
+           // ui.drawRactTex(UIPoint(500,300), UIPoint(0, 1), UIPoint(564,364), UIPoint(1, 0),RGBA(0,0,255,0));
+           ui.drawRactTex(UIPoint(w / 3.0f, h / 3.0f), UIPoint(0, 1), UIPoint(w / 3.0f * 2, h / 3.0f * 2), UIPoint(1, 0),RGBA(106,44,112,0));
+
 
             mVBO->setData(mDrawList.mVertices.data(), mDrawList.mVertices.size() * sizeof(UIVertex));
             auto icount = mDrawList.mIndices.size();
@@ -200,8 +201,9 @@ struct Window : public GLWindow
             shader->setInt("drawflag", 1);
             render->drawIndexs(0, icount - 6, false);
             shader->setInt("drawflag", 0);
-            mTexture->bind();
-            //render->drawIndexs(icount - 6, 6, false);
+            mFont->bind();
+            shader->setInt("drawflag", 2);
+            render->drawIndexs(icount - 6, 6, false);
             mVAO->unbind();
             // Sleep(100);
             present();
@@ -219,6 +221,7 @@ private:
     IBOHolder mIBO;
     UBOHolder mUBO;
     TextureHolder mTexture;
+    TextureHolder mFont;
 };
 
 struct Plat : public PlatWin

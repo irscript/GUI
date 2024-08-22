@@ -40,12 +40,51 @@ in struct {
     vec4 Color;
     vec2 UV;
 } texclr;
+
+float median(float r, float g, float b) {
+	return max(min(r, g), min(max(r, g), b));
+}
+
+float screenPxRange() {
+	// Precalculate unitRange and pass it as 
+	// a uniform for better performance.
+	vec2 unitRange = vec2(2.0)/vec2(textureSize(sTexture, 0));
+	vec2 screenTexSize = vec2(1.0)/fwidth( texclr.UV);
+	return max(0.5*dot(unitRange, screenTexSize), 1.0);
+}
+
+vec4 fontColor(){
+    vec4 texel=texture(sTexture, texclr.UV.st);
+    if(texel.a<= 0.0001)discard;
+    
+	float pxRange=screenPxRange();
+    float dist = median(texel.r, texel.g, texel.b);
+	
+	// Distance (in pixels) to the body edge and calculate opacity
+  	float pxDist = pxRange * (dist - 0.5);
+	float opacity = clamp(pxDist + 0.5, 0.0, 1.0);
+    vec4 bg=texclr.Color;
+    bg.r=1-bg.r;
+    bg.g=1-bg.g;
+    bg.b=1-bg.b;
+    return mix(bg,texclr.Color,  opacity);
+}
+
 void main()
 {
     if(drawflag == 0)
-        fColor = texclr.Color*texture(sTexture, texclr.UV.st);
+        fColor = texture(sTexture, texclr.UV.st);
     else if(drawflag == 1)
         fColor = texclr.Color;
+    else if(drawflag == 2){
+        fColor = fontColor();
+        vec4 bg=texclr.Color;
+    bg.r=1-bg.r;
+    bg.g=1-bg.g;
+    bg.b=1-bg.b;
+        if(fColor==bg)discard ;
+    }
+        
     else 
         fColor = vec4(0,1,0,0);
 }
