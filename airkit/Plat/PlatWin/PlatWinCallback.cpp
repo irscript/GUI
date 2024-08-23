@@ -463,6 +463,6 @@ namespace airkit
 
         UIPoint cursor(cursor_point.x, cursor_point.y);
 
-        return win.onHitTest(cursor);
+        return win.onWinHitTest(cursor);
     }
 }

@@ -5,6 +5,8 @@
 #include <airkit/GUI/UI/UIColor.hpp>
 #include <airkit/GUI/UI/UIArea.hpp>
 #include <airkit/GUI/Render/ITexture.hpp>
+
+#include <airkit/Core/Bitop.hpp>
 namespace airkit
 {
     using UIIndex = uint16_t;
@@ -32,14 +34,18 @@ namespace airkit
         UIIndex mIndexCount;    // 顶点索引数量
         uint32_t mDrawFlag;     // 绘制标志
         TextureHolder mTexture; // 纹理
+
+        void setClipRect(const UIArea &clipRect) { mClipRect = clipRect; }
+        void setTexture(const TextureHolder &texture) { mTexture = texture; }
     };
 
     struct DrawFlag
     {
         enum : uint32_t
         {
-            NoTex = 0,       // 不使用纹理：使用顶点颜色
-            NoFont = 1 << 0, // 非字体纹理纹理：使用纹理颜色
+            Clip = Bitop::bit<uint32_t>(0),    // 裁剪矩阵未改变
+            Vertex = Bitop::bit<uint32_t>(1),  // 不使用纹理：使用顶点颜色
+            Texture = Bitop::bit<uint32_t>(2), // 非字体纹理纹理：使用纹理颜色
             // 字体纹理的一些标记
         };
     };
@@ -55,6 +61,27 @@ namespace airkit
         void needVertex(uint32_t count) { mVertices.reserve(mVertices.size() + count); }
         // 申请索引内存缓存
         void needIndex(uint32_t count) { mIndices.reserve(mIndices.size() + count); }
+
+        // 开始：获取一个绘制命令
+        UIDrawCommand &begin()
+        {
+            auto &cmd = mDrawCommands.emplace_back();
+            cmd.mStartIndex = mIndices.size();
+            return cmd;
+        }
+        // 结束：计算绘制命令的索引数量
+        void end(UIDrawCommand &cmd, uint32_t flag)
+        {
+            cmd.mDrawFlag = flag;
+            cmd.mIndexCount = mIndices.size() - cmd.mStartIndex;
+        }
+        // 清空命令
+        void clear()
+        {
+            mDrawCommands.clear();
+            mIndices.clear();
+            mVertices.clear();
+        }
     };
 
 }

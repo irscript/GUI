@@ -4,11 +4,24 @@
 #include <airkit/GUI/Event/Event.hpp>
 #include <airkit/GUI/UI/UIFlag.hpp>
 #include <airkit/GUI/UI/UIArea.hpp>
+#include <airkit/GUI/UI/UIDrawData.hpp>
 namespace airkit
 {
     struct IGUIElement;
     using UIHolder = std::shared_ptr<IGUIElement>;
     using UIWatcher = std::weak_ptr<IGUIElement>;
+
+    // UI 环境
+    struct UIVibe
+    {
+        IGUIElement *mHover; // 鼠标悬浮下的UI
+        IGUIElement *mFocus; // 获取焦点的UI
+
+        double mDiffTime;
+        double mPrevTime;
+        double mCurrTime;
+    };
+
     // UI 元素基类
     struct IGUIElement
     {
@@ -49,7 +62,9 @@ namespace airkit
         virtual void onMouseWheel(MouseWheelEvent &event);
 
         // 响应命中测试
-        virtual IGUIElement* onHitTest(const UIHitEvent& event);
+        virtual IGUIElement *onHitTest(const UIHitEvent &event);
+        // 渲染帧
+        virtual void onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList);
 
     public:
         // 坐标转换
@@ -85,6 +100,8 @@ namespace airkit
         UIHolder getUIParent() { return mParentUI.lock(); }
         const UIHolder getUIParent() const { return mParentUI.lock(); }
 
+        void setUIParent(UIHolder parent) { mParentUI = parent; }
+
         // 获取窗口
         UIHolder getUIWindow();
         const UIHolder getUIWindow() const;
@@ -93,14 +110,29 @@ namespace airkit
         const UILimit &getUILimit() const { return mLimit; }
         UILimit &getUILimit() { return mLimit; }
 
+        // 获取UI区域
+        const UIArea &getArea() const { return mArea; }
+        UIArea &getArea() { return mArea; }
+
     protected:
-        UIFlag mUIFlag;               // UI 标志
-        UIArea mArea;                 // UI 区域位置大小
-        UIWatcher mParentUI;          // 父 UI
-        std::list<UIHolder> mChildUI; // 子 UI
-        UILimit mLimit;               // UI 大小限制的最值
+        UIFlag mUIFlag;      // UI 标志
+        UIArea mArea;        // UI 区域位置大小
+        UIWatcher mParentUI; // 父 UI
+
+        UILimit mLimit; // UI 大小限制的最值
     };
 
+    // 有子元素的UI基类
+    struct IUIParent : public IGUIElement
+    {
+        // 响应命中测试
+        virtual IGUIElement *onHitTest(const UIHitEvent &event) override;
+        // 渲染帧
+        virtual void onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList) override;
+
+    protected:
+        std::list<UIHolder> mChildUI; // 子 UI
+    };
 }
 
 #endif // __IGUIELEMENT_H__

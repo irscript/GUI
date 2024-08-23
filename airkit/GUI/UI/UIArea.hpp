@@ -52,6 +52,8 @@ namespace airkit
             mWidth = width;
             mHeight = height;
         }
+        void setX(float x){mX = x;}
+        void setY(float y){mY = y;}
 
         // 获取矩形在父容器的位置
         UIPoint getPos() const { return UIPoint(mX, mY); }
@@ -67,6 +69,8 @@ namespace airkit
         UIPoint getTR() const { return {mX + mWidth, mY}; }
         UIPoint getBL() const { return {mX, mY + mHeight}; }
         UIPoint getBR() const { return {mX + mWidth, mY + mHeight}; }
+
+        UIPoint getCenter() const { return {mX + mWidth / 2, mY + mHeight / 2}; }
 
         float getX() const { return mX; }
         float getY() const { return mY; }

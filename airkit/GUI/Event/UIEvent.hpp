@@ -132,6 +132,7 @@ namespace airkit
         UIResizedEvent(const UIArea &area)
             : UIResizeEvent(area, UIAction::Resized) {}
         const UIArea &getArea() const { return mArea; }
+        UIArea &getArea() { return mArea; }
         virtual ~UIResizedEvent() = default;
     };
 }

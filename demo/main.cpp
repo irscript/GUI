@@ -5,6 +5,17 @@
 #include <airkit/GUI/UI/UIHelper.hpp>
 using namespace airkit;
 
+struct TitleBar : public WinTitleBar
+{
+    TitleBar()
+    {
+        mUIIcon = UIHolder{new TitleBar::ButtonIcon({}, {})};
+        mUIClose = UIHolder{new TitleBar::ButtonClose({}, {})};
+        mUIMaximize = UIHolder{new TitleBar::ButtonMaximize({}, {})};
+        mUIMinimize = UIHolder{new TitleBar::ButtonMinimize({}, {})};
+    }
+};
+
 struct Window : public GLWindow
 {
     Window(HWND hd, float x, float y, float w, float h,
@@ -30,11 +41,11 @@ struct Window : public GLWindow
         mVAO = render->createVertexArray();
         mVAO->addVertexBuffer(mVBO);
         mVAO->setIndexBuffer(mIBO);
-        // auto ubosize = shader->bindUniformBuffer("uPushConstant", 0);
-        // mUBO = render->createUniformBuffer(ubosize, 0);
 
-       // mTexture = render->createTexture2D("bug.png");
-        mFont = render->createTexture2D("fnt.png");
+        mTexture = render->createTexture2D("bug.png");
+
+        auto title = new ::TitleBar();
+        setTitleBar(UIHolder(title) );
     }
     virtual void render() override
     {
@@ -64,8 +75,21 @@ struct Window : public GLWindow
 
             prepare();
 
+            mCmdlist.clear();
+
+            UIArea clip(0, 0, mArea.getWidth(), mArea.getHeight());
+
+            onRenderFrame(mUIVibe, clip, mCmdlist);
+
             render->clearColor(1.0f, 1.0f, 1.0f, 1.0f);
             render->clear();
+
+            // 没有数据
+            if (mCmdlist.mVertices.size() == 0)
+            {
+                present();
+                return;
+            }
 
             mPipeline->bind(); // 先生成数据
             auto wsize = mArea.getSize();
@@ -76,142 +100,30 @@ struct Window : public GLWindow
             ubo[2] = -1.0f; //-wsize.getWidth() / 2.0f * ubo[0];
             ubo[3] = -1.0f; //-wsize.getHeight() / 2.0f * ubo[1];
 
-            // mUBO->setData(ubo, 16);
-
             auto shader = mPipeline->getShader();
             shader->setFloat2("uScale", ubo);
             shader->setFloat2("uTranslate", ubo + 2);
 
-            // 创建顶点数组
-            // mVAO = render->createVertexArray();
-            // 创建顶点缓冲
-            auto w = wsize.getWidth();
-            auto h = wsize.getHeight();
-            /*
-                        RGBA clr(255, 192, 203, 255);
-                        float color = *(float *)&clr;
-                        float vertices[] = {
-                            w / 4.0f * 3,
-                            h / 4.0f, // top right
-                            1.0f,
-                            1.0f,
-                            RGBA::fromRGBA(255, 0, 0, 255),
-
-                            w / 4.0f * 3,
-                            h / 4.0f * 3, // bottom right
-                            1.0f,
-                            0.0f,
-                            RGBA::fromRGBA(0, 255, 0, 255),
-
-                            w / 4.0f,
-                            h / 4.0f * 3, // bottom left
-                            0.0f,
-                            0.0f,
-                            RGBA::fromRGBA(0, 0, 255, 255),
-
-                            w / 4.0f,
-                            h / 4.0f, // top left
-                            0.0f,
-                            1.0f,
-                            RGBA::fromRGBA(255, 255, 255, 255),
-                        };
-
-                        uint16_t indices[] = {
-                            // note that we start from 0!
-                            0, 1, 3, // first Triangle
-                            1, 2, 3  // second Triangle
-                        };
-
-                        mVBO->setData(vertices, sizeof(vertices));
-                        mIBO->setData(indices, sizeof(indices), 6);
-
-                        mVAO->bind();
-                        mTexture->bind();
-                        shader->setInt("drawfalg", 1);
-                        render->drawIndexs(0, 3, false);
-                        shader->setInt("drawfalg", 0);
-                        render->drawIndexs(3, 3, false);
-                        mVAO->unbind();
-            */
-            UIDrawList mDrawList;
-            UIHelper ui(mDrawList);
-
-            auto &cmd = mDrawList.mDrawCommands.emplace_back();
-            cmd.mStartIndex = 0;
-            cmd.mIndexCount = 6;
-
-            // 绘制线条
-            ui.drawLine(UIPoint(0, 10), UIPoint(w, 10), RGBA(255, 0, 0, 255), 5);
-            ui.drawLine(UIPoint(0, 20), RGBA(255, 0, 0, 255), UIPoint(w, 20), RGBA(0, 255, 0, 255), 5);
-
-            // 绘制矩形
-            ui.drawRect(UIArea(10, 30, 10, 10), RGBA(255, 0, 0, 255), 5);
-            ui.drawRect(UIArea(30, 30, 10, 10), RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 5);
-            ui.drawRect(UIArea(50, 30, 10, 10), RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), RGBA(0, 0, 255, 255), RGBA(0, 0, 0, 255), 5);
-            ui.drawRect2(UIArea(70, 30, 10, 10), RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 5);
-
-            ui.drawRect(UIPoint(10, 50), UIPoint(20, 60), RGBA(255, 0, 0, 255), 4);
-            ui.drawRect(UIPoint(30, 50), UIPoint(40, 60), RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 4);
-            ui.drawRect(UIPoint(50, 50), UIPoint(60, 60), RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), RGBA(0, 0, 255, 255), RGBA(0, 0, 0, 255), 4);
-            ui.drawRect2(UIPoint(70, 50), UIPoint(80, 60), RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 4);
-            // 填充矩形
-            ui.fillRect(UIArea(10, 70, 10, 10), RGBA(255, 0, 0, 255));
-            ui.fillRect(UIArea(30, 70, 10, 10), RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255));
-            ui.fillRect(UIArea(50, 70, 10, 10), RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), RGBA(0, 0, 255, 255), RGBA(0, 0, 0, 255));
-            ui.fillRect2(UIArea(70, 70, 10, 10), RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255));
-
-            ui.fillRect(UIPoint(10, 90), UIPoint(20, 100), RGBA(255, 0, 0, 255));
-            ui.fillRect(UIPoint(30, 90), UIPoint(40, 100), RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255));
-            ui.fillRect(UIPoint(50, 90), UIPoint(60, 100), RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), RGBA(0, 0, 255, 255), RGBA(0, 0, 0, 255));
-            ui.fillRect2(UIPoint(70, 90), UIPoint(80, 100), RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255));
-
-            // 绘制圆
-            ui.drawCircle(UIPoint(100, 200), 60.0f,
-                          RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 20, 3);
-            ui.fillCircle(UIPoint(100, 400), 60.0f, RGBA(255, 0, 0, 255), 32);
-            ui.fillCircle(UIPoint(300, 400), 100.0f, RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 32);
-
-            // 绘制点
-            ui.drawPoint(UIPoint(100, 100), RGBA(0, 0, 255, 255), 12);
-
-            // 绘制三角形
-            ui.drawTriangle(UIPoint(400, 100), RGBA(255, 0, 0, 255),
-                            UIPoint(500, 130), RGBA(0, 255, 0, 255),
-                            UIPoint(350, 210), RGBA(0, 0, 255, 255),
-                            12);
-            ui.fillTriangle(UIPoint(200, 100), UIPoint(300, 100), UIPoint(200, 200), RGBA(0, 0, 255, 255));
-
-            // 绘制弧线
-            ui.fillSector(UIPoint(500, 400), 80.0f, 0.0f, 90.0f,
-                          RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 2);
-            ui.drawArc(UIPoint(500, 400), 80.0f, 0.0f, 90.0f,
-                       RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 8, 2);
-
-            // 绘制纹理
-           // ui.drawRactTex(UIPoint(500,300), UIPoint(0, 1), UIPoint(564,364), UIPoint(1, 0),RGBA(0,0,255,0));
-           ui.drawRactTex(UIPoint(w / 3.0f, h / 3.0f), UIPoint(0, 0.01), UIPoint(w / 3.0f * 2, h / 3.0f * 2), UIPoint(0.01, 0),RGBA(106,44,112,0));
-
-
-            mVBO->setData(mDrawList.mVertices.data(), mDrawList.mVertices.size() * sizeof(UIVertex));
-            auto icount = mDrawList.mIndices.size();
+            mVBO->setData(mCmdlist.mVertices.data(), mCmdlist.mVertices.size() * sizeof(UIVertex));
+            auto icount = mCmdlist.mIndices.size();
             auto isize = icount * sizeof(UIIndex);
-            mIBO->setData(mDrawList.mIndices.data(), isize, icount);
+            mIBO->setData(mCmdlist.mIndices.data(), isize, icount);
             mVAO->bind();
 
-            shader->setInt("drawflag", 1);
-            render->drawIndexs(0, icount - 6, false);
-            shader->setInt("drawflag", 0);
-            mFont->bind();
-            shader->setInt("drawflag", 2);
-            render->drawIndexs(icount - 6, 6, false);
+            uint32_t uiflag = 0;
+            for (auto &cmd : mCmdlist.mDrawCommands)
+            {
+                if (cmd.mDrawFlag != uiflag)
+                {
+                    uiflag = cmd.mDrawFlag;
+                    shader->setInt("uiflag", uiflag);
+                }
+                render->drawIndexs(cmd.mStartIndex, cmd.mIndexCount, false);
+            }
+            mCmdlist.clear();
             mVAO->unbind();
-            // Sleep(100);
             present();
         }
-    }
-    virtual LRESULT onHitTest(UIPoint &cursor) override
-    {
-        return HTCLIENT;
     }
 
 private:
@@ -219,9 +131,8 @@ private:
     VAOHolder mVAO;
     VBOHolder mVBO;
     IBOHolder mIBO;
-    UBOHolder mUBO;
     TextureHolder mTexture;
-    TextureHolder mFont;
+    UIDrawList mCmdlist; // 绘制命令列表
 };
 
 struct Plat : public PlatWin
@@ -243,7 +154,7 @@ int main(int argc, char *argv[])
     auto win = plat.createWindow(800, 600, "win", {});
 
     Window *winptr = (Window *)win.get();
-    winptr->init("UIDefault.glsl");
+    winptr->init("UIDraw.glsl");
 
     while (winptr->shouldClose() == false)
     {

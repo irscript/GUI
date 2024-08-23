@@ -22,6 +22,12 @@ namespace airkit
         virtual UIPoint getCursorPos() = 0; // 获取鼠标位置，窗口坐标
 
         virtual int32_t doModal() = 0;
+
+        UIVibe &getUIVibe() { return mUIVibe; }
+        const UIVibe &getUIVibe() const { return mUIVibe; }
+
+    protected:
+        UIVibe mUIVibe;
     };
 }
 #endif // __IWINDOW_H__

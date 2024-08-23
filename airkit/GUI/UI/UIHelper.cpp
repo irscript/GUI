@@ -1,6 +1,5 @@
 
 #include <airkit/GUI/UI/UIHelper.hpp>
-#include "UIHelper.hpp"
 
 namespace airkit
 {

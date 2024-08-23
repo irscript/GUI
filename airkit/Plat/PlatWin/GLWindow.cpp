@@ -7,7 +7,11 @@ namespace airkit
     void GLWindow::prepare()
     {
         wglMakeCurrent(mWinDC, mGLContext);
-        IPlat::getInstance().getRender()->setViewport(0, 0, mArea.getWidth(), mArea.getHeight());
+        auto &gl = getGlDriver();
+        auto w = mArea.getWidth();
+        auto h = mArea.getHeight();
+        gl.Viewport(0, 0, w, h);
+        gl.Scissor(0, 0, w, h);
     }
 
     void GLWindow::present()

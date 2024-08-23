@@ -73,8 +73,11 @@ vec4 fontColor(){
 
 void main()
 {
-    if(drawflag == 0)
+    if(drawflag == 0){
         fColor = texture(sTexture, texclr.UV.st);
+        if(fColor.a < 0.01)discard ;
+    }
+        
     else if(drawflag == 1)
         fColor = texclr.Color;
     else if(drawflag == 2){
