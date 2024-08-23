@@ -7,12 +7,17 @@ using namespace airkit;
 
 struct TitleBar : public WinTitleBar
 {
-    TitleBar()
+    TitleBar() = default;
+    void create(UIHolder parent)
     {
         mUIIcon = UIHolder{new TitleBar::ButtonIcon({}, {})};
+        mUIIcon->setUIParent(parent);
         mUIClose = UIHolder{new TitleBar::ButtonClose({}, {})};
+        mUIClose->setUIParent(parent);
         mUIMaximize = UIHolder{new TitleBar::ButtonMaximize({}, {})};
+        mUIMaximize->setUIParent(parent);
         mUIMinimize = UIHolder{new TitleBar::ButtonMinimize({}, {})};
+        mUIMinimize->setUIParent(parent);
     }
 };
 
@@ -44,8 +49,10 @@ struct Window : public GLWindow
 
         mTexture = render->createTexture2D("bug.png");
 
-        auto title = new ::TitleBar();
-        setTitleBar(UIHolder(title));
+        auto tbar = new ::TitleBar();
+        UIHolder title(tbar);
+        tbar->create(title);
+        setTitleBar(title);
     }
     void onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList) override
     {

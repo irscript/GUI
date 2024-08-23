@@ -84,9 +84,4 @@ namespace airkit
         }
         return 0;
     }
-    void airkit::GLWindow::onSized(UIResizedEvent &event)
-    {
-        WinWindow::onSized(event);
-        render();
-    }
 }

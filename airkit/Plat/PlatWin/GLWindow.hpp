@@ -17,7 +17,7 @@ namespace airkit
         virtual void render() override;
         virtual int32_t doModal() override;
 
-        virtual void onSized(UIResizedEvent &event)override;
+        
         const HGLRC getGLContext() const { return mGLContext; }
     protected:
         HDC mWinDC;

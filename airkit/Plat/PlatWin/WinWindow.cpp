@@ -102,6 +102,8 @@ namespace airkit
             UIResizedEvent ev(size);
             mTitleBar->onSized(ev);
         }
+
+        render();
     }
     IGUIElement *WinWindow::onHitTest(const UIHitEvent &event)
     {
@@ -136,8 +138,9 @@ namespace airkit
     }
     void WinWindow::onMouseUp(MouseUpEvent &event)
     {
-        // auto pos = event.getPos();
-        auto hit = mUIVibe.mHover; // onHitTest(UIHitEvent(pos));
+        auto hit = mUIVibe.mHover;
+        //auto pos = event.getPos();
+        //auto hit = onHitTest(UIHitEvent(pos));
         if (hit != nullptr)
         {
             hit->onEvent(event);
