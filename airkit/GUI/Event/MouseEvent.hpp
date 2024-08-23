@@ -53,7 +53,7 @@ namespace airkit
         float getX() const { return mX; }
         float getY() const { return mY; }
 
-        UIPoint getCursorPos() const { return UIPoint(mX, mY); }
+        UIPoint getPos() const { return UIPoint(mX, mY); }
 
     protected:
         IMouseEvent(MouseAction action, float x, float y)

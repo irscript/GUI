@@ -1,6 +1,6 @@
 #include <airkit/GUI/Widgets/TitleBar.hpp>
-#include "TitleBar.hpp"
 #include <airkit/GUI/UI/UIHelper.hpp>
+#include <airkit/GUI/UI/IWindow.hpp>
 namespace airkit
 {
     IGUIElement *TitleBar::onHitTest(const UIHitEvent &event)
@@ -93,10 +93,22 @@ namespace airkit
 
         UIHelper ui(drawList);
         RGBA color = vibe.mHover == this ? RGBA(0xffdde1) : RGBA(0xee9ca7);
-        
+
         ui.drawRect(area, RGBA(0xee9ca7), 4);
 
         drawList.end(cmd, DrawFlag::Vertex);
+    }
+    void TitleBar::ButtonMaximize::onMouseUp(MouseUpEvent &event)
+    {
+        if (event.getButton() == MouseButton::Left)
+        {
+            auto window = getUIWindow();
+            if (window.get() == nullptr)
+                return;
+            auto &winptr = window->as<IWindow>();
+            mIsMaximize == true ? winptr.restore() : winptr.maximize();
+            mIsMaximize = !mIsMaximize;
+        }
     }
     void TitleBar::ButtonMinimize::onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList)
     {
@@ -111,6 +123,17 @@ namespace airkit
 
         drawList.end(cmd, DrawFlag::Vertex);
     }
+    void TitleBar::ButtonMinimize::onMouseUp(MouseUpEvent &event)
+    {
+        if (event.getButton() == MouseButton::Left)
+        {
+            auto window = getUIWindow();
+            if (window.get() == nullptr)
+                return;
+            auto &winptr = window->as<IWindow>();
+            winptr.minimize();
+        }
+    }
     void TitleBar::ButtonClose::onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList)
     {
         auto &cmd = drawList.begin();
@@ -124,5 +147,16 @@ namespace airkit
         ui.drawLine(mArea.getTL(), mArea.getBR(), RGBA(0xffdde1), thickness);
         ui.drawLine(mArea.getBL(), mArea.getTR(), RGBA(0xffdde1), thickness);
         drawList.end(cmd, DrawFlag::Vertex);
+    }
+    void TitleBar::ButtonClose::onMouseUp(MouseUpEvent &event)
+    {
+        if (event.getButton() == MouseButton::Left)
+        {
+            auto window = getUIWindow();
+            if (window.get() == nullptr)
+                return;
+            auto &winptr = window->as<IWindow>();
+            winptr.close();
+        }
     }
 }

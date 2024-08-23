@@ -56,7 +56,7 @@ namespace airkit
             CloseThemeData(theme);
 
             float height = title_bar_size.cy * dpi / 96.0f;
-            float half = height / 3*2;
+            float half = height / 3 * 2;
             height += half;
 
             UIArea size(0, 0, mArea.getWidth(), height);
@@ -83,25 +83,81 @@ namespace airkit
             CloseThemeData(theme);
 
             float height = title_bar_size.cy * dpi / 96.0f;
-            float half = height / 3*2;
+            float half = height / 3 * 2;
             height += half;
 
             float y = 0;
-           /* // 检查窗口是否最大化
-            WINDOWPLACEMENT placement = {0};
-            placement.length = sizeof(WINDOWPLACEMENT);
-            if (GetWindowPlacement(mHWnd, &placement) &&
-                placement.showCmd == SW_SHOWMAXIMIZED)
-            {
-                int padding = GetSystemMetricsForDpi(SM_CXPADDEDBORDER, dpi);
-                y += padding * 2;
-            }
-            */
+            /* // 检查窗口是否最大化
+             WINDOWPLACEMENT placement = {0};
+             placement.length = sizeof(WINDOWPLACEMENT);
+             if (GetWindowPlacement(mHWnd, &placement) &&
+                 placement.showCmd == SW_SHOWMAXIMIZED)
+             {
+                 int padding = GetSystemMetricsForDpi(SM_CXPADDEDBORDER, dpi);
+                 y += padding * 2;
+             }
+             */
 
             UIArea size(0, y, mArea.getWidth(), height);
             UIResizedEvent ev(size);
             mTitleBar->onSized(ev);
         }
+    }
+    IGUIElement *WinWindow::onHitTest(const UIHitEvent &event)
+    {
+        if (mTitleBar.get() != nullptr)
+        {
+            auto hit = mTitleBar->onHitTest(event);
+            if (hit != nullptr)
+                return hit;
+        }
+        return nullptr;
+    }
+    void WinWindow::onMouseMove(MouseMoveEvent &event)
+    {
+        auto pos = event.getPos();
+        auto hit = onHitTest(UIHitEvent(pos));
+        mUIVibe.mHover = hit;
+        if (hit != nullptr)
+        {
+            hit->onEvent(event);
+        }
+    }
+    void WinWindow::onMouseClick(MouseDownEvent &event)
+    {
+        auto pos = event.getPos();
+        auto hit = onHitTest(UIHitEvent(pos));
+        mUIVibe.mFocus = hit;
+        mUIVibe.mHover = hit;
+        if (hit != nullptr)
+        {
+            hit->onEvent(event);
+        }
+    }
+    void WinWindow::onMouseUp(MouseUpEvent &event)
+    {
+        // auto pos = event.getPos();
+        auto hit = mUIVibe.mHover; // onHitTest(UIHitEvent(pos));
+        if (hit != nullptr)
+        {
+            hit->onEvent(event);
+        }
+    }
+    void WinWindow::maximize()
+    {
+        ShowWindow(mHWnd, SW_MAXIMIZE);
+    }
+    void WinWindow::restore()
+    {
+        ShowWindow(mHWnd, SW_RESTORE);
+    }
+    void WinWindow::minimize()
+    {
+        ShowWindow(mHWnd, SW_MINIMIZE);
+    }
+    void WinWindow::close()
+    {
+        PostMessageA(mHWnd, WM_CLOSE, 0, 0);
     }
     LRESULT WinWindow::onWinHitTest(UIPoint &cursor)
     {

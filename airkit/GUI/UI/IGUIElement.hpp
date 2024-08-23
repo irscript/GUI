@@ -22,12 +22,18 @@ namespace airkit
         double mCurrTime;
     };
 
+    
     // UI 元素基类
     struct IGUIElement
     {
     public:
         IGUIElement() = default;
         virtual ~IGUIElement() = 0;
+
+        template <typename T>
+        const T &as() const { return *(T *)(this); }
+        template <typename T>
+        T &as() { return *(T *)(this); }
 
     public:
         // 事件响应

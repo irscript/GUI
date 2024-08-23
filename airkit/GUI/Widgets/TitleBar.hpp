@@ -17,8 +17,6 @@ namespace airkit
 
         virtual void onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList);
 
-        
-
     protected:
         UIHolder mUIIcon;  // 窗口图标
         UIHolder mUITitle; // 窗口标题
@@ -49,6 +47,10 @@ namespace airkit
             ~ButtonMaximize() = default;
 
             virtual void onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList);
+            virtual void onMouseUp(MouseUpEvent &event);
+
+        protected:
+            bool mIsMaximize = false;
         };
         // 最小化
         struct ButtonMinimize : public Button
@@ -58,6 +60,7 @@ namespace airkit
             ~ButtonMinimize() = default;
 
             virtual void onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList);
+            virtual void onMouseUp(MouseUpEvent &event);
         };
         // 关闭
         struct ButtonClose : public Button
@@ -67,6 +70,7 @@ namespace airkit
             ~ButtonClose() = default;
 
             virtual void onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList);
+            virtual void onMouseUp(MouseUpEvent &event);
         };
     };
 

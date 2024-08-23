@@ -26,7 +26,26 @@ namespace airkit
         HWND getWHD() const { return mHWnd; }
 
     protected:
+        // 窗口大小改变
         virtual void onSized(UIResizedEvent &event) override;
+
+        // 响应命中测试
+        virtual IGUIElement *onHitTest(const UIHitEvent &event);
+        //鼠标移动
+        virtual void onMouseMove(MouseMoveEvent &event);
+        // 鼠标按下
+        virtual void onMouseClick(MouseDownEvent &event) override;
+        // 鼠标释放
+        virtual void onMouseUp(MouseUpEvent &event) override;
+
+        // 最大化
+        virtual void maximize() override;
+        // 还原
+        virtual void restore() override;
+        // 最小化
+        virtual void minimize() override;
+        // 关闭
+        virtual void close() override;
 
     protected:
         virtual LRESULT onWinHitTest(UIPoint &cursor);

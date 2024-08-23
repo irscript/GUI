@@ -23,6 +23,11 @@ namespace airkit
 
         virtual int32_t doModal() = 0;
 
+        virtual void maximize() = 0; // 最大化
+        virtual void restore() = 0;  // 还原
+        virtual void minimize() = 0; // 最小化
+        virtual void close() = 0;    // 关闭
+
         UIVibe &getUIVibe() { return mUIVibe; }
         const UIVibe &getUIVibe() const { return mUIVibe; }
 
