@@ -86,7 +86,7 @@ namespace airkit
     }
     void airkit::GLWindow::onSized(UIResizedEvent &event)
     {
-        mArea = event.getArea();
+        WinWindow::onSized(event);
         render();
     }
 }

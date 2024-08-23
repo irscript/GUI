@@ -26,6 +26,9 @@ namespace airkit
         HWND getWHD() const { return mHWnd; }
 
     protected:
+        virtual void onSized(UIResizedEvent &event) override;
+
+    protected:
         virtual LRESULT onWinHitTest(UIPoint &cursor);
         virtual bool onClose();
 

@@ -32,10 +32,12 @@ namespace airkit
             element = mUIClose.get();
             if (element != nullptr && element->getArea().isInArea(pos))
                 return element;
+            // 在标题栏上
+            return this;
         }
 
         // 判断是否在用户元素区域
-        element = mUIClose.get();
+        element = mUIUseArea.get();
         if (element != nullptr)
         {
             // 转换坐标
@@ -52,7 +54,7 @@ namespace airkit
         auto &cmd = drawList.begin();
         cmd.setClipRect(mArea);
         UIHelper ui(drawList);
-        ui.fillRect(mArea, RGBA(0xee9ca7), RGBA(0xffdde1));
+        ui.fillRect(mArea, RGBA(0xffdde1));
         drawList.end(cmd, DrawFlag::Vertex);
 
         if (mUIIcon.get() != nullptr)
@@ -70,23 +72,29 @@ namespace airkit
     void TitleBar::ButtonIcon::onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList)
     {
         auto &cmd = drawList.begin();
-        cmd.setClipRect(mArea);
+        UIArea area = mArea;
+        area.mX += clip.mX;
+        area.mY += clip.mY;
+        cmd.setClipRect(area);
 
         UIHelper ui(drawList);
 
-        ui.drawCircle(mArea.getCenter(), mArea.getWidth() / 2, RGBA(0xee9ca7), RGBA(0xffdde1), 4, 8);
+        ui.fillRect(mArea, RGBA(0xee9ca7));
 
         drawList.end(cmd, DrawFlag::Vertex);
     }
     void TitleBar::ButtonMaximize::onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList)
     {
         auto &cmd = drawList.begin();
-        cmd.setClipRect(mArea);
+        UIArea area = mArea;
+        area.mX += clip.mX;
+        area.mY += clip.mY;
+        cmd.setClipRect(area);
 
         UIHelper ui(drawList);
         RGBA color = vibe.mHover == this ? RGBA(0xffdde1) : RGBA(0xee9ca7);
-
-        ui.drawRect2(mArea.getCenter(), mArea.getWidth() / 2, color, 4);
+        
+        ui.drawRect(area, RGBA(0xee9ca7), 4);
 
         drawList.end(cmd, DrawFlag::Vertex);
     }

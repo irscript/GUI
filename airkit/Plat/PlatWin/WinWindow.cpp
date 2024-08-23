@@ -2,6 +2,7 @@
 #include <windowsx.h>
 #include <uxtheme.h>
 #include <vssym32.h>
+#include "WinWindow.hpp"
 
 namespace airkit
 {
@@ -39,27 +40,77 @@ namespace airkit
         mTitleBar = bar;
         if (bar.get() != nullptr)
         {
-            bar->setUIParent(getUIWindow());
+            auto win = getUIWindow();
+            bar->setUIParent(win);
             // 计算窗口标题栏布局
-            SIZE title_bar_size = {0};
+            /*SIZE title_bar_size = {0};
             const int top_and_bottom_borders = 2;
             UINT dpi = GetDpiForWindow(mHWnd);
             auto height = GetSystemMetricsForDpi(SM_CYCAPTION, dpi) + top_and_bottom_borders;
+            */
+            SIZE title_bar_size = {0};
+            const int top_and_bottom_borders = 2;
+            HTHEME theme = OpenThemeData(mHWnd, L"WINDOW");
+            UINT dpi = GetDpiForWindow(mHWnd);
+            GetThemePartSize(theme, NULL, WP_CAPTION, CS_ACTIVE, NULL, TS_TRUE, &title_bar_size);
+            CloseThemeData(theme);
+
+            float height = title_bar_size.cy * dpi / 96.0f;
+            float half = height / 3*2;
+            height += half;
 
             UIArea size(0, 0, mArea.getWidth(), height);
             UIResizedEvent ev(size);
             mTitleBar->onSized(ev);
         }
     }
+    void WinWindow::onSized(UIResizedEvent &event)
+    {
+        mArea = event.getArea();
+        if (mTitleBar.get() != nullptr)
+        {
+            // 计算窗口标题栏布局
+            /*SIZE title_bar_size = {0};
+            const int top_and_bottom_borders = 2;
+            UINT dpi = GetDpiForWindow(mHWnd);
+            auto height = GetSystemMetricsForDpi(SM_CYCAPTION, dpi) + top_and_bottom_borders;
+            */
+            SIZE title_bar_size = {0};
+            const int top_and_bottom_borders = 2;
+            HTHEME theme = OpenThemeData(mHWnd, L"WINDOW");
+            UINT dpi = GetDpiForWindow(mHWnd);
+            GetThemePartSize(theme, NULL, WP_CAPTION, CS_ACTIVE, NULL, TS_TRUE, &title_bar_size);
+            CloseThemeData(theme);
 
+            float height = title_bar_size.cy * dpi / 96.0f;
+            float half = height / 3*2;
+            height += half;
+
+            float y = 0;
+           /* // 检查窗口是否最大化
+            WINDOWPLACEMENT placement = {0};
+            placement.length = sizeof(WINDOWPLACEMENT);
+            if (GetWindowPlacement(mHWnd, &placement) &&
+                placement.showCmd == SW_SHOWMAXIMIZED)
+            {
+                int padding = GetSystemMetricsForDpi(SM_CXPADDEDBORDER, dpi);
+                y += padding * 2;
+            }
+            */
+
+            UIArea size(0, y, mArea.getWidth(), height);
+            UIResizedEvent ev(size);
+            mTitleBar->onSized(ev);
+        }
+    }
     LRESULT WinWindow::onWinHitTest(UIPoint &cursor)
     {
         auto titleBar = mTitleBar.get();
         if (mTitleBar.get() != nullptr)
         {
             auto hit = ((WinTitleBar *)titleBar)->onWinHitTest(cursor);
-            if (hit != HTNOWHERE)
-                return hit;
+            // if (hit != HTNOWHERE)
+            return hit;
         }
         return HTCLIENT;
     }
@@ -70,9 +121,9 @@ namespace airkit
     LRESULT WinTitleBar::onWinHitTest(UIPoint &cursor)
     {
         UIHitEvent ev(cursor);
-        auto hit = onHitTest(ev);
+        const auto hit = onHitTest(ev);
         if (hit == nullptr)
-            return HTNOWHERE;
+            return HTCLIENT;
 
         if (hit == mUIIcon.get())
             return HTMENU;
@@ -112,22 +163,32 @@ namespace airkit
         if (mUIClose.get() != nullptr)
         {
             auto &area = mUIClose->getArea();
+            area.setSize(width, height);
             offset += width;
-            area.setArea(mArea.getWidth() - offset, 2, width, height);
+            auto x = mArea.getWidth() - offset;
+            area.setPos(x, 2);
+            offset += 2;
         }
         if (mUIMaximize.get() != nullptr)
         {
             auto &area = mUIMaximize->getArea();
+            area.setSize(width, height);
             offset += width;
-            area.setArea(mArea.getWidth() - offset, 2, width, height);
+            auto x = mArea.getWidth() - offset;
+            area.setPos(x, 2);
+            offset += 2;
         }
         if (mUIMinimize.get() != nullptr)
         {
             auto &area = mUIMinimize->getArea();
+            area.setSize(width, height);
             offset += width;
-            area.setArea(mArea.getWidth() - offset, 2, width, height);
+            auto x = mArea.getWidth() - offset;
+            area.setPos(x, 2);
+            offset += 2;
         }
         mBtnArea = mArea;
-        mBtnArea.setX(mArea.getWidth() - offset);
+        mBtnArea.setPos(mArea.getWidth() - offset, 0);
+        mBtnArea.setSize(offset, mArea.getHeight());
     }
 }

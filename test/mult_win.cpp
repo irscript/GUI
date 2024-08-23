@@ -74,10 +74,7 @@ struct Window : public GLWindow
             present();
         }
     }
-    virtual LRESULT onHitTest(UIPoint &cursor) override
-    {
-        return HTCLIENT;
-    }
+    
 
 private:
     PipelineHolder mPipeline;

@@ -61,6 +61,7 @@ namespace airkit
         virtual void onMouseHover(MouseHoverEvent &event);
         virtual void onMouseWheel(MouseWheelEvent &event);
 
+    public:
         // 响应命中测试
         virtual IGUIElement *onHitTest(const UIHitEvent &event);
         // 渲染帧

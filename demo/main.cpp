@@ -45,7 +45,11 @@ struct Window : public GLWindow
         mTexture = render->createTexture2D("bug.png");
 
         auto title = new ::TitleBar();
-        setTitleBar(UIHolder(title) );
+        setTitleBar(UIHolder(title));
+    }
+    void onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList) override
+    {
+        mTitleBar->onRenderFrame(vibe, clip, drawList);
     }
     virtual void render() override
     {

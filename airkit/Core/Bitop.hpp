@@ -71,16 +71,16 @@ namespace airkit
         Bit32(uint32_t value = 0) : mValue(value) {}
 
         // 置位
-        void set(uint32_t bit) { mValue = Bitop::set(mValue, bit); }
+        void set(uint32_t bit) { mValue = Bitop::set<uint32_t>(mValue, bit); }
         void setMask(uint32_t mask) { mValue |= mask; }
         // 复位
-        void reset(uint32_t bit) { mValue = Bitop::reset(mValue, bit); }
+        void reset(uint32_t bit) { mValue = Bitop::reset<uint32_t>(mValue, bit); }
         void resetMask(uint32_t mask) { mValue &= ~mask; }
         // 检查位
-        bool check(uint32_t bit) const { return Bitop::check(mValue, bit); }
+        bool check(uint32_t bit) const { return Bitop::check<uint32_t>(mValue, bit); }
         uint32_t checkMask(uint32_t mask) const { return (mValue & mask); }
         // 位翻转
-        void flip(uint32_t bit) { mValue = Bitop::flip(mValue, bit); }
+        void flip(uint32_t bit) { mValue = Bitop::flip<uint32_t>(mValue, bit); }
         void flipMask(uint32_t mask) { mValue ^= mask; }
         // 获取值
         uint32_t getValue() const { return mValue; }

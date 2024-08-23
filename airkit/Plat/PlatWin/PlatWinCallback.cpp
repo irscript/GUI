@@ -130,6 +130,8 @@ namespace airkit
                 WinWindow &win = *(WinWindow *)userdata;
                 auto pos = (WINDOWPOS *)l_param;
 
+                auto flag = pos->flags;
+
                 auto w = pos->cx;
                 auto h = pos->cy;
                 auto x = pos->x;
@@ -137,7 +139,7 @@ namespace airkit
 
                 // 判断大小是否有变化
                 auto &area = win.mArea;
-                if (area.getWidth() != w || area.getHeight() != h)
+                if (flag & SWP_NOSIZE == false) //(area.getWidth() != w || area.getHeight() != h)
                 {
                     // 生成大小变化事件
                     UIArea na(x, y, w, h);
@@ -145,7 +147,7 @@ namespace airkit
                     win.onEvent(ev);
                 }
                 // 判断位置是否有变化
-                if (area.getPos().getX() != x || area.getPos().getY() != y)
+                if (flag & SWP_NOMOVE == false) //(area.getPos().getX() != x || area.getPos().getY() != y)
                 {
                     // 生成位置变化事件
                     UIMovingEvent ev(x, y);
@@ -162,6 +164,9 @@ namespace airkit
             {
                 WinWindow &win = *(WinWindow *)userdata;
                 auto pos = (WINDOWPOS *)l_param;
+
+                auto flag = pos->flags;
+
                 auto w = pos->cx;
                 auto h = pos->cy;
                 auto x = pos->x;
@@ -325,6 +330,7 @@ namespace airkit
                 win.resetUIFlag(UIFlag::MouseEnter);
                 MouseLeaveEvent ev(cursor);
                 win.onEvent(ev);
+                return 0;
             }
         }
         break;
@@ -358,13 +364,35 @@ namespace airkit
                 auto z = GET_WHEEL_DELTA_WPARAM(w_param);
                 MouseWheelEvent ev(cursor, float(z) / float(WHEEL_DELTA));
                 win.onEvent(ev);
+                return 0;
             }
         }
         break;
         case WM_NCLBUTTONDOWN:
         case WM_LBUTTONDOWN:
-            mouse_event_btn<MouseDownEvent>(handle, MouseButton::Left, l_param);
-            break;
+        {
+            // mouse_event_btn<MouseDownEvent>(handle, MouseButton::Left, l_param);
+            auto userdata = GetWindowLongPtr(handle, GWLP_USERDATA);
+            if (userdata != 0)
+            {
+                WinWindow &win = *(WinWindow *)userdata;
+
+                auto cursor = win.getCursorPos();
+                MouseDownEvent ev(MouseButton::Left, cursor);
+                win.onEvent(ev);
+                auto hit = win.onWinHitTest(cursor);
+                switch (hit)
+                {
+                case HTCLOSE:
+                    return 0;
+                case HTMINBUTTON:
+                    return 0;
+                case HTMAXBUTTON:
+                    return 0;
+                }
+            }
+        }
+        break;
         case WM_NCRBUTTONDOWN:
         case WM_RBUTTONDOWN:
             mouse_event_btn<MouseDownEvent>(handle, MouseButton::Right, l_param);
@@ -381,11 +409,30 @@ namespace airkit
         case WM_NCRBUTTONUP:
         case WM_RBUTTONUP:
             mouse_event_btn<MouseUpEvent>(handle, MouseButton::Right, l_param);
+
             break;
         case WM_NCMBUTTONUP:
         case WM_MBUTTONUP:
             mouse_event_btn<MouseUpEvent>(handle, MouseButton::Middle, l_param);
+            if (message == WM_NCMBUTTONUP)
+                return 0;
             break;
+
+        case WM_ACTIVATE:
+        {
+            auto userdata = GetWindowLongPtr(handle, GWLP_USERDATA);
+            if (userdata != 0)
+            {
+                WinWindow &win = *(WinWindow *)userdata;
+                auto cursor = win.getCursorPos();
+                if (w_param == WA_INACTIVE)
+                {
+                    win.resetUIFlag(UIFlag::MouseEnter);
+                    MouseLeaveEvent ev(cursor);
+                }
+                // return 0;
+            }
+        }
         }
         return DefWindowProcA(handle, message, w_param, l_param);
     }
@@ -402,6 +449,7 @@ namespace airkit
     {
         if (!w_param)
             return DefWindowProcA(handle, message, w_param, l_param);
+
         UINT dpi = GetDpiForWindow(handle);
 
         int frame_x = GetSystemMetricsForDpi(SM_CXFRAME, dpi);
@@ -441,27 +489,28 @@ namespace airkit
         case HTBOTTOMLEFT:
             return hit;
         }
+        /*
+                UINT dpi = GetDpiForWindow(handle);
+                int frame_y = GetSystemMetricsForDpi(SM_CYFRAME, dpi);
+                int padding = GetSystemMetricsForDpi(SM_CXPADDEDBORDER, dpi);
 
-        UINT dpi = GetDpiForWindow(handle);
-        int frame_y = GetSystemMetricsForDpi(SM_CYFRAME, dpi);
-        int padding = GetSystemMetricsForDpi(SM_CXPADDEDBORDER, dpi);
-
-        POINT cursor_point = {0};
-        cursor_point.x = GET_X_LPARAM(l_param);
-        cursor_point.y = GET_Y_LPARAM(l_param);
-        ScreenToClient(handle, &cursor_point);
-        ScreenToClient(handle, &cursor_point);
-        if (cursor_point.y > 0 && cursor_point.y < frame_y + padding)
-            return HTTOP;
-        
+                POINT cursor_point = {0};
+                cursor_point.x = GET_X_LPARAM(l_param);
+                cursor_point.y = GET_Y_LPARAM(l_param);
+                ScreenToClient(handle, &cursor_point);
+                ScreenToClient(handle, &cursor_point);
+                if (cursor_point.y > 0 && cursor_point.y < frame_y + padding)
+                    return HTTOP;
+        */
 
         auto userdata = GetWindowLongPtr(handle, GWLP_USERDATA);
         if (userdata == 0)
             return HTCLIENT;
 
         WinWindow &win = *(WinWindow *)userdata;
+        auto cursor = win.getCursorPos();
 
-        UIPoint cursor(cursor_point.x, cursor_point.y);
+        // UIPoint cursor(cursor_point.x, cursor_point.y);
 
         return win.onWinHitTest(cursor);
     }

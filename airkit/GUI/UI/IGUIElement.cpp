@@ -111,11 +111,11 @@ namespace airkit
     void IGUIElement::onMoved(UIMovedEvent &event)
     {
         auto &pos = event.getPos();
-        printf("ui moved:(%f,%f)\n", pos.getX(), pos.getY());
+       // printf("ui moved:(%f,%f)\n", pos.getX(), pos.getY());
     }
     void IGUIElement::onCharInput(CharInputEvent &event)
     {
-        printf("%d\n", event.getUtf32());
+        //printf("%d\n", event.getUtf32());
     }
 
     void IGUIElement::onKeyDown(KeyDownEvent &event)
@@ -127,37 +127,37 @@ namespace airkit
 
     void IGUIElement::onMouseClick(MouseDownEvent &event)
     {
-        printf("mouse down[ %u ]:(%f,%f)\n", event.getButton(), event.getX(), event.getY());
+        //printf("mouse down[ %u ]:(%f,%f)\n", event.getButton(), event.getX(), event.getY());
     }
 
     void IGUIElement::onMouseUp(MouseUpEvent &event)
     {
-        printf("mouse up[ %u ]:(%f,%f)\n", event.getButton(), event.getX(), event.getY());
+        //printf("mouse up[ %u ]:(%f,%f)\n", event.getButton(), event.getX(), event.getY());
     }
 
     void IGUIElement::onMouseMove(MouseMoveEvent &event)
     {
-        printf("mouse move:(%f,%f)\n", event.getX(), event.getY());
+        //printf("mouse move:(%f,%f)\n", event.getX(), event.getY());
     }
 
     void IGUIElement::onMouseEnter(MouseEnterEvent &event)
     {
-        printf("mouse enter:(%f,%f)\n", event.getX(), event.getY());
+        //printf("mouse enter:(%f,%f)\n", event.getX(), event.getY());
     }
 
     void IGUIElement::onMouseLeave(MouseLeaveEvent &event)
     {
-        printf("mouse leave:(%f,%f)\n", event.getX(), event.getY());
+        //printf("mouse leave:(%f,%f)\n", event.getX(), event.getY());
     }
 
     void IGUIElement::onMouseHover(MouseHoverEvent &event)
     {
-        printf("mouse hover:(%f,%f)\n", event.getX(), event.getY());
+        //printf("mouse hover:(%f,%f)\n", event.getX(), event.getY());
     }
 
     void IGUIElement::onMouseWheel(MouseWheelEvent &event)
     {
-        printf("mouse wheel:(%f,%f)->%f\n", event.getX(), event.getY(), event.getDelta());
+        //printf("mouse wheel:(%f,%f)->%f\n", event.getX(), event.getY(), event.getDelta());
     }
 
     IGUIElement *IGUIElement::onHitTest(const UIHitEvent &event)
@@ -178,7 +178,7 @@ namespace airkit
         UIHolder parent = getUIParent();
         while (parent.get() != nullptr)
         {
-            if (parent->mUIFlag.check(UIFlag::Window) == true)
+            if (parent->mUIFlag.checkMask(UIFlag::Window) == true)
                 break;
             parent = parent->getUIParent();
         }
@@ -195,7 +195,7 @@ namespace airkit
         UIHolder parent = getUIParent();
         while (parent.get() != nullptr)
         {
-            if (parent->mUIFlag.check(UIFlag::Window) == true)
+            if (parent->mUIFlag.checkMask(UIFlag::Window) == true)
                 break;
             parent = parent->getUIParent();
         }
@@ -216,7 +216,7 @@ namespace airkit
         while (parent.get() != nullptr)
         {
             // 父UI是窗口
-            if (parent->mUIFlag.check(UIFlag::Window) == true)
+            if (parent->mUIFlag.checkMask(UIFlag::Window) == true)
                 break;
             // 计算坐标
             x += parent->mArea.getX();
@@ -269,13 +269,13 @@ namespace airkit
     UIHolder IGUIElement::getUIWindow()
     {
         // 如果自己就是窗口
-        if (mUIFlag.check(UIFlag::Window) == true)
+        if (mUIFlag.checkMask(UIFlag::Window) == true)
             return IPlat::getInstance().getWinHub().findWindow(this);
 
         UIHolder parent = getUIParent();
         while (parent.get() != nullptr)
         {
-            if (parent->mUIFlag.check(UIFlag::Window) == true)
+            if (parent->mUIFlag.checkMask(UIFlag::Window) == true)
                 break;
             parent = parent->getUIParent();
         }
@@ -285,13 +285,13 @@ namespace airkit
     const UIHolder IGUIElement::getUIWindow() const
     {
         // 如果自己就是窗口
-        if (mUIFlag.check(UIFlag::Window) == true)
+        if (mUIFlag.checkMask(UIFlag::Window) == true)
             return IPlat::getInstance().getWinHub().findWindow(this);
 
         UIHolder parent = getUIParent();
         while (parent.get() != nullptr)
         {
-            if (parent->mUIFlag.check(UIFlag::Window) == true)
+            if (parent->mUIFlag.checkMask(UIFlag::Window) == true)
                 break;
             parent = parent->getUIParent();
         }
@@ -349,7 +349,7 @@ namespace airkit
     }
     void IUIParent::onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList)
     { // 元素可见且有子UI
-        if (mUIFlag.check(UIFlag::Visible) == true && mChildUI.empty() == false)
+        if (mUIFlag.checkMask(UIFlag::Visible) == true && mChildUI.empty() == false)
         {
             // 子元素的裁剪矩阵
             UIArea clip2(clip.getX() + mArea.getX(),

@@ -90,7 +90,7 @@ namespace airkit
                    y >= mY && y <= getBottom();
         }
 
-    protected:
+    //protected:
         float mX;
         float mY;
         float mWidth;
