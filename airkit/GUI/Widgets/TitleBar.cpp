@@ -92,9 +92,18 @@ namespace airkit
         cmd.setClipRect(area);
 
         UIHelper ui(drawList);
-        RGBA color = vibe.mHover == this ? RGBA(0xffdde1) : RGBA(0xee9ca7);
+        RGBA color = vibe.mHover == this ? RGBA(0, 0, 255, 0) : RGBA(0xee9ca7);
 
-        ui.drawRect(area, RGBA(0xee9ca7), 4);
+        float y = area.getHeight() / 4;
+        float x = area.getWidth() / 5;
+
+        auto tl = area.getTL(), br = area.getBR();
+        tl.mY += y * 2;
+        tl.mX += x;
+        br.mY -= y;
+        br.mX -= x*2;
+
+        ui.drawRect(tl, br, color, 2);
 
         drawList.end(cmd, DrawFlag::Vertex);
     }
@@ -113,13 +122,23 @@ namespace airkit
     void TitleBar::ButtonMinimize::onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList)
     {
         auto &cmd = drawList.begin();
-        cmd.setClipRect(mArea);
+        UIArea area = mArea;
+        area.mX += clip.mX;
+        area.mY += clip.mY;
+        cmd.setClipRect(area);
 
         UIHelper ui(drawList);
-        RGBA color = vibe.mHover == this ? RGBA(0xffdde1) : RGBA(0xee9ca7);
-        UIPoint start = mArea.getTL(), end = mArea.getTR();
+        RGBA color = vibe.mHover == this ? RGBA(0, 0, 255, 0) : RGBA(0xee9ca7);
+        UIPoint start = area.getTL(), end = area.getTR();
 
-        ui.drawLine(start, end, RGBA(0xffdde1), 4);
+        float y = area.getHeight() / 5 * 3;
+        float x = area.getWidth() / 4;
+        start.mY += y;
+        start.mX += x;
+        end.mY += y;
+        end.mX -= x;
+
+        ui.drawLine(start, end, color, 2);
 
         drawList.end(cmd, DrawFlag::Vertex);
     }
@@ -137,15 +156,28 @@ namespace airkit
     void TitleBar::ButtonClose::onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList)
     {
         auto &cmd = drawList.begin();
-        cmd.setClipRect(mArea);
+        UIArea area = mArea;
+        area.mX += clip.mX;
+        area.mY += clip.mY;
+        cmd.setClipRect(area);
+
         UIHelper ui(drawList);
-        RGBA color = vibe.mHover == this ? RGBA(0xffdde1) : RGBA(0xee9ca7);
-        float thickness = /* mArea.getHeight() / 4;
-         if (thickness < 4)
-             thickness =*/
-            4;
-        ui.drawLine(mArea.getTL(), mArea.getBR(), RGBA(0xffdde1), thickness);
-        ui.drawLine(mArea.getBL(), mArea.getTR(), RGBA(0xffdde1), thickness);
+        RGBA color = vibe.mHover == this ? RGBA(0, 0, 255, 0) : RGBA(0xee9ca7);
+
+        float y = area.getHeight() / 4;
+        float x = area.getWidth() / 5;
+
+        auto tl = area.getTL(), br = area.getBR();
+        tl.mY += y * 2;
+        //tl.mX += x;
+        br.mY -= y;
+        br.mX -= x*3;
+
+        UIPoint tr(br.mX, tl.mY);
+        UIPoint bl(tl.mX, br.mY);
+
+        ui.drawLine(tl, br, color, 4);
+        ui.drawLine(bl, tr, color, 4);
         drawList.end(cmd, DrawFlag::Vertex);
     }
     void TitleBar::ButtonClose::onMouseUp(MouseUpEvent &event)
