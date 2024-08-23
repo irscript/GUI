@@ -33,8 +33,8 @@ struct Window : public GLWindow
         // auto ubosize = shader->bindUniformBuffer("uPushConstant", 0);
         // mUBO = render->createUniformBuffer(ubosize, 0);
 
-        mTexture = render->createTexture2D("bug.png");
-        mFont = render->createTexture2D("A_letter.png");
+       // mTexture = render->createTexture2D("bug.png");
+        mFont = render->createTexture2D("fnt.png");
     }
     virtual void render() override
     {
@@ -189,7 +189,7 @@ struct Window : public GLWindow
 
             // 绘制纹理
            // ui.drawRactTex(UIPoint(500,300), UIPoint(0, 1), UIPoint(564,364), UIPoint(1, 0),RGBA(0,0,255,0));
-           ui.drawRactTex(UIPoint(w / 3.0f, h / 3.0f), UIPoint(0, 1), UIPoint(w / 3.0f * 2, h / 3.0f * 2), UIPoint(1, 0),RGBA(106,44,112,0));
+           ui.drawRactTex(UIPoint(w / 3.0f, h / 3.0f), UIPoint(0, 0.01), UIPoint(w / 3.0f * 2, h / 3.0f * 2), UIPoint(0.01, 0),RGBA(106,44,112,0));
 
 
             mVBO->setData(mDrawList.mVertices.data(), mDrawList.mVertices.size() * sizeof(UIVertex));

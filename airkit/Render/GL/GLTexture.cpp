@@ -9,6 +9,8 @@ namespace airkit
     {
         switch (format)
         {
+        case ColorFormat::R8:
+            return GL_R8;
         case ColorFormat::RGB24:
             return GL_RGB;
         case ColorFormat::RGBA32:
@@ -66,6 +68,13 @@ namespace airkit
                 mInternalFormat = GL_RGB;
                 mSpecification.mFormat = ColorFormat::RGB24;
             }
+            else if (channels == 1)
+            {
+                mInternalFormat = GL_RED;
+                mSpecification.mFormat = ColorFormat::R8;
+                gl.PixelStorei(GL_UNPACK_ALIGNMENT, 1);
+                GL_CHECK();
+            }
             else
             {
                 checkError(false, "{}:Unknown image format!", path);
@@ -73,9 +82,6 @@ namespace airkit
 
             gl.CreateTextures(GL_TEXTURE_2D, 1, &mResID);
             GL_CHECK();
-            //gl.TextureStorage2D(mResID, 1, mInternalFormat, width, height);
-            //GL_CHECK();
-
             // 设置纹理采样参数
             gl.TextureParameteri(mResID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             GL_CHECK();
@@ -90,6 +96,12 @@ namespace airkit
             GL_CHECK();
             gl.TexImage2D(GL_TEXTURE_2D, 0, mInternalFormat, width, height, 0, mInternalFormat, GL_UNSIGNED_BYTE, data);
             GL_CHECK();
+            // 恢复纹理对齐
+            if (mInternalFormat == GL_RED)
+            {
+                gl.PixelStorei(GL_UNPACK_ALIGNMENT, 4);
+                GL_CHECK();
+            }
 
             stbi_image_free(data);
         }
@@ -104,7 +116,7 @@ namespace airkit
     {
         auto &gl = getGlDriver();
         gl.BindTextureUnit(slot, mResID);
-        //gl.BindTexture(GL_TEXTURE_2D, mResID);
+        // gl.BindTexture(GL_TEXTURE_2D, mResID);
         GL_CHECK();
         mSlot = slot;
     }

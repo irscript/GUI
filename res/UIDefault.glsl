@@ -67,6 +67,7 @@ vec4 fontColor(){
     bg.r=1-bg.r;
     bg.g=1-bg.g;
     bg.b=1-bg.b;
+    bg.a=opacity;
     return mix(bg,texclr.Color,  opacity);
 }
 
