@@ -17,6 +17,13 @@ namespace airkit
             mB = rgb & 0xFF;
             mA = 1;
         }
+        RGBA(int32_t rgb)
+        {
+            mR = (rgb >> 16) & 0xFF;
+            mG = (rgb >> 8) & 0xFF;
+            mB = rgb & 0xFF;
+            mA = 1;
+        }
         RGBA(const RGBA &rgba) : mRGBA(rgba.mRGBA) {}
 
         // 0xRRGGBB
@@ -59,7 +66,7 @@ namespace airkit
             return hex;
         }
         // 0xRRGGBBAA
-        static RGBA fromRGBA(uint32_t rgba)
+        static RGBA fromRGBA(uint32_t rgba = -1)
         {
             uint8_t r = (rgba >> 24) & 0xFF;
             uint8_t g = (rgba >> 16) & 0xFF;
@@ -68,7 +75,7 @@ namespace airkit
             return RGBA(r, g, b, a);
         }
         // 0xRRGGBB
-        static RGBA fromRGB(uint32_t rgb)
+        static RGBA fromRGB(uint32_t rgb = -1)
         {
             uint8_t r = (rgb >> 16) & 0xFF;
             uint8_t g = (rgb >> 8) & 0xFF;

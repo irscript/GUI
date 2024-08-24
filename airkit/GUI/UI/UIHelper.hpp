@@ -47,7 +47,7 @@ namespace airkit
         void fillRect2(const UIPoint &tl, const UIPoint &br, RGBA top, RGBA bottom) { fillRect(tl, br, top, top, bottom, bottom); }
         void fillRect(const UIPoint &tl, const UIPoint &br, RGBA tlc, RGBA trc, RGBA blc, RGBA brc);
         // 绘制矩形纹理
-        void drawRactTex(const UIPoint &tl, const UIPoint &tluv, const UIPoint &br, const UIPoint &bruv, RGBA color = RGBA(-1));
+        void drawRactTex(const UIPoint &tl, const UIPoint &tluv, const UIPoint &br, const UIPoint &bruv, RGBA color = RGBA::fromRGBA());
 
         // 绘制圆形
         void drawCircle(const UIPoint &center, float radius, RGBA color, float thickness = 1.0f, uint32_t segments = 32) { drawCircle(center, radius, color, color, thickness, segments); }
