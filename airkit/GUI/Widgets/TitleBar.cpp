@@ -79,7 +79,12 @@ namespace airkit
 
         UIHelper ui(drawList);
 
-        ui.fillRect(mArea, RGBA(0xee9ca7));
+        auto center = area.getCenter();
+        center.mY += area.getHeight() / 6;
+        center.mX -= area.getWidth() / 5;
+        auto r=std::min(area.getWidth(), area.getHeight()) / 4;
+
+        ui.drawCircle(center, r, RGBA(142,45,226),RGBA(74,14,0), 8,3);
 
         drawList.end(cmd, DrawFlag::Vertex);
     }
