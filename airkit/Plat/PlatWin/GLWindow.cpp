@@ -12,6 +12,12 @@ namespace airkit
         auto h = mArea.getHeight();
         gl.Viewport(0, 0, w, h);
         gl.Scissor(0, 0, w, h);
+
+        gl.Enable(GL_BLEND);
+        gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        gl.Enable(GL_SCISSOR_TEST);
+        gl.Enable(GL_CULL_FACE);
     }
 
     void GLWindow::present()

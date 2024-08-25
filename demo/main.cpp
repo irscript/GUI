@@ -92,8 +92,10 @@ struct Window : public GLWindow
 
             onRenderFrame(mUIVibe, clip, mCmdlist);
 
-            render->clearColor(1.0f, 1.0f, 1.0f, 1.0f);
-            render->clear();
+            UIHelper ui(mCmdlist);
+            auto &cmd = mCmdlist.begin();
+            ui.drawPoint(clip.getCenter(), RGBA::fromRGBA(0xFF0000FF), 20.0f);
+            mCmdlist.end(cmd, DrawFlag::Vertex);
 
             // 没有数据
             if (mCmdlist.mVertices.size() == 0)
@@ -101,6 +103,8 @@ struct Window : public GLWindow
                 present();
                 return;
             }
+            render->clearColor(1.0f, 1.0f, 1.0f, 1.0f);
+            render->clear();
 
             mPipeline->bind(); // 先生成数据
             auto wsize = mArea.getSize();
@@ -122,6 +126,7 @@ struct Window : public GLWindow
             mVAO->bind();
 
             uint32_t uiflag = 0;
+            shader->setInt("uiflag", 0);
             for (auto &cmd : mCmdlist.mDrawCommands)
             {
                 if (cmd.mDrawFlag != uiflag)
@@ -132,6 +137,7 @@ struct Window : public GLWindow
                 render->drawIndexs(cmd.mStartIndex, cmd.mIndexCount, false);
             }
             mCmdlist.clear();
+
             mVAO->unbind();
             present();
         }

@@ -6,23 +6,23 @@ namespace airkit
 
     struct RGBA
     {
-        RGBA(uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t a = 0)
+        RGBA(uint8_t r = 0, uint8_t g = 0, uint8_t b = 0, uint8_t a = 255)
             : mRGBA(r | (g << 8) | (b << 16) | (a << 24)) {}
 
         // 0xRRGGBB
-        RGBA(uint32_t rgb)
+        RGBA(uint32_t rgb, uint32_t a = 255)
         {
             mR = (rgb >> 16) & 0xFF;
             mG = (rgb >> 8) & 0xFF;
             mB = rgb & 0xFF;
-            mA = 1;
+            mA = a;
         }
-        RGBA(int32_t rgb)
+        RGBA(int32_t rgb, uint32_t a = 255)
         {
             mR = (rgb >> 16) & 0xFF;
             mG = (rgb >> 8) & 0xFF;
             mB = rgb & 0xFF;
-            mA = 1;
+            mA = a;
         }
         RGBA(const RGBA &rgba) : mRGBA(rgba.mRGBA) {}
 
@@ -32,7 +32,7 @@ namespace airkit
             mR = (rgb >> 16) & 0xFF;
             mG = (rgb >> 8) & 0xFF;
             mB = rgb & 0xFF;
-            mA = 1;
+            mA = 255;
             return *this;
         }
         RGBA &operator=(const RGBA &rgba)

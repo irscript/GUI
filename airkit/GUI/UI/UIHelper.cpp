@@ -6,15 +6,15 @@ namespace airkit
     void UIHelper::drawPoint(const UIPoint &point, RGBA color, float thickness)
     {
         auto hw = thickness * 0.5f;
-        auto top = point.mY + hw;
-        auto bottom = point.mY - hw;
+        auto top = point.mY - hw;
+        auto bottom = point.mY + hw;
         auto left = point.mX - hw;
         auto right = point.mX + hw;
 
-        UIPoint tl{top, left};
-        UIPoint tr{top, right};
-        UIPoint bl{bottom, left};
-        UIPoint br{bottom, right};
+        UIPoint tl{left, top};
+        UIPoint tr{right, top};
+        UIPoint bl{left, bottom};
+        UIPoint br{right, bottom};
 
         genRect(tl, color, tr, color, bl, color, br, color);
     }
@@ -321,7 +321,7 @@ namespace airkit
             mDrawList.mIndices.push_back(end);
             mDrawList.mIndices.push_back(start);
             mDrawList.mIndices.push_back(end + 1);
-            
+
             mDrawList.mIndices.push_back(end + 1);
             mDrawList.mIndices.push_back(start);
             mDrawList.mIndices.push_back(start + 1);
@@ -388,11 +388,9 @@ namespace airkit
         mDrawList.mIndices.push_back(index);
         mDrawList.mIndices.push_back(index + 2);
         mDrawList.mIndices.push_back(index + 1);
-        
 
         mDrawList.mIndices.push_back(index + 1);
         mDrawList.mIndices.push_back(index + 2);
         mDrawList.mIndices.push_back(index + 3);
-        
     }
 }

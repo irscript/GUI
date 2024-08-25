@@ -54,7 +54,7 @@ namespace airkit
         auto &cmd = drawList.begin();
         cmd.setClipRect(mArea);
         UIHelper ui(drawList);
-        ui.fillRect(mArea, RGBA(0xffdde1));
+        ui.fillRect(mArea, RGBA(0xff,0xdd,0xe1));
         drawList.end(cmd, DrawFlag::Vertex);
 
         if (mUIIcon.get() != nullptr)
@@ -97,7 +97,7 @@ namespace airkit
         cmd.setClipRect(area);
 
         UIHelper ui(drawList);
-        RGBA color = vibe.mHover == this ? RGBA(0, 0, 255, 0) : RGBA(0xee9ca7);
+        RGBA color = vibe.mHover == this ? RGBA(0, 0, 255) : RGBA(0xee9ca7);
 
         float y = area.getHeight() / 4;
         float x = area.getWidth() / 5;
@@ -133,7 +133,7 @@ namespace airkit
         cmd.setClipRect(area);
 
         UIHelper ui(drawList);
-        RGBA color = vibe.mHover == this ? RGBA(0, 0, 255, 0) : RGBA(0xee9ca7);
+        RGBA color = vibe.mHover == this ? RGBA(0, 0, 255) : RGBA(0xee9ca7);
         UIPoint start = area.getTL(), end = area.getTR();
 
         float y = area.getHeight() / 5 * 3;
@@ -167,7 +167,7 @@ namespace airkit
         cmd.setClipRect(area);
 
         UIHelper ui(drawList);
-        RGBA color = vibe.mHover == this ? RGBA(0, 0, 255, 0) : RGBA(0xee9ca7);
+        RGBA color = vibe.mHover == this ? RGBA(0, 0, 255) : RGBA(0xee9ca7);
 
         float y = area.getHeight() / 4;
         float x = area.getWidth() / 5;
