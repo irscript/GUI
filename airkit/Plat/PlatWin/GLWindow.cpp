@@ -17,7 +17,11 @@ namespace airkit
         gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         gl.Enable(GL_SCISSOR_TEST);
+        
+        // 设置剔除背面,设置正面的顶点顺序为逆时针
         gl.Enable(GL_CULL_FACE);
+        gl.CullFace(GL_BACK);
+        gl.FrontFace(GL_CCW);
     }
 
     void GLWindow::present()
