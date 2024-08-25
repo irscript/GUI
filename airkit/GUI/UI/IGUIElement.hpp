@@ -22,7 +22,6 @@ namespace airkit
         double mCurrTime;
     };
 
-    
     // UI 元素基类
     struct IGUIElement
     {
@@ -121,6 +120,11 @@ namespace airkit
         const UIArea &getArea() const { return mArea; }
         UIArea &getArea() { return mArea; }
 
+        // 获取自身的持有者
+        virtual UIHolder getSelf();
+        // 获取UI持有者
+        virtual UIHolder getHolder(IGUIElement *ui) { return UIHolder(); }
+
     protected:
         UIFlag mUIFlag;      // UI 标志
         UIArea mArea;        // UI 区域位置大小
@@ -136,9 +140,20 @@ namespace airkit
         virtual IGUIElement *onHitTest(const UIHitEvent &event) override;
         // 渲染帧
         virtual void onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList) override;
+        virtual UIHolder getHolder(IGUIElement *ui) override;
+
+        // 添加子UI
+        void addChild(UIHolder ui) { mChildUI.push_back(ui); }
+        // 移除子UI
+        void removeChild(UIHolder ui) { mChildUI.remove(ui); }
 
     protected:
         std::list<UIHolder> mChildUI; // 子 UI
+    };
+    // 布局基类
+    struct ILayout
+    {
+        virtual void onLayout(UIArea &area) = 0;
     };
 }
 

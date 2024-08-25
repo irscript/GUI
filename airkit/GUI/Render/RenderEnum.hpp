@@ -43,5 +43,32 @@ namespace airkit
         RGB24,
         RGBA32,
     };
+
+    // 文本绘制标志
+    struct TextFlag
+    {
+        enum : uint32_t
+        {
+            None = 0,
+
+            Top = 1 << 0,     // 顶部对齐
+            VCenter = 1 << 1, // 垂直居中
+            Bottom = 1 << 2,  // 底部对齐
+
+            Left = 1 << 3,    // 左对齐
+            HCenter = 1 << 4, // 水平居中
+            Right = 1 << 5,   // 右对齐
+
+            Wrap = 1 << 6, // 换行
+
+            Strikeout = 1 << 7, // 删除线
+            Underline = 1 << 8, // 下划线
+
+            // 默认值
+            Default = Top | HCenter
+
+        };
+    };
+
 }
 #endif // __RENDERENUM_H__

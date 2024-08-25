@@ -111,11 +111,11 @@ namespace airkit
     void IGUIElement::onMoved(UIMovedEvent &event)
     {
         auto &pos = event.getPos();
-       // printf("ui moved:(%f,%f)\n", pos.getX(), pos.getY());
+        // printf("ui moved:(%f,%f)\n", pos.getX(), pos.getY());
     }
     void IGUIElement::onCharInput(CharInputEvent &event)
     {
-        //printf("%d\n", event.getUtf32());
+        // printf("%d\n", event.getUtf32());
     }
 
     void IGUIElement::onKeyDown(KeyDownEvent &event)
@@ -127,37 +127,37 @@ namespace airkit
 
     void IGUIElement::onMouseClick(MouseDownEvent &event)
     {
-        //printf("mouse down[ %u ]:(%f,%f)\n", event.getButton(), event.getX(), event.getY());
+        // printf("mouse down[ %u ]:(%f,%f)\n", event.getButton(), event.getX(), event.getY());
     }
 
     void IGUIElement::onMouseUp(MouseUpEvent &event)
     {
-        //printf("mouse up[ %u ]:(%f,%f)\n", event.getButton(), event.getX(), event.getY());
+        // printf("mouse up[ %u ]:(%f,%f)\n", event.getButton(), event.getX(), event.getY());
     }
 
     void IGUIElement::onMouseMove(MouseMoveEvent &event)
     {
-        //printf("mouse move:(%f,%f)\n", event.getX(), event.getY());
+        // printf("mouse move:(%f,%f)\n", event.getX(), event.getY());
     }
 
     void IGUIElement::onMouseEnter(MouseEnterEvent &event)
     {
-        //printf("mouse enter:(%f,%f)\n", event.getX(), event.getY());
+        // printf("mouse enter:(%f,%f)\n", event.getX(), event.getY());
     }
 
     void IGUIElement::onMouseLeave(MouseLeaveEvent &event)
     {
-        //printf("mouse leave:(%f,%f)\n", event.getX(), event.getY());
+        // printf("mouse leave:(%f,%f)\n", event.getX(), event.getY());
     }
 
     void IGUIElement::onMouseHover(MouseHoverEvent &event)
     {
-        //printf("mouse hover:(%f,%f)\n", event.getX(), event.getY());
+        // printf("mouse hover:(%f,%f)\n", event.getX(), event.getY());
     }
 
     void IGUIElement::onMouseWheel(MouseWheelEvent &event)
     {
-        //printf("mouse wheel:(%f,%f)->%f\n", event.getX(), event.getY(), event.getDelta());
+        // printf("mouse wheel:(%f,%f)->%f\n", event.getX(), event.getY(), event.getDelta());
     }
 
     IGUIElement *IGUIElement::onHitTest(const UIHitEvent &event)
@@ -323,6 +323,17 @@ namespace airkit
             mLimit.setV(UISize(min, max));
         }
     }
+    UIHolder IGUIElement::getSelf()
+    {
+        // 如果自己就是窗口
+        if (mUIFlag.checkMask(UIFlag::Window) == true)
+            return IPlat::getInstance().getWinHub().findWindow(this);
+
+        auto parent = mParentUI.lock();
+        if (parent.get() == nullptr)
+            return UIHolder();
+        return parent->getHolder(this);
+    }
     IGUIElement *IUIParent::onHitTest(const UIHitEvent &event)
     {
         // 先判断是否在本区域内
@@ -360,5 +371,20 @@ namespace airkit
                 child->onRenderFrame(vibe, clip2, drawList);
             }
         }
+    }
+    UIHolder IUIParent::getHolder(IGUIElement *ui)
+    {
+        for (auto &child : mChildUI)
+        {
+            if (child.get() == ui)
+                return child;
+            auto holder = child->getHolder(ui);
+            if (holder.get() != nullptr)
+                return holder;
+        }
+        auto parent = mParentUI.lock();
+        if (parent.get() == nullptr)
+            return UIHolder();
+        return parent->getHolder(this);
     }
 }
