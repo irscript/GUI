@@ -46,6 +46,7 @@ namespace airkit
             Clip = Bitop::bit<uint32_t>(0),    // 裁剪矩阵未改变
             Vertex = Bitop::bit<uint32_t>(1),  // 不使用纹理：使用顶点颜色
             Texture = Bitop::bit<uint32_t>(2), // 非字体纹理纹理：使用纹理颜色
+            MTSDF = Bitop::bit<uint32_t>(3),   // 多通道距离纹理
             // 字体纹理的一些标记
         };
     };

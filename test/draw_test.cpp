@@ -33,8 +33,8 @@ struct Window : public GLWindow
         // auto ubosize = shader->bindUniformBuffer("uPushConstant", 0);
         // mUBO = render->createUniformBuffer(ubosize, 0);
 
-        mTexture = render->createTexture2D("bug.png");
-        }
+        mTexture = render->createTexture2D("A_letter.png"); //"bug.png");
+    }
     virtual void render() override
     {
         if (shouldClose() == false)
@@ -63,7 +63,7 @@ struct Window : public GLWindow
 
             prepare();
 
-            render->clearColor(1.0f, 1.0f, 1.0f, 1.0f);
+            render->clearColor(0.0f, 1.0f, 1.0f, 1.0f);
             render->clear();
 
             mPipeline->bind(); // 先生成数据
@@ -86,52 +86,7 @@ struct Window : public GLWindow
             // 创建顶点缓冲
             auto w = wsize.getWidth();
             auto h = wsize.getHeight();
-            /*
-                        RGBA clr(255, 192, 203, 255);
-                        float color = *(float *)&clr;
-                        float vertices[] = {
-                            w / 4.0f * 3,
-                            h / 4.0f, // top right
-                            1.0f,
-                            1.0f,
-                            RGBA::fromRGBA(255, 0, 0, 255),
 
-                            w / 4.0f * 3,
-                            h / 4.0f * 3, // bottom right
-                            1.0f,
-                            0.0f,
-                            RGBA::fromRGBA(0, 255, 0, 255),
-
-                            w / 4.0f,
-                            h / 4.0f * 3, // bottom left
-                            0.0f,
-                            0.0f,
-                            RGBA::fromRGBA(0, 0, 255, 255),
-
-                            w / 4.0f,
-                            h / 4.0f, // top left
-                            0.0f,
-                            1.0f,
-                            RGBA::fromRGBA(255, 255, 255, 255),
-                        };
-
-                        uint16_t indices[] = {
-                            // note that we start from 0!
-                            0, 1, 3, // first Triangle
-                            1, 2, 3  // second Triangle
-                        };
-
-                        mVBO->setData(vertices, sizeof(vertices));
-                        mIBO->setData(indices, sizeof(indices), 6);
-
-                        mVAO->bind();
-                        mTexture->bind();
-                        shader->setInt("drawfalg", 1);
-                        render->drawIndexs(0, 3, false);
-                        shader->setInt("drawfalg", 0);
-                        render->drawIndexs(3, 3, false);
-                        mVAO->unbind();
-            */
             UIDrawList mDrawList;
             UIHelper ui(mDrawList);
 
@@ -174,21 +129,26 @@ struct Window : public GLWindow
             ui.drawPoint(UIPoint(100, 100), RGBA(0, 0, 255, 255), 12);
 
             // 绘制三角形
-            ui.drawTriangle(UIPoint(400, 100), RGBA(255, 0, 0, 255),
-                            UIPoint(500, 130), RGBA(0, 255, 0, 255),
-                            UIPoint(350, 210), RGBA(0, 0, 255, 255),
+            ui.drawTriangle(UIPoint(400, 100), RGBA(255, 0, 0),
+                            UIPoint(500, 130), RGBA(0, 255, 0),
+                            UIPoint(350, 210), RGBA(0, 0, 255),
                             12);
-            ui.fillTriangle(UIPoint(200, 100), UIPoint(300, 100), UIPoint(200, 200), RGBA(0, 0, 255, 255));
+            ui.fillTriangle(UIPoint(200, 100), UIPoint(300, 100), UIPoint(200, 200), RGBA(0, 0, 255));
 
             // 绘制弧线
             ui.fillSector(UIPoint(500, 400), 80.0f, 0.0f, 90.0f,
-                          RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 2);
+                          RGBA(255, 0, 0, 255), RGBA(0, 255, 0), 2);
             ui.drawArc(UIPoint(500, 400), 80.0f, 0.0f, 90.0f,
-                       RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 8, 2);
+                       RGBA(255, 0, 0, 255), RGBA(0, 255, 0), 8, 2);
 
             // 绘制纹理
-            // ui.drawRactTex(UIPoint(500,300), UIPoint(0, 1), UIPoint(564,364), UIPoint(1, 0),RGBA(0,0,255,0));
-            ui.drawRactTex(UIPoint(w / 3.0f, h / 3.0f), UIPoint(0, 1), UIPoint(w / 3.0f * 2, h / 3.0f * 2), UIPoint(1, 0), RGBA(106, 44, 112, 0));
+            RGBA clrarr[4] = {
+                RGBA(255, 0, 0, 255),
+                RGBA(0, 255, 0, 255),
+                RGBA(0, 0, 255, 255),
+                RGBA(255, 255, 0, 255)};
+            ui.drawRactTex(UIPoint(w / 3.0f, h / 3.0f), UIPoint(0, 1),
+                           UIPoint(w / 3.0f * 2, h / 3.0f * 2), UIPoint(1, 0), clrarr);
 
             mVBO->setData(mDrawList.mVertices.data(), mDrawList.mVertices.size() * sizeof(UIVertex));
             auto icount = mDrawList.mIndices.size();
@@ -198,7 +158,7 @@ struct Window : public GLWindow
 
             shader->setInt("drawflag", 1);
             render->drawIndexs(0, icount - 6, false);
-            shader->setInt("drawflag", 0);
+            shader->setInt("drawflag", 2);
             mTexture->bind();
             // shader->setInt("drawflag", 2);
             render->drawIndexs(icount - 6, 6, false);

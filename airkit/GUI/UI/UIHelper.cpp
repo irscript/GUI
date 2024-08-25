@@ -1,5 +1,6 @@
 
 #include <airkit/GUI/UI/UIHelper.hpp>
+#include "UIHelper.hpp"
 
 namespace airkit
 {
@@ -164,18 +165,18 @@ namespace airkit
         genRect(tl, tlc, tr, trc, bl, blc, br, brc);
     }
 
-    void UIHelper::drawRactTex(const UIPoint &tl, const UIPoint &tluv, const UIPoint &br, const UIPoint &bruv, RGBA color)
+    void UIHelper::drawRactTex(const UIPoint &tl, const UIPoint &tluv, const UIPoint &br, const UIPoint &bruv, const RGBA * const color)
     {
         auto tr = UIPoint(br.getX(), tl.getY());
         auto bl = UIPoint(tl.getX(), br.getY());
 
         auto index = mDrawList.mVertices.size(); // 开始的顶点索引
 
-        UIVertex v0(tl, tluv, color);
-        UIVertex v1(tr, {tluv.mY, bruv.mX}, color);
+        UIVertex v0(tl, tluv, color[0]);
+        UIVertex v1(tr, {tluv.mY, bruv.mX}, color[1]);
 
-        UIVertex v2(bl, {tluv.mX, bruv.mY}, color);
-        UIVertex v3(br, bruv, color);
+        UIVertex v2(bl, {tluv.mX, bruv.mY}, color[2]);
+        UIVertex v3(br, bruv, color[3]);
 
         mDrawList.needVertex(4);
 
@@ -195,7 +196,6 @@ namespace airkit
         mDrawList.mIndices.push_back(index + 2);
         mDrawList.mIndices.push_back(index + 3);
     }
-
     void UIHelper::drawCircle(const UIPoint &center, float radius, RGBA in, RGBA out, float thickness, uint32_t segments)
     {
         // 先生成线段的端点

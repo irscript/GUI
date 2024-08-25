@@ -47,7 +47,17 @@ namespace airkit
         void fillRect2(const UIPoint &tl, const UIPoint &br, RGBA top, RGBA bottom) { fillRect(tl, br, top, top, bottom, bottom); }
         void fillRect(const UIPoint &tl, const UIPoint &br, RGBA tlc, RGBA trc, RGBA blc, RGBA brc);
         // 绘制矩形纹理
-        void drawRactTex(const UIPoint &tl, const UIPoint &tluv, const UIPoint &br, const UIPoint &bruv, RGBA color = RGBA::fromRGBA());
+        void drawRactTex(const UIPoint &tl, const UIPoint &tluv,
+                         const UIPoint &br, const UIPoint &bruv,
+                         RGBA color = RGBA::fromRGBA())
+        {
+            RGBA clrarr[4] = {color, color, color, color};
+            drawRactTex(tl, tluv, br, bruv, clrarr);
+        }
+
+        void drawRactTex(const UIPoint &tl, const UIPoint &tluv,
+                         const UIPoint &br, const UIPoint &bruv,
+                         const RGBA *const color); // color是4个顶点的颜色，顺序为左上，右上，左下，右下
 
         // 绘制圆形
         void drawCircle(const UIPoint &center, float radius, RGBA color, float thickness = 1.0f, uint32_t segments = 32) { drawCircle(center, radius, color, color, thickness, segments); }
@@ -71,10 +81,10 @@ namespace airkit
         void fillSector(const UIPoint &center, float radius,
                         float startAngle, float endAngle,
                         RGBA color, uint32_t segments = 32) { fillSector(center, radius, startAngle, endAngle,
-                                                             color, color, segments); }
+                                                                         color, color, segments); }
         void fillSector(const UIPoint &center, float radius,
                         float startAngle, float endAngle,
-                        RGBA in, RGBA out,  uint32_t segments = 32);
+                        RGBA in, RGBA out, uint32_t segments = 32);
 
     public:
         // 设置颜色
