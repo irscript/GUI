@@ -266,7 +266,8 @@ namespace airkit
             {
                 WinWindow &win = *(WinWindow *)userdata;
                 auto key = translateKey(w_param);
-                printf("keydown 0x%X\n", w_param);
+                if (key == KeyButton::Unknown)
+                    return 0;
                 auto mods = getKeyMods();
                 bool repeat = (l_param & 0x40000000) != 0;
                 KeyDownEvent ev(key, repeat, mods);
@@ -282,7 +283,8 @@ namespace airkit
             if (userdata != 0)
             {
                 WinWindow &win = *(WinWindow *)userdata;
-                auto ev = KeyUpEvent(KeyButton(w_param));
+                auto key = translateKey(w_param);
+                auto ev = KeyUpEvent(key);
                 win.onEvent(ev);
                 return 0;
             }
@@ -465,20 +467,6 @@ namespace airkit
         case HTBOTTOMLEFT:
             return hit;
         }
-        /*
-                UINT dpi = GetDpiForWindow(handle);
-                int frame_y = GetSystemMetricsForDpi(SM_CYFRAME, dpi);
-                int padding = GetSystemMetricsForDpi(SM_CXPADDEDBORDER, dpi);
-
-                POINT cursor_point = {0};
-                cursor_point.x = GET_X_LPARAM(l_param);
-                cursor_point.y = GET_Y_LPARAM(l_param);
-                ScreenToClient(handle, &cursor_point);
-                ScreenToClient(handle, &cursor_point);
-                if (cursor_point.y > 0 && cursor_point.y < frame_y + padding)
-                    return HTTOP;
-        */
-
         auto userdata = GetWindowLongPtr(handle, GWLP_USERDATA);
         if (userdata == 0)
             return HTCLIENT;
@@ -612,13 +600,13 @@ namespace airkit
         case VK_DELETE:
             return KeyButton::Delete;
         case VK_LEFT:
-            return KeyButton::Left;
+            return KeyButton::LeftArrow;
         case VK_RIGHT:
-            return KeyButton::Right;
+            return KeyButton::RightArrow;
         case VK_UP:
-            return KeyButton::Up;
+            return KeyButton::UpArrow;
         case VK_DOWN:
-            return KeyButton::Down;
+            return KeyButton::DownArrow;
         case VK_PRIOR:
             return KeyButton::PageUp;
         case VK_NEXT:
@@ -722,28 +710,23 @@ namespace airkit
             return KeyButton::NP_Add;
 
         case VK_SHIFT:
+        case VK_LSHIFT:
+        case VK_RSHIFT:
             return KeyButton::Shift;
+
         case VK_CONTROL:
+        case VK_LCONTROL:
+        case VK_RCONTROL:
             return KeyButton::Control;
         case VK_MENU:
+        case VK_LMENU:
+        case VK_RMENU:
             return KeyButton::Alt;
 
-        case VK_LSHIFT:
-            return KeyButton::LeftShift;
-        case VK_RSHIFT:
-            return KeyButton::RightShift;
-        case VK_LCONTROL:
-            return KeyButton::LeftControl;
-        case VK_RCONTROL:
-            return KeyButton::RightControl;
-        case VK_LMENU:
-            return KeyButton::LeftAlt;
-        case VK_RMENU:
-            return KeyButton::RightAlt;
         case VK_LWIN:
-            return KeyButton::LeftSuper;
         case VK_RWIN:
-            return KeyButton::RightSuper;
+            return KeyButton::Super;
+
         case VK_APPS:
             return KeyButton::Menu;
 
@@ -762,7 +745,7 @@ namespace airkit
         case VK_VOLUME_UP:
             return KeyButton::MediaVolumeUp;
         }
-        return KeyButton::Unknow;
+        return KeyButton::Unknown;
     }
 
     uint32_t PlatWin::translateKey(KeyButton key)
@@ -885,13 +868,13 @@ namespace airkit
             return VK_INSERT;
         case KeyButton::Delete:
             return VK_DELETE;
-        case KeyButton::Left:
+        case KeyButton::LeftArrow:
             return VK_LEFT;
-        case KeyButton::Right:
+        case KeyButton::RightArrow:
             return VK_RIGHT;
-        case KeyButton::Up:
+        case KeyButton::UpArrow:
             return VK_UP;
-        case KeyButton::Down:
+        case KeyButton::DownArrow:
             return VK_DOWN;
         case KeyButton::PageUp:
             return VK_PRIOR;
@@ -1001,6 +984,8 @@ namespace airkit
             return VK_CONTROL;
         case KeyButton::Alt:
             return VK_MENU;
+        case KeyButton::Super:
+            return VK_LWIN;
 
         case KeyButton::LeftShift:
             return VK_LSHIFT;

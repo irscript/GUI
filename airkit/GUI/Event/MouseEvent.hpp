@@ -7,7 +7,7 @@ namespace airkit
 {
     enum class MouseAction : uint16_t
     {
-        Unknow,
+        Unknown,
 
         Down, // 按下：鼠标按键按下
         Up,   // 抬起：鼠标按键抬起
@@ -25,7 +25,7 @@ namespace airkit
     };
     enum class MouseButton : uint16_t
     {
-        Unknow,
+        Unknown,
 
         // From glfw3.h
         Button0,

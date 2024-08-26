@@ -8,7 +8,7 @@ namespace airkit
     // UI动作包含窗口和UI元素的动作
     enum class UIAction : uint32_t
     {
-        Unknow,
+        Unknown,
 
         Hit, // UI元素命中测试事件
 

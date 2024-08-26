@@ -8,7 +8,7 @@ namespace airkit
     // 事件类别枚举
     enum class EventKind : uint32_t
     {
-        Unknow,
+        Unknown,
         User,      // 用户事件
         Mouse,     // 鼠标事件
         Keyboard,  // 键盘事件

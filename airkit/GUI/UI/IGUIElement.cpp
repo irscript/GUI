@@ -120,7 +120,8 @@ namespace airkit
 
     void IGUIElement::onKeyDown(KeyDownEvent &event)
     {
-        //printf(event.isRepeat() ? "repeat keydown: %d\n" : "keydown: %d\n", event.getButton());
+       printf(event.isRepeat() ? "repeat keydown: %s\n" : "keydown: %s\n",getKeyName(event.getButton()) );
+       printf("mods: %s\n",event.getMods().toString().c_str());
     }
     void IGUIElement::onKeyUp(KeyUpEvent &event)
     {

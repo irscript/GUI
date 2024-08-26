@@ -64,10 +64,8 @@ vec4 fontColor(){
   	float pxDist = pxRange * (dist - 0.5);
 	float opacity = clamp(pxDist + 0.5, 0.0, 1.0);
     vec4 bg=texclr.Color;
-    bg.r=0;
-    bg.g=0;
-    bg.b=0;
-    bg.a=0;
+    bg.a=opacity;
+    return bg;
     return mix(bg,texclr.Color,  opacity);
 }
 

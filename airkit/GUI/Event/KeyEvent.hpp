@@ -7,10 +7,10 @@ namespace airkit
 {
     enum class KeyAction : uint8_t
     {
-        Unknow,
-
-        Down, // 按下
-        Up,   // 抬起
+        Unknown,
+        Down,   // 按下
+        Up,     // 抬起
+        Repeat, // 重复:不在事件中使用
     };
 
     // 按键修改符状态
@@ -45,12 +45,30 @@ namespace airkit
                 uint8_t numLock : 1;  // numLock键
             };
         };
+
+        std::string toString() const
+        {
+            std::string ss;
+            if (shift)
+                ss += "Shift+";
+            if (control)
+                ss += "Control+";
+            if (alt)
+                ss += "Alt+";
+            if (super)
+                ss += "Super+";
+            if (capsLock)
+                ss += "CapsLock+";
+            if (numLock)
+                ss += "NumLock+";
+            return ss;
+        }
     };
 
-    // 美国标准键盘
+    // 键盘按钮：按照美国标准
     enum class KeyButton : uint16_t
     {
-        Unknow,
+        Unknown,
         // ----------------可打印字符按键-------------
         Space = 32,      // 空格键: ' '
         Apostrophe = 39, // 单引号键: '
@@ -112,10 +130,10 @@ namespace airkit
         Backspace = 259,   // 退格键：Backspace
         Insert = 260,      // 插入键：Insert
         Delete = 261,      // 删除键：Delete
-        Right = 262,       // 右箭头：Right ->
-        Left = 263,        // 左箭头：Left <-
-        Down = 264,        // 下箭头：Down |v
-        Up = 265,          // 上箭头：Up ^|
+        RightArrow = 262,  // 右箭头：Right ->
+        LeftArrow = 263,   // 左箭头：Left <-
+        DownArrow = 264,   // 下箭头：Down |v
+        UpArrow = 265,     // 上箭头：Up ^|
         PageUp = 266,      // 页面上滚动键：PageUp
         PageDown = 267,    // 页面下滚动键：PageDown
         Home = 268,        // 首页键：Home
@@ -188,6 +206,7 @@ namespace airkit
         Shift = 350,   // Shift 键：Shift，不区分左右
         Control = 351, // Ctrl 键：Ctrl，不区分左右
         Alt = 352,     // Alt 键：Alt，不区分左右
+        Super = 353,   // Win 键：Win，不区分左右
 
         // 媒体键
 
@@ -201,6 +220,7 @@ namespace airkit
 
     };
 
+    const char *getKeyName(KeyButton key);
     struct IKeyEvent : public IEvent
     {
 
