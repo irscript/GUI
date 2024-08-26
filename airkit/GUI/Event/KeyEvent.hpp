@@ -5,7 +5,7 @@
 
 namespace airkit
 {
-    enum class KeyAction : uint16_t
+    enum class KeyAction : uint8_t
     {
         Unknow,
 
@@ -13,30 +13,65 @@ namespace airkit
         Up,   // 抬起
     };
 
+    // 按键修改符状态
+    struct KeyMods
+    {
+        KeyMods(uint8_t value = 0)
+            : value(value) {}
+
+        KeyMods(const KeyMods &other)
+            : value(other.value) {}
+
+        KeyMods &operator=(uint8_t value)
+        {
+            this->value = value;
+            return *this;
+        }
+        KeyMods &operator=(const KeyMods &other)
+        {
+            this->value = other.value;
+            return *this;
+        }
+        union
+        {
+            uint8_t value;
+            struct
+            {
+                uint8_t shift : 1;    // shift键
+                uint8_t control : 1;  // ctrl键
+                uint8_t alt : 1;      // alt键
+                uint8_t super : 1;    // win键
+                uint8_t capsLock : 1; // capsLock键
+                uint8_t numLock : 1;  // numLock键
+            };
+        };
+    };
+
+    // 美国标准键盘
     enum class KeyButton : uint16_t
     {
         Unknow,
-        // From glfw3.h
-        Space = 32,
-        Apostrophe = 39, /* ' */
-        Comma = 44,      /* , */
-        Minus = 45,      /* - */
-        Period = 46,     /* . */
-        Slash = 47,      /* / */
+        // ----------------可打印字符按键-------------
+        Space = 32,      // 空格键: ' '
+        Apostrophe = 39, // 单引号键: '
+        Comma = 44,      // 逗号键: ,
+        Minus = 45,      // 减号键: -
+        Period = 46,     // 点号键: .
+        Slash = 47,      // 斜杠键: /
 
-        D0 = 48, /* 0 */
-        D1 = 49, /* 1 */
-        D2 = 50, /* 2 */
-        D3 = 51, /* 3 */
-        D4 = 52, /* 4 */
-        D5 = 53, /* 5 */
-        D6 = 54, /* 6 */
-        D7 = 55, /* 7 */
-        D8 = 56, /* 8 */
-        D9 = 57, /* 9 */
+        D0 = 48, // 数字 0
+        D1 = 49, // 数字 1
+        D2 = 50, // 数字 2
+        D3 = 51, // 数字 3
+        D4 = 52, // 数字 4
+        D5 = 53, // 数字 5
+        D6 = 54, // 数字 6
+        D7 = 55, // 数字 7
+        D8 = 56, // 数字 8
+        D9 = 57, // 数字9
 
-        Semicolon = 59, /* ; */
-        Equal = 61,     /* = */
+        Semicolon = 59, // 分号键: ;
+        Equal = 61,     // 等号键: =
 
         A = 65,
         B = 66,
@@ -65,89 +100,105 @@ namespace airkit
         Y = 89,
         Z = 90,
 
-        LeftBracket = 91,  /* [ */
-        Backslash = 92,    /* \ */
-        RightBracket = 93, /* ] */
-        GraveAccent = 96,  /* ` */
+        LeftBracket = 91,  // 左方括号：[
+        Backslash = 92,    // 反斜杠：\1
+        RightBracket = 93, // 右方括号：]
+        GraveAccent = 96,  // 重音符：`
 
-        World1 = 161, /* non-US #1 */
-        World2 = 162, /* non-US #2 */
+        // 功能按键
+        Escape = 256,      // 退出键：ESC
+        Enter = 257,       // 回车键：Enter
+        Tab = 258,         // 制表键：Tab
+        Backspace = 259,   // 退格键：Backspace
+        Insert = 260,      // 插入键：Insert
+        Delete = 261,      // 删除键：Delete
+        Right = 262,       // 右箭头：Right ->
+        Left = 263,        // 左箭头：Left <-
+        Down = 264,        // 下箭头：Down |v
+        Up = 265,          // 上箭头：Up ^|
+        PageUp = 266,      // 页面上滚动键：PageUp
+        PageDown = 267,    // 页面下滚动键：PageDown
+        Home = 268,        // 首页键：Home
+        End = 269,         // 末页键：End
+        CapsLock = 280,    // 大写锁定键：CapsLock
+        NumLock = 282,     // 数字锁定键：NumLock
+        ScrollLock = 283,  // 滚动锁定键：ScrollLock
+        PrintScreen = 284, // 截图键：PrintScreen
+        Pause = 285,       // 暂停键：Pause
 
-        /* 功能性按键 */
-        Escape = 256,
-        Enter = 257,
-        Tab = 258,
-        Backspace = 259,
-        Insert = 260,
-        Delete = 261,
-        Right = 262,
-        Left = 263,
-        Down = 264,
-        Up = 265,
-        PageUp = 266,
-        PageDown = 267,
-        Home = 268,
-        End = 269,
-        CapsLock = 280,
-        ScrollLock = 281,
-        NumLock = 282,
-        PrintScreen = 283,
-        Pause = 284,
-        F1 = 290,
-        F2 = 291,
-        F3 = 292,
-        F4 = 293,
-        F5 = 294,
-        F6 = 295,
-        F7 = 296,
-        F8 = 297,
-        F9 = 298,
-        F10 = 299,
-        F11 = 300,
-        F12 = 301,
-        F13 = 302,
-        F14 = 303,
-        F15 = 304,
-        F16 = 305,
-        F17 = 306,
-        F18 = 307,
-        F19 = 308,
-        F20 = 309,
-        F21 = 310,
-        F22 = 311,
-        F23 = 312,
-        F24 = 313,
-        F25 = 314,
+        // Fn 系列键
+        F1 = 290,  // F1键：F1
+        F2 = 291,  // F2键：F2
+        F3 = 292,  // F3键：F3
+        F4 = 293,  // F4键：F4
+        F5 = 294,  // F5键：F5
+        F6 = 295,  // F6键：F6
+        F7 = 296,  // F7键：F7
+        F8 = 297,  // F8键：F8
+        F9 = 298,  // F9键：F9
+        F10 = 299, // F10键：F10
+        F11 = 300, // F11键：F11
+        F12 = 301, // F12键：F12
+        F13 = 302, // F13键：F13
+        F14 = 303, // F14键：F14
+        F15 = 304, // F15键：F15
+        F16 = 305, // F16键：F16
+        F17 = 306, // F17键：F17
+        F18 = 307, // F18键：F18
+        F19 = 308, // F19键：F19
+        F20 = 309, // F20键：F20
+        F21 = 310, // F21键：F21
+        F22 = 311, // F22键：F22
+        F23 = 312, // F23键：F23
+        F24 = 313, // F24键：F24
+                   // F25 = 314, // F25键：F25
 
-        /* 小键盘区域 */
-        KP0 = 320,
-        KP1 = 321,
-        KP2 = 322,
-        KP3 = 323,
-        KP4 = 324,
-        KP5 = 325,
-        KP6 = 326,
-        KP7 = 327,
-        KP8 = 328,
-        KP9 = 329,
-        KPDecimal = 330,
-        KPDivide = 331,
-        KPMultiply = 332,
-        KPSubtract = 333,
-        KPAdd = 334,
-        KPEnter = 335,
-        KPEqual = 336,
+        // Numpad 键
+        NP_0 = 320,       // Numpad 0 键： 0
+        NP_1 = 321,       // Numpad 1 键： 1
+        NP_2 = 322,       // Numpad 2 键： 2
+        NP_3 = 323,       // Numpad 3 键： 3
+        NP_4 = 324,       // Numpad 4 键： 4
+        NP_5 = 325,       // Numpad 5 键： 5
+        NP_6 = 326,       // Numpad 6 键： 6
+        NP_7 = 327,       // Numpad 7 键： 7
+        NP_8 = 328,       // Numpad 8 键： 8
+        NP_9 = 329,       // Numpad 9 键： 9
+        NP_Decimal = 330, // Numpad . 键： .
+        NP_Div = 331,     // Numpad / 键： /
+        NP_Mul = 332,     // Numpad * 键： *
+        NP_Sub = 333,     // Numpad - 键： -
+        NP_Add = 334,     // Numpad + 键： +
 
-        // 控制性按键
-        LeftShift = 340,
-        LeftControl = 341,
-        LeftAlt = 342,
-        LeftSuper = 343,
-        RightShift = 344,
-        RightControl = 345,
-        RightAlt = 346,
-        RightSuper = 347,
-        Menu = 348
+        // NP_Enter = 335,    // Numpad Enter 键： Enter
+        // NP_Equal = 336,    // Numpad = 键： =
+
+        // 控制性键
+
+        LeftShift = 340,    // 左 Shift 键： 左 Shift
+        RightShift = 341,   // 右 Shift 键： 右 Shift
+        LeftControl = 342,  // 左 Ctrl 键： 左 Ctrl
+        RightControl = 343, // 右 Ctrl 键： 右 Ctrl
+        LeftAlt = 344,      // 左 Alt 键： 左 Alt
+        RightAlt = 345,     // 右 Alt 键： 右 Alt
+        LeftSuper = 346,    // 左 Win 键：左 Win
+        RightSuper = 347,   // 右 Win 键：右 Win
+        Menu = 348,         // 菜单键：菜单键
+
+        Shift = 350,   // Shift 键：Shift，不区分左右
+        Control = 351, // Ctrl 键：Ctrl，不区分左右
+        Alt = 352,     // Alt 键：Alt，不区分左右
+
+        // 媒体键
+
+        MediaPlayPause = 400,  // 播放/暂停键
+        MediaStop = 401,       // 停止键
+        MediaNext = 402,       // 下一曲键
+        MediaPrevious = 403,   // 上一曲键
+        MediaVolumeUp = 404,   // 音量加键
+        MediaVolumeDown = 405, // 音量减键
+        MediaMute = 406,       // 静音键
+
     };
 
     struct IKeyEvent : public IEvent
@@ -168,15 +219,17 @@ namespace airkit
 
     struct KeyDownEvent : public IKeyEvent
     {
-        KeyDownEvent(KeyButton button, bool isRepeat)
+        KeyDownEvent(KeyButton button, bool isRepeat, KeyMods mods)
             : IKeyEvent(KeyAction::Down, button),
-              mIsRepeat(isRepeat) {}
+              mIsRepeat(isRepeat), mMods(mods) {}
         virtual ~KeyDownEvent() = default;
 
         bool isRepeat() const { return mIsRepeat; }
+        KeyMods getMods() const { return mMods; }
 
     protected:
         bool mIsRepeat; // 是否重复
+        KeyMods mMods;
     };
 
     struct KeyUpEvent : public IKeyEvent

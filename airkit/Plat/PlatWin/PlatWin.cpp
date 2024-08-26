@@ -191,7 +191,7 @@ namespace airkit
 
     IWindow *PlatWin::createGLWin(HWND hd, float x, float y, float w, float h, HDC dc, HGLRC context)
     {
-       return new GLWindow(hd, x, y, w, h, dc, context);
+        return new GLWindow(hd, x, y, w, h, dc, context);
     }
 
     void airkit::PlatWin::registerClass()
@@ -209,4 +209,5 @@ namespace airkit
         if (ret == 0)
             error(fmt::format("RegisterClassEx failed: {}\n", GetLastError()));
     }
+   
 }

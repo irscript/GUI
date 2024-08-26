@@ -120,6 +120,7 @@ namespace airkit
 
     void IGUIElement::onKeyDown(KeyDownEvent &event)
     {
+        //printf(event.isRepeat() ? "repeat keydown: %d\n" : "keydown: %d\n", event.getButton());
     }
     void IGUIElement::onKeyUp(KeyUpEvent &event)
     {

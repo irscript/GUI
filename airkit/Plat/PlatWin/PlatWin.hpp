@@ -20,21 +20,24 @@ namespace airkit
         virtual void warning(const std::string &msg) override;
 
         // 创建窗口
-        UIHolder createWindow(uint32_t width, uint32_t height, const char *title,const UIHolder& shared) override;
+        UIHolder createWindow(uint32_t width, uint32_t height, const char *title, const UIHolder &shared) override;
         // 释放窗口
         void releaseWindow(const IGUIElement *win) override;
 
     private:
         HWND createWin(uint32_t width, uint32_t height, const char *title);
         static void *GLLoad(const char *name);
-        IWindow *createGLWin(uint32_t width, uint32_t height, const char *title,const IWindow *const shared);
+        IWindow *createGLWin(uint32_t width, uint32_t height, const char *title, const IWindow *const shared);
 
     protected:
         virtual IWindow *createGLWin(HWND hd, float x, float y, float w, float h,
-                                     HDC dc, HGLRC context) ;
+                                     HDC dc, HGLRC context);
 
     private:
         void registerClass();
+        static KeyButton translateKey(WPARAM w_param);
+        static uint32_t translateKey(KeyButton key);
+        static KeyMods getKeyMods();
         static LRESULT wincallback(HWND handle, UINT message, WPARAM w_param, LPARAM l_param);
         static LRESULT onWM_NCCALCSIZE(HWND handle, UINT message, WPARAM w_param, LPARAM l_param);
         static LRESULT onWM_NCHITTEST(HWND handle, UINT message, WPARAM w_param, LPARAM l_param);
