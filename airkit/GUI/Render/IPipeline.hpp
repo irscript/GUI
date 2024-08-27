@@ -19,7 +19,7 @@ namespace airkit
         virtual const ShaderHolder &getShader() const = 0;
     };
 
-    using PipelineHolder = std::shared_ptr<IPipeline>;
+    using PipelineHolder = Holder<IPipeline>;
 }
 
 #endif // __IPIPELINE_H__

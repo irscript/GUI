@@ -5,11 +5,12 @@
 #include <airkit/GUI/UI/UIFlag.hpp>
 #include <airkit/GUI/UI/UIArea.hpp>
 #include <airkit/GUI/UI/UIDrawData.hpp>
+#include <airkit/GUI/Theme/UITheme.hpp>
 namespace airkit
 {
     struct IGUIElement;
-    using UIHolder = std::shared_ptr<IGUIElement>;
-    using UIWatcher = std::weak_ptr<IGUIElement>;
+    using UIHolder = Holder<IGUIElement>;
+    using UIWatcher = Watcher<IGUIElement>;
 
     // UI 环境
     struct UIVibe
@@ -66,9 +67,12 @@ namespace airkit
         virtual void onMouseHover(MouseHoverEvent &event);
         virtual void onMouseWheel(MouseWheelEvent &event);
 
-    public:
         // 响应命中测试
         virtual IGUIElement *onHitTest(const UIHitEvent &event);
+
+    public:
+        // 响应主题变化
+        virtual void onThemeChange(UITheme &event);
         // 渲染帧
         virtual void onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList);
 

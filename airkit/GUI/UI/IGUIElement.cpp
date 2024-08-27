@@ -1,7 +1,6 @@
 #include <airkit/GUI/UI/IGUIElement.hpp>
 #include <airkit/GUI/UI/IWindow.hpp>
 #include <airkit/GUI/IPlat.hpp>
-#include "IGUIElement.hpp"
 
 namespace airkit
 {
@@ -160,6 +159,10 @@ namespace airkit
     void IGUIElement::onMouseWheel(MouseWheelEvent &event)
     {
         // printf("mouse wheel:(%f,%f)->%f\n", event.getX(), event.getY(), event.getDelta());
+    }
+
+    void IGUIElement::onThemeChange(UITheme &event)
+    {
     }
 
     IGUIElement *IGUIElement::onHitTest(const UIHitEvent &event)

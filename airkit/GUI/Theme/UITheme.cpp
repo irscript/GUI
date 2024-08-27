@@ -1,4 +1,4 @@
-#include <airkit/GUI/UI/GUITheme.hpp>
+#include <airkit/GUI/Theme/UITheme.hpp>
 
 namespace airkit
 {
@@ -6,7 +6,7 @@ namespace airkit
     {
         return false;
     }
-    const UIStyle *UITheme::getStyle(const std::string &name) const
+    const IUIStyle *UITheme::getStyle(const std::string &name) const
     {
         for (auto group : mUsing)
         {

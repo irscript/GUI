@@ -59,8 +59,8 @@ namespace airkit
     protected:
     };
 
-    using RenderHolder = std::shared_ptr<IRender>;
-    using RenderWatcher = std::weak_ptr<IRender>;
+    using RenderHolder = Holder<IRender>;
+    using RenderWatcher = Watcher<IRender>;
 }
 
 #endif // __IRENDER_H__

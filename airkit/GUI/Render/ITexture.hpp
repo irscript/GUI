@@ -34,6 +34,6 @@ namespace airkit
         virtual ~ITexture2D() = default;
     };
 
-    using TextureHolder = std::shared_ptr<ITexture2D>;
+    using TextureHolder = Holder<ITexture2D>;
 }
 #endif // __ITEXTURE_H__

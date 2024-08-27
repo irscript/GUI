@@ -33,9 +33,9 @@ namespace airkit
         virtual void setData(const void *data, uint32_t size, uint32_t count) = 0;
     };
     // vertex buffer
-    using VBOHolder = std::shared_ptr<IVertexBuffer>;
+    using VBOHolder = Holder<IVertexBuffer>;
     // index buffer
-    using IBOHolder = std::shared_ptr<IIndexBuffer>;
+    using IBOHolder = Holder<IIndexBuffer>;
     // 顶点数组：VAO
     struct IVertexArray
     {
@@ -48,7 +48,7 @@ namespace airkit
         virtual const IBOHolder &getIndexBuffer() const = 0;
     };
     // vertex array
-    using VAOHolder = std::shared_ptr<IVertexArray>;
+    using VAOHolder = Holder<IVertexArray>;
 
     // uniform buffer
     struct IUniformBuffer
@@ -57,6 +57,6 @@ namespace airkit
         virtual void setData(const void *data, uint32_t size, uint32_t offset = 0) = 0;
     };
     // uniform buffer
-    using UBOHolder = std::shared_ptr<IUniformBuffer>;
+    using UBOHolder = Holder<IUniformBuffer>;
 }
 #endif // __IBUFFER_H__

@@ -24,6 +24,15 @@
 #include <initializer_list>
 #include <fstream>
 
-
 #include <airkit/AIR_COMPILE_OPTION.h>
+
+namespace airkit
+{
+    template <typename T>
+    using Scope = std::unique_ptr<T>;
+    template <typename T>
+    using Holder = std::shared_ptr<T>;
+    template <typename T>
+    using Watcher = std::weak_ptr<T>;
+}
 #endif //!__AIR_PCH__H__

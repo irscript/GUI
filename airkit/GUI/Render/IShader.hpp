@@ -33,8 +33,8 @@ namespace airkit
         std::string mName;
     };
 
-    using ShaderHolder = std::shared_ptr<IShader>;
-    using ShaderWatcher = std::weak_ptr<IShader>;
+    using ShaderHolder = Holder<IShader>;
+    using ShaderWatcher = Watcher<IShader>;
 
     // 着色器程序库
     struct ShaderLibrary
