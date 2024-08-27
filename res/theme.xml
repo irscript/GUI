@@ -1,0 +1,7 @@
+<theme>
+    <group name="default">
+        <button>
+                <background>#999999</background>
+        </button>
+    </group>
+</theme>

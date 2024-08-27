@@ -1,11 +1,12 @@
 #include <airkit/GUI/UI/IGUIElement.hpp>
 #include <airkit/GUI/UI/IWindow.hpp>
 #include <airkit/GUI/IPlat.hpp>
+#include "IGUIElement.hpp"
 
 namespace airkit
 {
     IGUIElement::~IGUIElement()
-    {
+    {/*
         auto window = getUIWindow();
         if (window.get() != nullptr)
         {
@@ -15,7 +16,7 @@ namespace airkit
                 vibe.mFocus = nullptr;
             if (vibe.mHover == this)
                 vibe.mHover = nullptr;
-        }
+        }*/
     }
     void IGUIElement::onEvent(IEvent &event)
     {
@@ -119,8 +120,8 @@ namespace airkit
 
     void IGUIElement::onKeyDown(KeyDownEvent &event)
     {
-       printf(event.isRepeat() ? "repeat keydown: %s\n" : "keydown: %s\n",getKeyName(event.getButton()) );
-       printf("mods: %s\n",event.getMods().toString().c_str());
+        printf(event.isRepeat() ? "repeat keydown: %s\n" : "keydown: %s\n", getKeyName(event.getButton()));
+        printf("mods: %s\n", event.getMods().toString().c_str());
     }
     void IGUIElement::onKeyUp(KeyUpEvent &event)
     {
@@ -159,10 +160,6 @@ namespace airkit
     void IGUIElement::onMouseWheel(MouseWheelEvent &event)
     {
         // printf("mouse wheel:(%f,%f)->%f\n", event.getX(), event.getY(), event.getDelta());
-    }
-
-    void IGUIElement::onThemeChange(UITheme &event)
-    {
     }
 
     IGUIElement *IGUIElement::onHitTest(const UIHitEvent &event)
@@ -362,6 +359,11 @@ namespace airkit
         }
         // 子UI没有命中
         return this;
+    }
+    void IUIParent::onThemeChange(UITheme &theme)
+    {
+        for (auto &child : mChildUI)
+            child->onThemeChange(theme);
     }
     void IUIParent::onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList)
     { // 元素可见且有子UI

@@ -11,6 +11,9 @@ namespace airkit
         {
             mArea.setArea(pos, size);
         }
+
+        virtual std::string getStyleName() const{return "button";}
+        
     };
 }
 

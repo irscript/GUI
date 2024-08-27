@@ -3,6 +3,9 @@
 #include <airkit/Plat/PlatWin/GLWindow.hpp>
 #include <airkit/GUI/UI/UIColor.hpp>
 #include <airkit/GUI/UI/UIHelper.hpp>
+
+#include <airkit/GUI/Theme/UIThemeLoader.hpp>
+
 using namespace airkit;
 
 struct TitleBar : public WinTitleBar
@@ -162,9 +165,18 @@ protected:
         return new Window(hd, x, y, w, h, dc, context);
     }
 };
+IUIStyle *getButtun(pugi::xml_node &node)
+{
 
+    return new IUIStyle("button");
+}
 int main(int argc, char *argv[])
 {
+    UITheme theme;
+    UIThemeXmlPaser parser;
+    parser.registerDomain("button", getButtun);
+    auto res = parser.parse("theme.xml", theme);
+
     Plat plat;
     plat.init(RenderAPI::OpenGL);
 

@@ -10,8 +10,6 @@ namespace airkit
         UITheme() = default;
         ~UITheme() = default;
 
-        // 加载主题文件
-        bool load(const std::string &path);
         // 获取样式
         const IUIStyle *getStyle(const std::string &name) const;
         // 获取纹理
@@ -40,6 +38,7 @@ namespace airkit
         }
 
     protected:
+        friend class UIThemeXmlPaser;
         using Styles = std::map<std::string, UIStyles>;
         Styles mStyles;                 // 风格组
         UISkins mSkins;                 // 皮肤
@@ -63,6 +62,7 @@ namespace airkit
         UITheme &theme;
     };
 
+    
 }
 
 #endif // __GUITHEME_H__

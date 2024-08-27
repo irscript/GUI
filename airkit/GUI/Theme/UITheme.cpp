@@ -1,11 +1,9 @@
 #include <airkit/GUI/Theme/UITheme.hpp>
+#include "UITheme.hpp"
 
 namespace airkit
 {
-    bool UITheme::load(const std::string &path)
-    {
-        return false;
-    }
+    
     const IUIStyle *UITheme::getStyle(const std::string &name) const
     {
         for (auto group : mUsing)
@@ -18,3 +16,5 @@ namespace airkit
         return nullptr;
     }
 }
+
+

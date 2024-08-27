@@ -6,11 +6,14 @@ target("glad2")
     set_kind("static")
     add_includedirs("airkit/3Part/Glad2/")
     add_files("airkit/3Part/Glad2/**.c")
-
+target("pugixml")
+    set_kind("static")
+    add_includedirs("airkit/3Part/pugixml/")
+    add_files("airkit/3Part/pugixml/**.cpp")
 
 target("airkit")
     set_kind("static")
-    add_deps("glad2")
+    add_deps("glad2","pugixml")
     add_includedirs("."
     ,"airkit/3Part/"
     ,"airkit/3Part/Glad2/")

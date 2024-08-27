@@ -9,35 +9,37 @@ namespace airkit
     // UI风格描述项基类
     struct IUIStyle
     {
+        IUIStyle(const std::string &name):mName(name){}
         virtual ~IUIStyle() = default;
 
         std::string mName; // 对应的UI组件名称
-
-        uint32_t mFlag; // 样式标志:用于是否使用边框、背景等信息
-
-        UIBDI mBDI; // 边框描述
-        UIBGI mBGI; // 背景描述
-        UIFNT mFNT; // 字体描述
-
-        UIMargin mMargin;   // 外边距
-        UIPadding mPadding; // 内边距
-
+                           /*
+                                   uint32_t mFlag; // 样式标志:用于是否使用边框、背景等信息
+                   
+                                   UIBDI mBDI; // 边框描述
+                                   UIBGI mBGI; // 背景描述
+                                   UIFNT mFNT; // 字体描述
+                   
+                                   UIMargin mMargin;   // 外边距
+                                   UIPadding mPadding; // 内边距
+                           */
         enum : uint32_t
         {
             use_bg = 1 << 0,     // 使用背景色
             use_border = 1 << 1, // 使用边框色
             use_font = 1 << 2,   // 使用字体色
-            use_margin = 1 << 3  // 使用外边距
+            use_margin = 1 << 3, // 使用外边距
+
         };
     };
 
-    using StyleScope = Scope<IUIStyle>;
+    using UIStyleScope = Scope<IUIStyle>;
 
     // UI 风格类组：类似 CSS 的选择器
     struct UIStyles
     {
-        std::string mName;                         // 组名称
-        std::map<std::string, StyleScope> mStyles; // 组内样式
+        std::string mName;                           // 组名称
+        std::map<std::string, UIStyleScope> mStyles; // 组内样式
         const IUIStyle *getStyle(const std::string &name) const
         {
             auto iter = mStyles.find(name);

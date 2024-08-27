@@ -71,8 +71,11 @@ namespace airkit
         virtual IGUIElement *onHitTest(const UIHitEvent &event);
 
     public:
+        // 获取样式名称
+        virtual std::string getStyleName() const {return "";}
+        virtual IUIStyle *getStyle(UITheme &theme) const { return nullptr; }
         // 响应主题变化
-        virtual void onThemeChange(UITheme &event);
+        virtual void onThemeChange(UITheme &theme) {}
         // 渲染帧
         virtual void onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList);
 
@@ -142,8 +145,11 @@ namespace airkit
     {
         // 响应命中测试
         virtual IGUIElement *onHitTest(const UIHitEvent &event) override;
+        // 响应主题变化
+        virtual void onThemeChange(UITheme &theme) override;
         // 渲染帧
         virtual void onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList) override;
+
         virtual UIHolder getHolder(IGUIElement *ui) override;
 
         // 添加子UI
