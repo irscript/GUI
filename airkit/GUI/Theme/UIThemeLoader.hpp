@@ -10,6 +10,9 @@ namespace airkit
         // 解析器：每个组件向该解析器注册自己的解析函数
         using Domain = IUIStyle *(*)(pugi::xml_node &node);
 
+        UIThemeXmlPaser();
+        ~UIThemeXmlPaser()=default;
+
         void registerDomain(const std::string &name, Domain domain)
         {
             mDomains[name] = domain;

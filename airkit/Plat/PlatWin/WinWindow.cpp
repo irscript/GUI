@@ -42,12 +42,7 @@ namespace airkit
         {
             auto win = getUIWindow();
             bar->setUIParent(win);
-            // 计算窗口标题栏布局
-            /*SIZE title_bar_size = {0};
-            const int top_and_bottom_borders = 2;
-            UINT dpi = GetDpiForWindow(mHWnd);
-            auto height = GetSystemMetricsForDpi(SM_CYCAPTION, dpi) + top_and_bottom_borders;
-            */
+
             SIZE title_bar_size = {0};
             const int top_and_bottom_borders = 2;
             HTHEME theme = OpenThemeData(mHWnd, L"WINDOW");
@@ -62,19 +57,36 @@ namespace airkit
             UIArea size(0, 0, mArea.getWidth(), height);
             UIResizedEvent ev(size);
             mTitleBar->onSized(ev);
+
+            if (mContent.get() != nullptr)
+            {
+                UIArea size(0, height, mArea.getWidth(), mArea.getHeight() - height);
+                UIResizedEvent ev(size);
+                mContent->onSized(ev);
+            }
+        }
+    }
+    void WinWindow::setContent(UIHolder content)
+    {
+        mContent = content;
+        if (content.get() != nullptr)
+        {
+            float height = 0;
+            if (mTitleBar.get() != nullptr)
+                height = mTitleBar->getArea().getHeight();
+            UIArea size(0, height, mArea.getWidth(), mArea.getHeight() - height);
+            UIResizedEvent ev(size);
+            mContent->onSized(ev);
         }
     }
     void WinWindow::onSized(UIResizedEvent &event)
     {
+        float y = 0;
         mArea = event.getArea();
         if (mTitleBar.get() != nullptr)
         {
             // 计算窗口标题栏布局
-            /*SIZE title_bar_size = {0};
-            const int top_and_bottom_borders = 2;
-            UINT dpi = GetDpiForWindow(mHWnd);
-            auto height = GetSystemMetricsForDpi(SM_CYCAPTION, dpi) + top_and_bottom_borders;
-            */
+
             SIZE title_bar_size = {0};
             const int top_and_bottom_borders = 2;
             HTHEME theme = OpenThemeData(mHWnd, L"WINDOW");
@@ -86,21 +98,17 @@ namespace airkit
             float half = height / 3 * 2;
             height += half;
 
-            float y = 0;
-            /* // 检查窗口是否最大化
-             WINDOWPLACEMENT placement = {0};
-             placement.length = sizeof(WINDOWPLACEMENT);
-             if (GetWindowPlacement(mHWnd, &placement) &&
-                 placement.showCmd == SW_SHOWMAXIMIZED)
-             {
-                 int padding = GetSystemMetricsForDpi(SM_CXPADDEDBORDER, dpi);
-                 y += padding * 2;
-             }
-             */
+            y = height;
 
-            UIArea size(0, y, mArea.getWidth(), height);
+            UIArea size(0, 0, mArea.getWidth(), height);
             UIResizedEvent ev(size);
             mTitleBar->onSized(ev);
+        }
+        if (mContent.get() != nullptr)
+        {
+            UIArea size(0, y, mArea.getWidth(), mArea.getHeight() - y);
+            UIResizedEvent ev(size);
+            mContent->onSized(ev);
         }
 
         render();
@@ -139,8 +147,8 @@ namespace airkit
     void WinWindow::onMouseUp(MouseUpEvent &event)
     {
         auto hit = mUIVibe.mHover;
-        //auto pos = event.getPos();
-        //auto hit = onHitTest(UIHitEvent(pos));
+        // auto pos = event.getPos();
+        // auto hit = onHitTest(UIHitEvent(pos));
         if (hit != nullptr)
         {
             hit->onEvent(event);
@@ -193,8 +201,8 @@ namespace airkit
         if (hit == mUIMaximize.get())
             return HTMAXBUTTON;
 
-        //HTTOP
-        if(cursor.mY<=3)
+        // HTTOP
+        if (cursor.mY <= 3)
             return HTTOP;
 
         return HTCAPTION;

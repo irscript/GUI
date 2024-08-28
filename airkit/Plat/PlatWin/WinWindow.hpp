@@ -20,7 +20,9 @@ namespace airkit
         virtual int32_t doModal() override;
 
         // 设置标题栏
-        void setTitleBar(UIHolder bar);
+        virtual void setTitleBar(UIHolder bar) override;
+        // 设置内容
+        virtual void setContent(UIHolder content) override;
 
         // 获取窗口句柄
         HWND getWHD() const { return mHWnd; }
@@ -31,7 +33,7 @@ namespace airkit
 
         // 响应命中测试
         virtual IGUIElement *onHitTest(const UIHitEvent &event);
-        //鼠标移动
+        // 鼠标移动
         virtual void onMouseMove(MouseMoveEvent &event);
         // 鼠标按下
         virtual void onMouseClick(MouseDownEvent &event) override;
@@ -59,7 +61,6 @@ namespace airkit
     protected:
         HWND mHWnd;                  // 窗口句柄
         uint32_t mHighSurrogate = 0; // UTF-16编码的高代理字符
-        UIHolder mTitleBar;          // 标题栏
     };
     struct WinTitleBar : public TitleBar
     {

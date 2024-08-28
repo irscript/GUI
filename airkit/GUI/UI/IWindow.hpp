@@ -31,8 +31,37 @@ namespace airkit
         UIVibe &getUIVibe() { return mUIVibe; }
         const UIVibe &getUIVibe() const { return mUIVibe; }
 
+        // 设置标题栏
+        virtual void setTitleBar(UIHolder bar) = 0;
+        UIHolder setTitleBar(IGUIElement *bar)
+        {
+            setTitleBar(bar);
+            return mTitleBar;
+        }
+        UIHolder getTitleBar() const { return mTitleBar; }
+        // 设置内容
+        virtual void setContent(UIHolder content) = 0;
+        UIHolder setContent(IGUIElement *bar)
+        {
+            setContent(bar);
+            return mContent;
+        }
+        UIHolder getContent() const { return mContent; }
+
+        // 获取UI持有者
+        virtual UIHolder getHolder(IGUIElement *ui)
+        {
+            if (mTitleBar.get() == ui)
+                return mTitleBar;
+            if (mContent.get() == ui)
+                return mContent;
+            return UIHolder();
+        }
+
     protected:
         UIVibe mUIVibe;
+        UIHolder mTitleBar; // 标题栏
+        UIHolder mContent;  // 内容
     };
 }
 #endif // __IWINDOW_H__
