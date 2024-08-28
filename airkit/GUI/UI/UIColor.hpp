@@ -80,7 +80,7 @@ namespace airkit
             uint8_t r = (rgb >> 16) & 0xFF;
             uint8_t g = (rgb >> 8) & 0xFF;
             uint8_t b = rgb & 0xFF;
-            return RGBA(r, g, b, 1);
+            return RGBA(r, g, b);
         }
     };
 }

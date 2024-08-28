@@ -1,7 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <theme>
-    <group name="default">
+    <group name="default" skin="default.skin">
         <button>
-                <background>#999999</background>
+            <normal>
+                <background skin="1">
+                    <color lt="#ff0000ff" rt="#00ff00ff" rb="#0000ffff" lb="#ffff00ff" />
+                </background>
+                <border>
+                    <width l="1" t="2" r="3" b="4" />
+                    <color lt="#ff0000ff" rt="#00ff00ff" rb="#0000ffff" lb="#ffff00ff" />
+                    <radius lt="1" rt="2" rb="3" lb="4" />
+                </border>
+                <font size="12">
+                    <color lt="#ff0000ff" rt="#00ff00ff" rb="#0000ffff" lb="#ffff00ff" />
+                </font>
+            </normal>
         </button>
     </group>
 </theme>

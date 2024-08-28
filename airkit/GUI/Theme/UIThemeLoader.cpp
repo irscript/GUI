@@ -1,30 +1,6 @@
 #include <airkit/GUI/Theme/UIThemeLoader.hpp>
-#include <airkit/GUI/Widgets/Button.hpp>
-namespace airkit::xmldomain
-{
-    IUIStyle *button(pugi::xml_node &node)
-    {
-        auto style = new Button::Style();
-        do
-        {
-            bool error = false;
-            for (auto component = node.first_child();
-                 component;
-                 component = component.next_sibling())
-            {
-                std::string name = component.name();
-                if (name == "margin")
-                {
-                    continue;
-                }
-            }
-            if (error == false)
-                return style;
-        } while (0);
-        delete style;
-        return nullptr;
-    }
-}
+#include <airkit/GUI/Theme/XmlDomain.hpp>
+
 namespace airkit
 {
     bool UIThemeXmlPaser::parse(const std::string &path, UITheme &theme)
@@ -84,7 +60,7 @@ namespace airkit
     }
 
 #define REGISTER_DOMAIN(domain) \
-    mDomains.insert(std::make_pair(#domain, xmldomain::##domain))
+    mDomains.insert(std::make_pair(#domain, xmldomain::domain))
     UIThemeXmlPaser::UIThemeXmlPaser()
     {
         REGISTER_DOMAIN(button);

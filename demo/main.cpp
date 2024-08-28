@@ -165,16 +165,12 @@ protected:
         return new Window(hd, x, y, w, h, dc, context);
     }
 };
-IUIStyle *getButtun(pugi::xml_node &node)
-{
 
-    return new IUIStyle("button");
-}
 int main(int argc, char *argv[])
 {
     UITheme theme;
     UIThemeXmlPaser parser;
-    parser.registerDomain("button", getButtun);
+    
     auto res = parser.parse("theme.xml", theme);
 
     Plat plat;

@@ -47,81 +47,62 @@ namespace airkit
 
         };
     };
-
+    // UI 外边距描述项
+    struct UIMargin
+    {
+        float left = 0;
+        float right = 0;
+        float top = 0;
+        float bottom = 0;
+    };
+    // UI 内边距
+    using UIPadding = UIMargin;
+    // UI颜色样式
+    struct UIClr
+    {
+        RGBA lt; // 左上
+        RGBA rt; // 右上
+        RGBA lb; // 左下
+        RGBA rb; // 右下
+    };
+    // UI 边框宽度
+    using UIBorderWidth = UIMargin;
+    // UI 边框圆角半径
+    struct UIBorderRadius
+    {
+        float lt = 0; // 左上
+        float rt = 0; // 右上
+        float lb = 0; // 左下
+        float rb = 0; // 右下
+    };
     // UI边框描述项
     struct UIBDI
     {
         // 边框宽度
-        struct
-        {
-            float left;
-            float right;
-            float top;
-            float bottom;
-        } border;
+        UIBorderWidth width;
 
         // 边框颜色
-        struct
-        {
-            RGBA left;
-            RGBA right;
-            RGBA top;
-            RGBA bottom;
-        } color;
+        UIClr color;
 
         // 边框圆角半径
-        struct
-        {
-            float left;
-            float right;
-            float top;
-            float bottom;
-        } round;
+        UIBorderRadius round;
     };
 
     // UI背景描述项
     struct UIBGI
     {
-        struct
-        {
-            RGBA left;
-            RGBA right;
-            RGBA top;
-            RGBA bottom;
-        } color; // 背景颜色
+        UIClr color; // 背景颜色
         union
         {
-            uint32_t id;        // 皮肤id
-            const UISkin *skin; // 皮肤
+            uint32_t id;                  // 皮肤id
+            const UISkin *skin = nullptr; // 皮肤
         };
     };
     // UI字体描述项
     struct UIFNT
     {
-        float size;
-        struct
-        {
-            RGBA left;
-            RGBA right;
-            RGBA top;
-            RGBA bottom;
-        } color;
-    };
-    // UI 外边距描述项
-    struct UIMargin
-    {
-        float left;
-        float right;
-        float top;
-        float bottom;
-    };
-    // UI 内边距
-    struct UIPadding
-    {
-        float left;
-        float right;
-        float top;
-        float bottom;
+        float size = 32;
+        UIClr color;
     };
 
 }

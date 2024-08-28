@@ -29,14 +29,18 @@ namespace airkit
             };
             State mNormal;   // 正常状态
             State mHover;    // 鼠标悬浮
-            State mActive;   // 激活状态
+            State mActive;   // 激活状态:鼠标按下
             State mDisabled; // 禁用状态
             union
             {
                 uint32_t mFlag;
                 struct
                 {
-                    uint32_t margin : 1; // 有外边距
+                    uint32_t margin : 1;   // 有外边距描述
+                    uint32_t normal : 1;   // 有正常状态描述
+                    uint32_t hover : 1;    // 有悬浮状态描述
+                    uint32_t active : 1;   // 有激活状态描述
+                    uint32_t disabled : 1; // 有禁用状态描述
                 };
             };
         };
