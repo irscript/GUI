@@ -3,6 +3,8 @@
 
 #include <airkit/GUI/WindowHub.hpp>
 #include <airkit/GUI/Render/IRender.hpp>
+#include <airkit/GUI/Theme/UITheme.hpp>
+
 #define FMT_HEADER_ONLY
 #include <airkit/3Part/fmt/core.h>
 namespace airkit
@@ -34,25 +36,28 @@ namespace airkit
         virtual void error(const std::string &msg) = 0;
         virtual void warning(const std::string &msg) = 0;
 
+        UITheme &getTheme() { return mTheme; }
+
     protected:
         WindowHub mWinHub;    // 窗口管理器
         RenderAPI mRenderAPI; // 渲染接口API
         RenderHolder mRender; // 渲染接口
+        UITheme mTheme;       // 主题
     protected:
         static IPlat *mInstance;
     };
 
 // 检查错误
-#define checkError(cond, ...)                                                                  \
-    do                                                                                         \
-    {                                                                                          \
-        if (!((cond)))                                                                         \
-        {                                                                                      \
-            static constexpr char posfmt[] = "\nfunc: {0}\nfile: {1}\nline: {2}\ncond: {3}\n"; \
-            std::string pos = fmt::format(posfmt, thisfuncarg(), thisfile(), thisline(), #cond);   \
-            std::string logmsg = fmt::format(__VA_ARGS__);                                     \
-            IPlat::getInstance().error(logmsg + pos);                                          \
-        }                                                                                      \
+#define checkError(cond, ...)                                                                    \
+    do                                                                                           \
+    {                                                                                            \
+        if (!((cond)))                                                                           \
+        {                                                                                        \
+            static constexpr char posfmt[] = "\nfunc: {0}\nfile: {1}\nline: {2}\ncond: {3}\n";   \
+            std::string pos = fmt::format(posfmt, thisfuncarg(), thisfile(), thisline(), #cond); \
+            std::string logmsg = fmt::format(__VA_ARGS__);                                       \
+            IPlat::getInstance().error(logmsg + pos);                                            \
+        }                                                                                        \
     } while (0)
 
 }

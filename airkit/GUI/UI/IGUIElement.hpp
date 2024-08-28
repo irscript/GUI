@@ -1,7 +1,7 @@
 #ifndef __IGUIELEMENT_H__
 #define __IGUIELEMENT_H__
 
-#include <airkit/GUI/Event/Event.hpp>
+#include <airkit/GUI/Event/EventReceiver.hpp>
 #include <airkit/GUI/UI/UIFlag.hpp>
 #include <airkit/GUI/UI/UIArea.hpp>
 #include <airkit/GUI/UI/UIDrawData.hpp>
@@ -24,7 +24,7 @@ namespace airkit
     };
 
     // UI 元素基类
-    struct IGUIElement
+    struct IGUIElement : public IEventReceiver
     {
     public:
         IGUIElement() = default;
@@ -37,7 +37,7 @@ namespace airkit
 
     public:
         // 事件响应
-        virtual void onEvent(IEvent &event);
+        virtual void onEvent(IEvent &event) override;
 
         // 响应焦点变化
         virtual void onFocus(UIFocusEvent &event);
@@ -72,7 +72,7 @@ namespace airkit
 
     public:
         // 获取样式名称
-        virtual std::string getStyleName() const {return "";}
+        virtual std::string getStyleName() const { return ""; }
         virtual IUIStyle *getStyle(UITheme &theme) const { return nullptr; }
         // 响应主题变化
         virtual void onThemeChange(UITheme &theme) {}

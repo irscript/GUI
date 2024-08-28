@@ -168,7 +168,6 @@ namespace airkit
         if (mTitleBar.get() != nullptr)
         {
             auto hit = ((WinTitleBar *)titleBar)->onWinHitTest(cursor);
-            // if (hit != HTNOWHERE)
             return hit;
         }
         return HTCLIENT;
@@ -193,6 +192,10 @@ namespace airkit
             return HTMINBUTTON;
         if (hit == mUIMaximize.get())
             return HTMAXBUTTON;
+
+        //HTTOP
+        if(cursor.mY<=3)
+            return HTTOP;
 
         return HTCAPTION;
     }

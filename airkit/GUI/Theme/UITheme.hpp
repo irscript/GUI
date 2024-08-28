@@ -14,6 +14,8 @@ namespace airkit
         const IUIStyle *getStyle(const std::string &name) const;
         // 获取纹理
         const TextureHolder &getTextures() const { return mSkins.mTextures; }
+        // 获取名称
+        const std::string &getName() const { return mName; }
 
     protected:
         friend class UIStyleSelector;
@@ -43,6 +45,7 @@ namespace airkit
         Styles mStyles;                 // 风格组
         UISkins mSkins;                 // 皮肤
         std::vector<UIStyles *> mUsing; // 正在使用的样式组
+        std::string mName;              // 主题名称
     };
     // 样式组选择器
     struct UIStyleSelector
@@ -62,7 +65,6 @@ namespace airkit
         UITheme &theme;
     };
 
-    
 }
 
 #endif // __GUITHEME_H__

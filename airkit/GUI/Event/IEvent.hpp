@@ -28,11 +28,17 @@ namespace airkit
         template <typename T>
         T &as() { return *(T *)(this); }
 
+        // 是否已处理
+        bool isHandled() const { return mHandled; }
+        // 设置已处理
+        void setHandled() { mHandled = true; }
+
     protected:
         IEvent(EventKind kind) : mKind(kind) {}
 
     private:
         EventKind mKind;
+        bool mHandled = false; // 是否处理
     };
 
     struct CharInputEvent : public IEvent
