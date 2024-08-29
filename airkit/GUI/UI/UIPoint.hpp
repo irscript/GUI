@@ -40,9 +40,20 @@ namespace airkit
             }
         }
 
-    //protected:
+        // protected:
         float mX;
         float mY;
+
+        /// @brief 线性插值函数
+        /// @param a 起始点
+        /// @param b 结束点
+        /// @param t 插值因子，取值范围为[0,1]
+        /// @return 插值结果
+        static UIPoint lerp(const UIPoint &a, const UIPoint &b, float t)
+        {
+            return UIPoint(a.mX + (b.mX - a.mX) * t,
+                           a.mY + (b.mY - a.mY) * t);
+        }
     };
 
     struct UISize
@@ -79,7 +90,7 @@ namespace airkit
                    mHeight == size.mHeight;
         }
 
-   // protected:
+        // protected:
         union
         {
             struct
@@ -122,7 +133,7 @@ namespace airkit
 
         static constexpr float max = 1E30; // 最大限制值
 
-   // protected:
+        // protected:
         UISize mH; // 水平方向限制值
         UISize mV; // 垂直方向限制值
     };

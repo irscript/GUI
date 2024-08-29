@@ -122,8 +122,8 @@ struct Window : public GLWindow
             // 绘制圆
             ui.drawCircle(UIPoint(100, 200), 60.0f,
                           RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 20, 3);
-            ui.fillCircle(UIPoint(100, 400), 60.0f, RGBA(255, 0, 0, 255), 32);
-            ui.fillCircle(UIPoint(300, 400), 100.0f, RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 32);
+            ui.fillCircle(UIPoint(100, 400), 60.0f, RGBA(0, 255, 0, 255), 16);
+            ui.fillCircle(UIPoint(300, 400), 100.0f, RGBA(255, 0, 0, 255), RGBA(0, 255, 0, 255), 16);
 
             // 绘制点
             ui.drawPoint(UIPoint(100, 100), RGBA(0, 0, 255, 255), 12);
@@ -138,8 +138,8 @@ struct Window : public GLWindow
             // 绘制弧线
             ui.fillSector(UIPoint(500, 400), 80.0f, 0.0f, 90.0f,
                           RGBA(255, 0, 0, 255), RGBA(0, 255, 0), 2);
-            ui.drawArc(UIPoint(500, 400), 80.0f, 0.0f, 90.0f,
-                       RGBA(255, 0, 0, 255), RGBA(0, 255, 0), 8, 2);
+            ui.drawArc(UIPoint(510, 410), 80.0f, 0.0f, 90.0f,
+                       RGBA(255, 0, 0, 255), RGBA(0, 255, 0), 16, 2);
 
             // 绘制纹理
             RGBA clrarr[4] = {
@@ -147,8 +147,8 @@ struct Window : public GLWindow
                 RGBA(0, 255, 0, 255),
                 RGBA(0, 0, 255, 255),
                 RGBA(255, 255, 0, 255)};
-            ui.drawRactTex(UIPoint(w / 3.0f, h / 3.0f), UIPoint(0, 1),
-                           UIPoint(w / 3.0f * 2, h / 3.0f * 2), UIPoint(1, 0), clrarr);
+            ui.texRect(UIPoint(w / 3.0f, h / 3.0f), UIPoint(0, 1),
+                       UIPoint(w / 3.0f * 2, h / 3.0f * 2), UIPoint(1, 0), clrarr);
 
             mVBO->setData(mDrawList.mVertices.data(), mDrawList.mVertices.size() * sizeof(UIVertex));
             auto icount = mDrawList.mIndices.size();
