@@ -1,9 +1,27 @@
 #include <airkit/GUI/Theme/UIThemeLoader.hpp>
 #include <airkit/GUI/Theme/XmlDomain.hpp>
+#include "UIThemeLoader.hpp"
 
 namespace airkit
 {
     bool UIThemeXmlPaser::parse(const std::string &path, UITheme &theme)
+    {
+        // 先加载主题文件xml
+        if (loadTheme(path, theme) == false)
+            return false;
+        if (theme.mSkin.empty())
+            return true;
+        std::filesystem::path p(path);
+        auto dir = p.parent_path();
+        
+        //dir /= theme.mSkin;
+        std::string skin=dir.string()+theme.mSkin;
+        // 加载皮肤
+        if (loadSkin(skin, theme.mSkins) == false)
+            return false;
+        return true;
+    }
+    bool UIThemeXmlPaser::loadTheme(const std::string &path, UITheme &theme)
     {
         // 先加载主题文件xml
         pugi::xml_document doc;
@@ -21,6 +39,9 @@ namespace airkit
             mError = "theme file format error";
             return false;
         }
+        theme.mName = root.attribute("name").value();
+        theme.mSkin = root.attribute("skin").value();
+
         // 遍历组
         for (auto group = root.child("group"); group; group = group.next_sibling("group"))
         {
@@ -56,6 +77,11 @@ namespace airkit
                 gth.mStyles.insert(std::make_pair(style->mName, style));
             }
         }
+        return true;
+    }
+
+    bool UIThemeXmlPaser::loadSkin(const std::string &path, UISkins &skins)
+    {
         return true;
     }
 

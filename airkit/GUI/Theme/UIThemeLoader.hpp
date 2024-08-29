@@ -19,7 +19,9 @@ namespace airkit
         }
         // 加载主题文件
         bool parse(const std::string &path, UITheme &theme);
-
+    protected:
+        bool loadTheme(const std::string &path, UITheme &theme);
+        bool loadSkin(const std::string &path, UISkins &skins);
     protected:
         std::map<std::string, Domain> mDomains;
         std::string mError; // 错误信息

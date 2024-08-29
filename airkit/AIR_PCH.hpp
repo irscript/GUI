@@ -23,6 +23,7 @@
 #include <unordered_set>
 #include <initializer_list>
 #include <fstream>
+#include<filesystem>
 
 #include <airkit/AIR_COMPILE_OPTION.h>
 

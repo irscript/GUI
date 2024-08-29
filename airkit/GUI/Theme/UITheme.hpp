@@ -46,6 +46,7 @@ namespace airkit
         UISkins mSkins;                 // 皮肤
         std::vector<UIStyles *> mUsing; // 正在使用的样式组
         std::string mName;              // 主题名称
+        std::string mSkin;              // 皮肤纹理的文件相对路径
     };
     // 样式组选择器
     struct UIStyleSelector
