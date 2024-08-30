@@ -71,12 +71,19 @@ namespace airkit
             else
                 x += fntsize;
         }
-        auto glyph = getGlyph('=');
+        auto glyph = getGlyph('3');
         ui.texRect(
             UIPoint(10, 90),
             UIPoint(glyph->image.l, glyph->image.t),
             UIPoint(42, 122),
             UIPoint(glyph->image.r, glyph->image.b),
+            color);
+
+        ui.texRect(
+            UIPoint(50, 100),
+            UIPoint(0, 1),
+            UIPoint(254, 304),
+            UIPoint(1, 0),
             color);
 
         drawlist.end(cmd, DrawFlag::MTSDF);

@@ -55,7 +55,7 @@ float screenPxRange() {
 
 vec4 fontColor(){
     vec4 texel=texture(sTexture, texclr.UV.st);
-    //if(texel.a<= 0.0001)discard;
+    if(texel.a<= 0.0001)discard;
     
 	float pxRange=screenPxRange();
     float dist = median(texel.r, texel.g, texel.b);
@@ -63,7 +63,9 @@ vec4 fontColor(){
 	// Distance (in pixels) to the body edge and calculate opacity
   	float pxDist = pxRange * (dist - 0.5);
 	float opacity = clamp(pxDist + 0.5, 0.0, 1.0);
-    vec4 bg=vec4(0);
+    vec4 bg=texclr.Color;
+    bg.a=opacity;
+    return bg;
     return mix(bg,texclr.Color,  opacity);
 }
 
