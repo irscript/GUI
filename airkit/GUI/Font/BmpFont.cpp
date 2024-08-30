@@ -32,18 +32,19 @@ namespace airkit
         }
         return true;
     }
-    void BmpFont::drawText(UIDrawList &drawlist, const UIArea &clip, const std::string &text, const uint32_t flag, RGBA color, const float size)
+    void BmpFont::drawText(UIDrawList &drawlist, const UIArea &clip,
+                           const std::string &text, const uint32_t flag,
+                           RGBA color, const float fntsize)
     {
         if (text.empty())
             return;
 
         // 计算字体缩放
-        float scale = size / mMeta->size;
 
         // 计算行高
-        float lineHeight = mMeta->size * scale * mMeta->lineHeight;
-        float x = clip.mX+10;
-        float y = clip.mY + size+10;
+        float lineHeight = fntsize * mMeta->lineHeight;
+        float x = clip.mX + 10;
+        float y = clip.mY + fntsize + 10;
 
         auto &cmd = drawlist.begin();
         cmd.mTexture = mTextures[0];
@@ -54,10 +55,10 @@ namespace airkit
             if (glyph)
             {
                 // 计算顶点
-                float t = y - 32;//glyph->plane.t * mMeta->size ;
-                float b = y ;//- glyph->plane.b * mMeta->size ;
-                float l = x ;//+ glyph->plane.l * mMeta->size ;
-                float r = x +32;// glyph->plane.r * mMeta->size ;
+                float t = y - glyph->plane.t * fntsize;
+                float b = y - glyph->plane.b * fntsize;
+                float l = x + glyph->plane.l * fntsize;
+                float r = x + glyph->plane.r * fntsize;
 
                 ui.texRect(
                     UIPoint(l, t),
@@ -65,28 +66,20 @@ namespace airkit
                     UIPoint(r, b),
                     UIPoint(glyph->image.r, glyph->image.b),
                     color);
-                x += glyph->advance  * mMeta->size;
+                x += glyph->advance * fntsize;
             }
             else
-                x += size;
+                x += fntsize;
         }
-        auto glyph = getGlyph('~');
-        auto l=142.5f/204;
-        auto r=148.5f/204;
-        auto t=168.5f/204;
-        auto b=141.5f/204;
+        auto glyph = getGlyph('=');
         ui.texRect(
-                    UIPoint(10, 90),
-                    UIPoint(glyph->image.l, glyph->image.t),
-                    UIPoint(42, 122),
-                    UIPoint(glyph->image.r, glyph->image.b),
-                    color);
+            UIPoint(10, 90),
+            UIPoint(glyph->image.l, glyph->image.t),
+            UIPoint(42, 122),
+            UIPoint(glyph->image.r, glyph->image.b),
+            color);
 
-        
-        
         drawlist.end(cmd, DrawFlag::MTSDF);
-
-        
     }
     UISize BmpFont::calcSize(const std::string &text, const float size)
     {
