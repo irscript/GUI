@@ -28,30 +28,28 @@ namespace airkit
         /// @return 计算后的大小
         virtual UISize calcSize(const std::string &text, const float size = 1) = 0;
 
-        // 字体图元
-        struct Glyph
-        {
-            uint32_t code; // 字符编码
-            float advance; // 字符宽度:以字体大小为单位
-            struct
-            {
-                float l, r, t, b;
-            } image,   // 纹理坐标
-                plane; // 平面坐标: 以字体大小为单位，基于原点偏移,用于提示如何绘制该字符
-        };
-        // 字体元数据
-        struct FontMeta
-        {
-            float size;               // 字体大小
-            float lineHeight;         // 行高: 以字体大小为单位
-            float distanceRange;      // 距离场
-            float underlineY;         // 下划线位置: 以字体大小为单位，基于原点偏移,
-            float underlineThickness; // 下划线厚度: 以字体大小为单位
-        };
+        
+        /*
+                // 获取字体元数据
+                virtual const IFontMeta &getMeta() const = 0;
+
+                // 获取字体图元
+                virtual const IGlyph &getGlyphs(uint32_t code) const = 0;
+                */
     };
 
     using FontHolder = Holder<IFont>;
 
+    // 位图字体接口
+    struct IBmpFont : public IFont
+    {
+
+    protected:
+    };
+    // 矢量字体接口
+    struct IVecFont : public IFont
+    {
+    };
 }
 
 #endif // __IFONT_H__

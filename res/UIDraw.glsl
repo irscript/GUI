@@ -41,6 +41,34 @@ in struct {
     vec2 UV;
 } texclr;
 
+float median(float r, float g, float b) {
+	return max(min(r, g), min(max(r, g), b));
+}
+
+float screenPxRange() {
+	// Precalculate unitRange and pass it as 
+	// a uniform for better performance.
+	vec2 unitRange = vec2(2.0)/vec2(textureSize(sTexture, 0));
+	vec2 screenTexSize = vec2(1.0)/fwidth( texclr.UV);
+	return max(0.5*dot(unitRange, screenTexSize), 1.0);
+}
+
+vec4 fontColor(){
+    vec4 texel=texture(sTexture, texclr.UV.st);
+    if(texel.a<= 0.0001)discard;
+    mix(texclr.Color,texel,  texel.a);
+    
+	float pxRange=screenPxRange();
+    float dist = median(texel.r, texel.g, texel.b);
+	
+	// Distance (in pixels) to the body edge and calculate opacity
+  	float pxDist = pxRange * (dist - 0.5);
+	float opacity = clamp(pxDist + 0.5, 0.0, 1.0);
+    vec4 bg=texclr.Color;
+    bg.a=opacity;
+    return bg;
+    //return mix(bg,texclr.Color,  opacity);
+}
 
 void main()
 {
@@ -54,6 +82,11 @@ void main()
     if((flag & 0x4u)!=0u)
     {
         fColor=texture(sTexture,texclr.UV);
+        return;
+    }
+    if((flag & 0x8u)!=0u)
+    {
+        fColor=fontColor();
         return;
     }
 

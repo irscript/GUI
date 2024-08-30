@@ -5,6 +5,7 @@
 #include <airkit/GUI/UI/UIHelper.hpp>
 
 #include <airkit/GUI/Theme/UIThemeLoader.hpp>
+#include <airkit/GUI/Font/BmpFont.hpp>
 
 using namespace airkit;
 
@@ -52,6 +53,8 @@ struct Window : public GLWindow
 
         mTexture = render->createTexture2D("bug.png");
 
+        auto res2 = mFont.load("demo.bfnt", render);
+
         auto tbar = new ::TitleBar();
         UIHolder title(tbar);
         tbar->create(title);
@@ -60,6 +63,13 @@ struct Window : public GLWindow
     void onRenderFrame(const UIVibe &vibe, const UIArea &clip, UIDrawList &drawList) override
     {
         mTitleBar->onRenderFrame(vibe, clip, drawList);
+
+        UIArea area = clip;
+        area.mY = mTitleBar->getArea().getHeight();
+        area.mHeight -= area.mY;
+
+        mFont.drawText(drawList, area, "Hello World!", 0, RGBA(0,255,0), 32.0);
+        
     }
     virtual void render() override
     {
@@ -95,11 +105,6 @@ struct Window : public GLWindow
 
             onRenderFrame(mUIVibe, clip, mCmdlist);
 
-            UIHelper ui(mCmdlist);
-            auto &cmd = mCmdlist.begin();
-            ui.drawPoint(clip.getCenter(), RGBA::fromRGBA(0xFF0000FF), 20.0f);
-            mCmdlist.end(cmd, DrawFlag::Vertex);
-
             // 没有数据
             if (mCmdlist.mVertices.size() == 0)
             {
@@ -130,12 +135,18 @@ struct Window : public GLWindow
 
             uint32_t uiflag = 0;
             shader->setInt("uiflag", 0);
+            ITexture*tex=nullptr;
             for (auto &cmd : mCmdlist.mDrawCommands)
             {
                 if (cmd.mDrawFlag != uiflag)
                 {
                     uiflag = cmd.mDrawFlag;
                     shader->setInt("uiflag", uiflag);
+                }
+                if (cmd.mTexture.get() != tex)
+                {
+                    tex = cmd.mTexture.get();
+                    tex->bind();
                 }
                 render->drawIndexs(cmd.mStartIndex, cmd.mIndexCount, false);
             }
@@ -153,6 +164,7 @@ private:
     IBOHolder mIBO;
     TextureHolder mTexture;
     UIDrawList mCmdlist; // 绘制命令列表
+    BmpFont mFont;
 };
 
 struct Plat : public PlatWin
@@ -170,13 +182,14 @@ int main(int argc, char *argv[])
 {
     UITheme theme;
     UIThemeXmlPaser parser;
-    
+
     auto res = parser.parse("theme.xml", theme);
 
     Plat plat;
     plat.init(RenderAPI::OpenGL);
 
     auto win = plat.createWindow(800, 600, "win", {});
+
 
     Window *winptr = (Window *)win.get();
     winptr->init("UIDraw.glsl");

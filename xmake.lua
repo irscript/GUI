@@ -28,6 +28,7 @@ target("demo")
     add_ldflags("-lopengl32 -lgdi32 -luxtheme")
     set_rundir("res")
 
+includes("tool/i18n","tool/bfnt")
 
     --单元测试
 for _, file in ipairs(os.files("test/*.cpp")) do
